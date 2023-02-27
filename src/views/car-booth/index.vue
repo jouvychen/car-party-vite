@@ -119,12 +119,12 @@ let controls: OrbitControls;
 let boothModel: THREE.Object3D | null = null; // 展台
 let carModel: THREE.Object3D | null = null;
 const wheels: THREE.Object3D[] = [];
-let carBoothPosition: Position | null = null;
+let carBoothPosition: Position = new THREE.Vector3();
 let boothPosition = {
-  booth1: null,
-  booth2: null,
-  booth3: null,
-  booth4: null,
+  booth1: new THREE.Vector3(),
+  booth2: new THREE.Vector3(),
+  booth3: new THREE.Vector3(),
+  booth4: new THREE.Vector3(),
 };
 
 let bodyMaterial: THREE.MeshPhysicalMaterial;
@@ -460,7 +460,7 @@ const init = async () => {
   renderer.toneMappingExposure = 0.85;
   container?.appendChild(renderer.domElement);
 
-  stats = new Stats();
+  stats = Stats();
   stats.dom.setAttribute("id", "stats");
   const infoContainer = document.getElementById("stats-container");
   infoContainer?.appendChild(stats.dom);
@@ -492,7 +492,7 @@ const init = async () => {
 
   const textureLoader = new THREE.TextureLoader();
   const rgbeLoader = new RGBELoader().setPath("/textures/equirectangular/");
-  const gltfLoader = new GLTFLoader().setPath("/models/collections/glb/");
+  const gltfLoader = new GLTFLoader().setPath("/models/");
   const dracoLoader = new DRACOLoader().setDecoderPath("/draco/");
   gltfLoader.setDRACOLoader(dracoLoader);
 
@@ -574,7 +574,7 @@ const init = async () => {
   const bodyColorInput = document.getElementById("body-color");
   bodyColorInput?.addEventListener("input", function (value) {
     debugger;
-    bodyMaterial.color.set(this.value);
+    bodyMaterial.color.set(value);
     if (carModel) {
       changeBodyColor(
         [
@@ -593,7 +593,7 @@ const init = async () => {
   const detailsColorInput = document.getElementById("details-color");
   detailsColorInput?.addEventListener("input", function (value) {
     debugger;
-    detailsMaterial.color.set(this.value);
+    detailsMaterial.color.set(value);
     if (carModel) {
       changeBodyColor(["车架"], detailsMaterial);
     }
@@ -602,7 +602,7 @@ const init = async () => {
   const glassColorInput = document.getElementById("glass-color");
   glassColorInput?.addEventListener("input", function (value) {
     debugger;
-    glassMaterial.color.set(this.value);
+    glassMaterial.color.set(value);
   });
 
   // Car
@@ -756,7 +756,17 @@ const onWindowResize = () => {
 };
 
 // 开关车前灯
-const addLight = (mesh: THREE.Mesh, h: number, s: number, l: number, x: number, y: number, z: number, textureFlare0: THREE.Texture, textureFlare3: THREE.Texture) => {
+const addLight = (
+  mesh: THREE.Mesh,
+  h: number,
+  s: number,
+  l: number,
+  x: number,
+  y: number,
+  z: number,
+  textureFlare0: THREE.Texture,
+  textureFlare3: THREE.Texture
+) => {
   const light = new THREE.PointLight(0xffffff, 1.5, 2000);
   light.name = `镜头光晕-${mesh.name}`;
   light.color.setHSL(h, s, l);
@@ -774,12 +784,16 @@ const addLight = (mesh: THREE.Mesh, h: number, s: number, l: number, x: number, 
   light.add(lensflare);
 };
 const onTweenOpenLight = () => {
-  const lMesh = carModel?.getObjectByName("左车灯光晕点");
-  const rMesh = carModel?.getObjectByName("右车灯光晕点");
+  const lMesh = carModel?.getObjectByName("左车灯光晕点") as THREE.Mesh;
+  const rMesh = carModel?.getObjectByName("右车灯光晕点") as THREE.Mesh;
   // 已经开灯, 则移除场景中的光晕节点
   if (tweenState.value.openLight) {
-    lMesh?.remove(scene.getObjectByName(`镜头光晕-${lMesh.name}`));
-    rMesh?.remove(scene.getObjectByName(`镜头光晕-${rMesh.name}`));
+    lMesh?.remove(
+      scene.getObjectByName(`镜头光晕-${lMesh.name}`) as THREE.Object3D
+    );
+    rMesh?.remove(
+      scene.getObjectByName(`镜头光晕-${rMesh.name}`) as THREE.Object3D
+    );
     scene.environment = hdrTexture;
   } else {
     if (tweenState.value.openWheelSeeding) {
@@ -789,10 +803,10 @@ const onTweenOpenLight = () => {
     }
 
     const wlPosition = new THREE.Vector3();
-    lMesh.getWorldPosition(wlPosition);
+    lMesh?.getWorldPosition(wlPosition);
 
     const wrPosition = new THREE.Vector3();
-    rMesh.getWorldPosition(wrPosition);
+    rMesh?.getWorldPosition(wrPosition);
 
     // 当前正处于开灯动画位置(openLight)，则不需要镜头缓动动画
     if (currentAnimationName.value === "openLight") {
@@ -820,12 +834,12 @@ const onTweenOpenLight = () => {
         source.texture.textureFlare3
       );
     } else {
-      let watchPoint = {};
-      watchPoint = carModel.getObjectByName("车前中观测点").position;
+      let watchPoint: Position | undefined;
+      watchPoint = carModel?.getObjectByName("车前中观测点")?.position;
       entranceAnimations.animateCamera(
         camera,
         controls,
-        { x: watchPoint.x, y: watchPoint.y, z: watchPoint.z },
+        { x: watchPoint?.x, y: watchPoint?.y, z: watchPoint?.z },
         {
           x: 0,
           y: 0,
@@ -877,37 +891,43 @@ const onTweenOpenBooth = () => {
     booth3,
     booth4,
   ] = [
-    boothModel.getObjectByName("原点").position,
-    boothModel.getObjectByName("车承台父节点"),
-    boothModel.getObjectByName("车闸父节点"),
-    boothModel.getObjectByName("车闸001"),
-    boothModel.getObjectByName("车闸002"),
-    boothModel.getObjectByName("车闸003"),
-    boothModel.getObjectByName("车闸004"),
+    boothModel?.getObjectByName("原点")?.position,
+    boothModel?.getObjectByName("车承台父节点"),
+    boothModel?.getObjectByName("车闸父节点"),
+    boothModel?.getObjectByName("车闸001"),
+    boothModel?.getObjectByName("车闸002"),
+    boothModel?.getObjectByName("车闸003"),
+    boothModel?.getObjectByName("车闸004"),
   ];
 
-  const [booth1Vector, booth2Vector, booth3Vector, booth4Vector] = [
-    new THREE.Vector3(
-      boothOrigin.position.x - booth1.position.x,
-      booth1.position.y,
-      boothOrigin.position.z - booth1.position.z
-    ),
-    new THREE.Vector3(
-      boothOrigin.position.x - booth2.position.x,
-      booth2.position.y,
-      boothOrigin.position.z - booth2.position.z
-    ),
-    new THREE.Vector3(
-      boothOrigin.position.x - booth3.position.x,
-      booth3.position.y,
-      boothOrigin.position.z - booth3.position.z
-    ),
-    new THREE.Vector3(
-      boothOrigin.position.x - booth4.position.x,
-      booth4.position.y,
-      boothOrigin.position.z - booth4.position.z
-    ),
-  ];
+  let booth1Vector: THREE.Vector3 = new THREE.Vector3();
+  let booth2Vector: THREE.Vector3 = new THREE.Vector3();
+  let booth3Vector: THREE.Vector3 = new THREE.Vector3();
+  let booth4Vector: THREE.Vector3 = new THREE.Vector3();
+  if (boothOrigin && booth1 && booth2 && booth3 && booth4) {
+    [booth1Vector, booth2Vector, booth3Vector, booth4Vector] = [
+      new THREE.Vector3(
+        boothOrigin.position.x - booth1.position.x,
+        booth1.position.y,
+        boothOrigin.position.z - booth1.position.z
+      ),
+      new THREE.Vector3(
+        boothOrigin.position.x - booth2.position.x,
+        booth2.position.y,
+        boothOrigin.position.z - booth2.position.z
+      ),
+      new THREE.Vector3(
+        boothOrigin.position.x - booth3.position.x,
+        booth3.position.y,
+        boothOrigin.position.z - booth3.position.z
+      ),
+      new THREE.Vector3(
+        boothOrigin.position.x - booth4.position.x,
+        booth4.position.y,
+        boothOrigin.position.z - booth4.position.z
+      ),
+    ];
+  }
 
   // toFixed(4)是为了保证精度，因为他们的象限是正负号的
   if (!boothPosition.booth1) {
@@ -961,7 +981,7 @@ const onTweenOpenBooth = () => {
   );
   booth1Tween.easing(TWEEN.Easing.Sinusoidal.InOut).repeat(0);
   booth1Tween.onUpdate(function () {
-    booth1.position.set(booth1Params.x, booth1Vector.y, booth1Params.z);
+    booth1?.position.set(booth1Params.x, booth1Vector.y, booth1Params.z);
   });
 
   // 2 (本块对调x和z是因为所在象限有一个为负，上面与“原点”相减时导致相反)
@@ -989,7 +1009,7 @@ const onTweenOpenBooth = () => {
       "booth2Params.z",
       booth2Params.z
     );
-    booth2.position.set(booth2Params.x, booth2Vector.y, booth2Params.z);
+    booth2?.position.set(booth2Params.x, booth2Vector.y, booth2Params.z);
   });
 
   // 3 (本块起点和终点都加负号是因为上面向量相减，而该块又在第三象限的缘故，都是负号，负负得正了)
@@ -1012,7 +1032,7 @@ const onTweenOpenBooth = () => {
   booth3Tween.easing(TWEEN.Easing.Sinusoidal.InOut).repeat(0);
   booth3Tween.onUpdate(function () {
     // console.log('booth3Params.x', booth3Params.x, 'booth3Params.z', booth3Params.z);
-    booth3.position.set(booth3Params.x, booth3Vector.y, booth3Params.z);
+    booth3?.position.set(booth3Params.x, booth3Vector.y, booth3Params.z);
   });
 
   // 4
@@ -1035,47 +1055,49 @@ const onTweenOpenBooth = () => {
   booth4Tween.easing(TWEEN.Easing.Sinusoidal.InOut).repeat(0);
   booth4Tween.onUpdate(function () {
     // console.log('booth4Params.x', booth4Params.x, 'booth4Params.z', booth4Params.z);
-    booth4.position.set(booth4Params.x, booth4Vector.y, booth4Params.z);
+    booth4?.position.set(booth4Params.x, booth4Vector.y, booth4Params.z);
   });
 
   // 整体微下沉和上浮
   const boothOriginParams = {
     y: tweenState.value.openBooth
-      ? boothOrigin.position.y
-      : boothOrigin.position.y,
+      ? boothOrigin?.position.y
+      : boothOrigin?.position.y,
   };
   const boothOriginParamsTween = new TWEEN.Tween(boothOriginParams);
   boothOriginParamsTween.to(
     {
       y: tweenState.value.openBooth
-        ? boothOrigin.position.y + 0.05
-        : boothOrigin.position.y - 0.05,
+        ? Number(boothOrigin?.position.y) + 0.05
+        : Number(boothOrigin?.position.y) - 0.05,
     },
     1000
   );
   boothOriginParamsTween.easing(TWEEN.Easing.Sinusoidal.InOut).repeat(0);
-  boothOriginParamsTween.onUpdate(function () {
-    boothOrigin.position.y = boothOriginParams.y;
-  });
+  boothOrigin &&
+    boothOriginParamsTween.onUpdate(function () {
+      boothOrigin.position.y = boothOriginParams.y as number;
+    });
 
   // 载车承台升降
   if (!carBoothPosition) {
-    carBoothPosition = carBooth.position.clone();
+    carBoothPosition = carBooth?.position.clone() as Position;
   }
   const carBoothParams = {
-    y: carBooth.position.y,
+    y: carBooth?.position.y,
   };
   const carBoothTween = new TWEEN.Tween(carBoothParams);
   carBoothTween.to(
     {
-      y: tweenState.value.openBooth ? carBoothPosition.y : originPosition.y,
+      y: tweenState.value.openBooth ? carBoothPosition.y : originPosition?.y,
     },
     3000
   );
   carBoothTween.easing(TWEEN.Easing.Sinusoidal.InOut).repeat(0);
-  carBoothTween.onUpdate(function () {
-    carBooth.position.y = carBoothParams.y;
-  });
+  carBooth &&
+    carBoothTween.onUpdate(function () {
+      carBooth.position.y = carBoothParams.y as number;
+    });
 
   // 上升
   if (!tweenState.value.openBooth) {
