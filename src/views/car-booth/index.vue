@@ -494,6 +494,8 @@ const init = async () => {
   const rgbeLoader = new RGBELoader().setPath("/textures/equirectangular/");
   const gltfLoader = new GLTFLoader().setPath("/models/");
   const dracoLoader = new DRACOLoader().setDecoderPath("/draco/");
+  dracoLoader.setDecoderConfig({ type: "js" }); //使用兼容性强的draco_decoder.js解码器
+  dracoLoader.preload();
   gltfLoader.setDRACOLoader(dracoLoader);
 
   // 默认加载
@@ -520,7 +522,6 @@ const init = async () => {
       loadManager.value.schedule = Math.floor((loaded / total) * 100);
     }
   };
-
   const [texture, boothGltf, gltf, textureFlare0, textureFlare3] =
     await Promise.all([
       rgbeLoader.loadAsync("venice_sunset_1k.hdr"),

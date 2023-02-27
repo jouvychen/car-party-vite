@@ -41,7 +41,6 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
         resolvers: [AntDesignVueResolver({ importStyle: 'less', resolveIcons: true })]
       })
     ],
-    base: './',
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),

@@ -21,7 +21,7 @@ export const routes: Array<RouteRecordRaw> = [
           icon: 'BarsOutlined',
         },
         // redirect: '/personal-set/personal-msg',
-        component: () => import(/* webpackChunkName: "about" */ '@/components/HelloWorld.vue'),
+        component: () => import(/* webpackChunkName: "about" */ '@/views/car-booth/index.vue'),
         // children: [
         //   {
         //     path: '/personal-set/personal-msg',
