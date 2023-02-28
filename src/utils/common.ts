@@ -41,3 +41,10 @@ export const throttle = (fn:any, delay:number) => {
 export const getImageUrl = (name:string)=>{
   return new URL(`../../assets/images/home/${name}`, import.meta.url).href;
 };
+
+export const uuid = () => {
+  const tempUrl = URL.createObjectURL(new Blob());
+  const uuid = tempUrl.toString();
+  URL.revokeObjectURL(tempUrl); // 释放这个url
+  return uuid.substring(uuid.lastIndexOf('/') + 1);
+};

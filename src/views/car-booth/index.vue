@@ -1,51 +1,91 @@
 <template>
   <div class="car-booth">
+    <revolver :revolver-list="revolverList"></revolver>
+
+    <template v-for="o in revolverList" :key="o.uuid">
+      <!-- 控制颜色面板 -->
+      <floatWindow v-if="o.name === '颜色'" :float-window="o">
+        <template #content>
+          <!-- {{o}} -->
+          <span class="colorPicker">
+            <input id="body-color" type="color" value="#ff0000" />
+            <br />
+            车体
+          </span>
+          <span class="colorPicker">
+            <input id="details-color" type="color" value="#ffffff" />
+            <br />
+            车架
+          </span>
+          <span class="colorPicker">
+            <input id="glass-color" type="color" value="#ffffff" />
+            <br />
+            Glass
+          </span>
+        </template>
+      </floatWindow>
+
+      <!-- 控制动画面板 -->
+      <floatWindow v-if="o.name === '动画'" :float-window="o">
+        <template #content>
+          <div class="class">
+            <a-button @click="onTweenOpenDoor">{{
+              tweenState.openDoor ? "关门" : "开门"
+            }}</a-button>
+            <a-button @click="onTweenOpenTailWing">{{
+              tweenState.openTailWing ? "降下尾翼" : "升起尾翼"
+            }}</a-button>
+            <a-button @click="onTweenOpenCoolingGlass">
+              {{
+                tweenState.openCoolingGlass ? "降下散热玻璃" : "升起散热玻璃"
+              }}
+            </a-button>
+            <a-button @click="onTweenWheelSeeding">
+              {{
+                !tweenState.openWheelSeedingBroke &&
+                !tweenState.openWheelSeeding
+                  ? "开始轮播"
+                  : tweenState.openWheelSeedingBroke
+                  ? "继续轮播"
+                  : "停止轮播"
+              }}
+            </a-button>
+            <a-button @click="onResetCamera">视角复位</a-button>
+            <a-button @click="onTweenOpenLight">{{
+              tweenState.openLight ? "关灯" : "开灯"
+            }}</a-button>
+            <a-button @click="onTweenOpenBooth">{{
+              tweenState.openBooth ? "降下展台" : "升起展台"
+            }}</a-button>
+          </div>
+        </template>
+      </floatWindow>
+
+      <!-- 性能指标面板 -->
+      <floatWindow v-if="o.name === '性能'" :float-window="o">
+        <template #content>
+          <div class="mt6">
+            <div class="class">性能指标：</div>
+            <div id="stats-container"></div>
+          </div>
+        </template>
+      </floatWindow>
+
+      <!-- 光照控制面板 -->
+      <floatWindow v-if="o.name === '光照'" :float-window="o">
+        <template #content>
+          <div class="mt6">
+            <div class="class">GUI面板：</div>
+            <div id="gui-container"></div>
+          </div>
+        </template>
+      </floatWindow>
+
+      <!-- </template> -->
+    </template>
+
     <div class="left">
       <div id="info" class="info">
-        <!-- 颜色 -->
-        <span class="colorPicker">
-          <input id="body-color" type="color" value="#ff0000" />
-          <br />
-          车体
-        </span>
-        <span class="colorPicker">
-          <input id="details-color" type="color" value="#ffffff" />
-          <br />
-          车架
-        </span>
-        <span class="colorPicker">
-          <input id="glass-color" type="color" value="#ffffff" />
-          <br />
-          Glass
-        </span>
-        <div class="class">
-          <a-button @click="onTweenOpenDoor">{{
-            tweenState.openDoor ? "关门" : "开门"
-          }}</a-button>
-          <a-button @click="onTweenOpenTailWing">{{
-            tweenState.openTailWing ? "降下尾翼" : "升起尾翼"
-          }}</a-button>
-          <a-button @click="onTweenOpenCoolingGlass">
-            {{ tweenState.openCoolingGlass ? "降下散热玻璃" : "升起散热玻璃" }}
-          </a-button>
-          <a-button @click="onTweenWheelSeeding">
-            {{
-              !tweenState.openWheelSeedingBroke && !tweenState.openWheelSeeding
-                ? "开始轮播"
-                : tweenState.openWheelSeedingBroke
-                ? "继续轮播"
-                : "停止轮播"
-            }}
-          </a-button>
-          <a-button @click="onResetCamera">视角复位</a-button>
-          <a-button @click="onTweenOpenLight">{{
-            tweenState.openLight ? "关灯" : "开灯"
-          }}</a-button>
-          <a-button @click="onTweenOpenBooth">{{
-            tweenState.openBooth ? "降下展台" : "升起展台"
-          }}</a-button>
-        </div>
-
         <div class="mt6">
           <div class="class">加载信息：</div>
           <div class="class">
@@ -54,18 +94,6 @@
             }}
           </div>
           <div>加载进度:{{ loadManager.schedule }}%</div>
-        </div>
-
-        <!-- 性能指标 -->
-        <div class="mt6">
-          <div class="class">性能指标：</div>
-          <div id="stats-container"></div>
-        </div>
-
-        <!-- GUI面板 -->
-        <div class="mt6">
-          <div class="class">GUI面板：</div>
-          <div id="gui-container"></div>
         </div>
       </div>
     </div>
@@ -78,34 +106,36 @@
 
 <script lang="ts" setup name="CarBooth">
 // import { message } from 'ant-design-vue/es';
-import { TWEEN } from "three/examples/jsm/libs/tween.module.min"; // 补间动画
 
+// threejs相关导入
+import { TWEEN } from "three/examples/jsm/libs/tween.module.min"; // 补间动画
 import * as THREE from "three";
 import Stats from "three/examples/jsm/libs/stats.module";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"; // 控制器
-
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"; // gltf加载器
-
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
-
 import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper.js";
 import { createGUI, createLightGUI } from "./gui";
-
-import { debounce } from "@/utils/common";
 import { EntranceAnimations } from "@/utils/entranceTweenClass";
-// import * as TweenMax from './gsap2.1.3/TweenMax.min.js';
-
 import {
   Lensflare,
   LensflareElement,
 } from "three/examples/jsm/objects/Lensflare.js";
 
-interface Position {
-  x: number;
-  y: number;
-  z: number;
-}
+// 工具类导入
+import { debounce, uuid } from "@/utils/common";
+
+// 常量导入
+import { revolverList } from './constan';
+
+// 组件导入
+import floatWindow from "../float-window/index.vue";
+import revolver from "../revolver/index.vue";
+
+// 数据类型导入
+import { Position, ObjectKeys } from '@/utils/interface'
+
 
 let camera: THREE.PerspectiveCamera;
 let scene: THREE.Scene;
@@ -119,21 +149,20 @@ let controls: OrbitControls;
 let boothModel: THREE.Object3D | null = null; // 展台
 let carModel: THREE.Object3D | null = null;
 const wheels: THREE.Object3D[] = [];
-let carBoothPosition: Position = new THREE.Vector3();
-let boothPosition = {
-  booth1: new THREE.Vector3(),
-  booth2: new THREE.Vector3(),
-  booth3: new THREE.Vector3(),
-  booth4: new THREE.Vector3(),
+
+// 记录升降展台的原始位置, 初始值要为空, 否则下面赋值判断会不执行
+let carBoothPosition: Position | null;
+// 记录升降展台4块板材的原始位置, 初始值要为空, 否则下面赋值判断会不执行
+let boothPosition: ObjectKeys = {
+  booth1: null,
+  booth2: null,
+  booth3: null,
+  booth4: null,
 };
 
 let bodyMaterial: THREE.MeshPhysicalMaterial;
 
 const sideDragRef = ref(null);
-
-interface ObjectKeys {
-  [key: string]: any;
-}
 
 let source: ObjectKeys = {
   texture: {
@@ -154,6 +183,23 @@ const loadManager = ref({
 });
 
 let rectLight: THREE.RectAreaLight;
+
+for (let i = 0, l = revolverList.length; i < l; i++) {
+  revolverList[i].uuid = uuid();
+  // revolverList[i].name = i.toString();
+  // revolverList[i].name = i.toString();
+  revolverList[i].unfoldClass.right = `${
+    window.innerWidth -
+    Number(
+      revolverList[i].unfoldClass.width.slice(
+        0,
+        revolverList[i].unfoldClass.width.length - 2
+      )
+    )
+  }px`;
+}
+uuid();
+
 const createGUIFun = () => {
   const infoContainer = document.getElementById(
     "gui-container"
@@ -436,7 +482,6 @@ const onTweenWheelSeedingFun = () => {
       ) {
         return;
       }
-      console.log(wheelSeedingIndex, wheelSeedingList[wheelSeedingIndex]);
       currentAnimationName.value = "WheelSeeding";
       if (wheelSeedingIndex < wheelSeedingList.length - 1) {
         wheelSeedingIndex += 1;
@@ -573,9 +618,8 @@ const init = async () => {
   });
 
   const bodyColorInput = document.getElementById("body-color");
-  bodyColorInput?.addEventListener("input", function (value) {
-    debugger;
-    bodyMaterial.color.set(value);
+  bodyColorInput?.addEventListener("input", (event: Event) => {
+    bodyMaterial.color.set((event.target as HTMLInputElement).value);
     if (carModel) {
       changeBodyColor(
         [
@@ -592,18 +636,16 @@ const init = async () => {
   });
 
   const detailsColorInput = document.getElementById("details-color");
-  detailsColorInput?.addEventListener("input", function (value) {
-    debugger;
-    detailsMaterial.color.set(value);
+  detailsColorInput?.addEventListener("input", (event: Event) => {
+    detailsMaterial.color.set((event.target as HTMLInputElement).value);
     if (carModel) {
       changeBodyColor(["车架"], detailsMaterial);
     }
   });
 
   const glassColorInput = document.getElementById("glass-color");
-  glassColorInput?.addEventListener("input", function (value) {
-    debugger;
-    glassMaterial.color.set(value);
+  glassColorInput?.addEventListener("input", (event: Event) => {
+    glassMaterial.color.set((event.target as HTMLInputElement).value);
   });
 
   // Car
@@ -615,7 +657,6 @@ const init = async () => {
   // scene.add(boothModel);
   boothGroup?.add(carModel);
   scene.add(boothModel);
-  console.log("scene", scene);
 
   // carModel.getObjectByName('车身').material = bodyMaterial;
   // carModel.getObjectByName('挡叶').material = bodyMaterial;
@@ -1004,12 +1045,6 @@ const onTweenOpenBooth = () => {
   );
   booth2Tween.easing(TWEEN.Easing.Sinusoidal.InOut).repeat(0);
   booth2Tween.onUpdate(function () {
-    console.log(
-      "booth2Params.x",
-      booth2Params.x,
-      "booth2Params.z",
-      booth2Params.z
-    );
     booth2?.position.set(booth2Params.x, booth2Vector.y, booth2Params.z);
   });
 
@@ -1097,7 +1132,7 @@ const onTweenOpenBooth = () => {
   carBoothTween.easing(TWEEN.Easing.Sinusoidal.InOut).repeat(0);
   carBooth &&
     carBoothTween.onUpdate(function () {
-      carBooth.position.y = carBoothParams.y as number;
+      carBooth.position.y = Number(carBoothParams.y);
     });
 
   // 上升
