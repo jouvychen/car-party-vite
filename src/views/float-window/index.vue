@@ -1,14 +1,24 @@
 <template>
-  <div v-if="floatWindow.uuid" :id="`window${floatWindow.uuid}`" class="box blurred-bg tinted" @mousedown="move">
+  <div
+    v-if="floatWindow.uuid"
+    :id="`window${floatWindow.uuid}`"
+    class="box blurred-bg tinted"
+    @mousedown="move"
+  >
     <div class="container">
       <div class="container-controls">
-        <span class="control-item control-minimize js-minimize" @mousedown="onMinimize">‒</span>
-        <span class="control-item js-maximize">□</span>
-        <span class="control-item js-close">˟</span>
+        {{ floatWindow.name }}
+        <span
+          class="control-item control-minimize js-minimize"
+          @mousedown="onMinimize"
+          >‒</span
+        >
+        <!-- <span class="control-item js-maximize">□</span>
+        <span class="control-item js-close">˟</span> -->
       </div>
       <div class="container-content">
         <div class="container-cursor">
-          {{ floatWindow.uuid }}--{{ test }}
+          <!-- {{ floatWindow.uuid }}--{{ test }} -->
           <slot name="content"></slot>
         </div>
       </div>
@@ -17,18 +27,18 @@
   </div>
 </template>
 <script setup lang="ts">
-import $ from 'jquery';
-import { MouseMove } from './tools';
-import { PropType } from 'vue';
-import { message } from 'ant-design-vue/es';
-import type { Revolver } from '../revolver/typeStatement';
-import EventsBus from '@/utils/eventBus';
+import $ from "jquery";
+import { MouseMove } from "./tools";
+import { PropType } from "vue";
+import { message } from "ant-design-vue/es";
+import type { Revolver } from "../revolver/typeStatement";
+import EventsBus from "@/utils/eventBus";
 
 // const store = useStore();
 // const revolverSelected = computed(() => store.state.revolverSelected); // 暂时没用
 const test = ref(false);
 
-EventsBus.on('onBusRevolver', value => {
+EventsBus.on("onBusRevolver", (value) => {
   const val = value as Revolver;
   if (val.uuid === props.floatWindow.uuid) {
     test.value = !test.value;
@@ -74,25 +84,25 @@ const onMinimize = () => {
         height: 0,
       },
       function () {
-        message.success('动画完成');
+        // message.success("动画完成");
         test.value = !test.value;
-      },
+      }
     )
-    .addClass('mytest');
+    .addClass("mytest");
 };
 
 onMounted(() => {
   var prompt = {
     // window: $(`#window${random.value}`),
     window: $(`#window${props.floatWindow.uuid}`),
-    shortcut: $('.prompt-shortcut'),
-    input: $('.js-prompt-input'),
+    shortcut: $(".prompt-shortcut"),
+    input: $(".js-prompt-input"),
 
     init: function () {
-      $('.js-minimize').click(prompt.minimize);
-      $('.js-maximize').click(prompt.maximize);
-      $('.js-close').click(prompt.close);
-      $('.js-open').click(prompt.open);
+      $(".js-minimize").click(prompt.minimize);
+      $(".js-maximize").click(prompt.maximize);
+      $(".js-close").click(prompt.close);
+      $(".js-open").click(prompt.open);
       prompt.input.focus();
       prompt.input.blur(prompt.focus);
     },
@@ -109,14 +119,14 @@ onMounted(() => {
       // prompt.focus();
     },
     close: function () {
-      prompt.window.addClass('window--destroyed');
-      prompt.window.removeClass('window--maximized window--minimized');
-      prompt.shortcut.removeClass('hidden');
-      prompt.input.val('');
+      prompt.window.addClass("window--destroyed");
+      prompt.window.removeClass("window--maximized window--minimized");
+      prompt.shortcut.removeClass("hidden");
+      prompt.input.val("");
     },
     open: function () {
-      prompt.window.removeClass('window--destroyed');
-      prompt.shortcut.addClass('hidden');
+      prompt.window.removeClass("window--destroyed");
+      prompt.shortcut.addClass("hidden");
       prompt.focus();
     },
   };
@@ -149,6 +159,7 @@ onMounted(() => {
   height: 0;
   position: absolute;
   border-radius: 5px;
+  z-index: 999;
 
   padding-top: 25px;
   text-align: center;
@@ -159,6 +170,7 @@ onMounted(() => {
 
   &:active {
     cursor: move;
+
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
   }
 
@@ -187,10 +199,12 @@ onMounted(() => {
     justify-content: flex-end;
     align-items: center;
     background-color: #eee;
-    width: min-content;
+    width: 100%;
     position: absolute;
     right: 0;
     top: 0;
+
+    pointer-events: none;
   }
 
   .container-controls .control-item {
@@ -210,13 +224,22 @@ onMounted(() => {
     line-height: 22px;
   }
 
+  .container-content {
+    :deep(.ant-btn) {
+      span {
+        top: 0 !important;
+        left: 0 !important;
+      }
+    }
+  }
+
   .container-cursor {
     display: flex;
     margin: 5px;
     .i-cursor-indicator {
       color: #fff;
       font-size: 1em;
-      font-family: 'Consolas', monospace;
+      font-family: "Consolas", monospace;
       margin: 0 2px 0 5px;
     }
     .i-cursor-underscore {
@@ -234,7 +257,7 @@ onMounted(() => {
     outline: 0;
     color: transparent;
     text-shadow: 0 0 0 #fff;
-    font-family: 'Consolas', monospace;
+    font-family: "Consolas", monospace;
     flex: 1;
 
     &:focus {
@@ -245,7 +268,8 @@ onMounted(() => {
   .i-prompt {
     width: 62px;
     height: 62px;
-    background: url('https://cdn4.iconfinder.com/data/icons/small-n-flat/24/terminal-48.png') no-repeat center;
+    background: url("https://cdn4.iconfinder.com/data/icons/small-n-flat/24/terminal-48.png")
+      no-repeat center;
     background-color: rgba(0, 0, 0, 0.35);
     border-radius: 10px;
     box-shadow: 0 3px 1px rgba(0, 0, 0, 0.25);

@@ -127,15 +127,14 @@ import {
 import { debounce, uuid } from "@/utils/common";
 
 // 常量导入
-import { revolverList } from './constan';
+import { revolverList } from "./constan";
 
 // 组件导入
 import floatWindow from "../float-window/index.vue";
 import revolver from "../revolver/index.vue";
 
 // 数据类型导入
-import { Position, ObjectKeys } from '@/utils/interface'
-
+import { Position, ObjectKeys } from "@/utils/interface";
 
 let camera: THREE.PerspectiveCamera;
 let scene: THREE.Scene;
@@ -186,6 +185,7 @@ let rectLight: THREE.RectAreaLight;
 
 for (let i = 0, l = revolverList.length; i < l; i++) {
   revolverList[i].uuid = uuid();
+  revolverList[i].unfoldClass.top = `${30 * i}px`;
   // revolverList[i].name = i.toString();
   // revolverList[i].name = i.toString();
   revolverList[i].unfoldClass.right = `${
@@ -1219,6 +1219,14 @@ onBeforeUnmount(() => {
   }
   a {
     color: #08f;
+  }
+  .left {
+    position: absolute;
+    z-index: 2;
+  }
+  .right {
+    position: absolute;
+    z-index: 1;
   }
   .colorPicker {
     display: inline-block;
