@@ -1,5 +1,5 @@
 <template>
-  <div
+  <!-- <div
     v-if="floatWindow.uuid"
     :id="`window${floatWindow.uuid}`"
     class="box blurred-bg tinted"
@@ -13,17 +13,37 @@
           @mousedown="onMinimize"
           >‒</span
         >
-        <!-- <span class="control-item js-maximize">□</span>
-        <span class="control-item js-close">˟</span> -->
       </div>
       <div class="container-content">
         <div class="container-cursor">
-          <!-- {{ floatWindow.uuid }}--{{ test }} -->
           <slot name="content"></slot>
         </div>
       </div>
     </div>
     <div class="prompt-shortcut i-prompt hidden js-open"></div>
+  </div> -->
+
+  <div v-if="floatWindow.uuid" :id="`window${floatWindow.uuid}`" class="drag">
+    <div class="title">
+      <h2>这是一个可以拖动的窗口</h2>
+      <div>
+        <a class="min" href="javascript:;" title="最小化"></a>
+        <a class="max" href="javascript:;" title="最大化"></a>
+        <a class="revert" href="javascript:;" title="还原"></a>
+        <a class="close" href="javascript:;" title="关闭"></a>
+      </div>
+    </div>
+    <div class="resizeL"></div>
+    <div class="resizeT"></div>
+    <div class="resizeR"></div>
+    <div class="resizeB"></div>
+    <div class="resizeLT"></div>
+    <div class="resizeTR"></div>
+    <div class="resizeBR"></div>
+    <div class="resizeLB"></div>
+    <div class="content">
+      <slot name="content"></slot>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -34,8 +54,200 @@ import { message } from "ant-design-vue/es";
 import type { Revolver } from "../revolver/typeStatement";
 import EventsBus from "@/utils/eventBus";
 
-// const store = useStore();
-// const revolverSelected = computed(() => store.state.revolverSelected); // 暂时没用
+// 代码整理：懒人之家 lanrenzhijia.com
+/*-------------------------- +
+  获取id, class, tagName
+ +-------------------------- */
+var get = {
+  byId: function (id: any) {
+    return typeof id === "string" ? document.getElementById(id) : id;
+  },
+  byClass: function (sClass: any, oParent: any) {
+    var aClass = [];
+    var reClass = new RegExp("(^| )" + sClass + "( |$)");
+    var aElem = this.byTagName("*", oParent);
+    for (var i = 0; i < aElem.length; i++)
+      reClass.test(aElem[i].className) && aClass.push(aElem[i]);
+    return aClass;
+  },
+  byTagName: function (elem: any, obj: any) {
+    return (obj || document).getElementsByTagName(elem);
+  },
+};
+var disX = 0;
+var disY = 0;
+var dragMinWidth = 250;
+var dragMinHeight = 124;
+/*-------------------------- +
+  拖拽函数
+ +-------------------------- */
+function drag(oDrag: any, handle: any) {
+  var oMin = get.byClass("min", oDrag)[0];
+  var oMax = get.byClass("max", oDrag)[0];
+  var oRevert = get.byClass("revert", oDrag)[0];
+  var oClose = get.byClass("close", oDrag)[0];
+  handle = handle || oDrag;
+  handle.style.cursor = "move";
+  handle.onmousedown = function (event: any) {
+    var event = event || window.event;
+    disX = event.clientX - oDrag.offsetLeft;
+    disY = event.clientY - oDrag.offsetTop;
+
+    document.onmousemove = function (event) {
+      var event = event || window.event;
+      var iL = event.clientX - disX;
+      var iT = event.clientY - disY;
+      var maxL = document.documentElement.clientWidth - oDrag.offsetWidth;
+      var maxT = document.documentElement.clientHeight - oDrag.offsetHeight;
+
+      iL <= 0 && (iL = 0);
+      iT <= 0 && (iT = 0);
+      iL >= maxL && (iL = maxL);
+      iT >= maxT && (iT = maxT);
+
+      oDrag.style.left = iL + "px";
+      oDrag.style.top = iT + "px";
+
+      return false;
+    };
+
+    document.onmouseup = function () {
+      document.onmousemove = null;
+      document.onmouseup = null;
+      // this.releaseCapture && this.releaseCapture()
+    };
+    this.setCapture && this.setCapture();
+    return false;
+  };
+  //最大化按钮
+  oMax.onclick = function () {
+    oDrag.style.top = oDrag.style.left = 0;
+    oDrag.style.width = document.documentElement.clientWidth - 2 + "px";
+    oDrag.style.height = document.documentElement.clientHeight - 2 + "px";
+    this.style.display = "none";
+    oRevert.style.display = "block";
+  };
+  //还原按钮
+  oRevert.onclick = function () {
+    oDrag.style.width = dragMinWidth + "px";
+    oDrag.style.height = dragMinHeight + "px";
+    oDrag.style.left =
+      (document.documentElement.clientWidth - oDrag.offsetWidth) / 2 + "px";
+    oDrag.style.top =
+      (document.documentElement.clientHeight - oDrag.offsetHeight) / 2 + "px";
+    this.style.display = "none";
+    oMax.style.display = "block";
+  };
+  //最小化按钮
+  oMin.onclick = oClose.onclick = function () {
+    oDrag.style.display = "none";
+    var oA = document.createElement("a");
+    oA.className = "open";
+    oA.href = "javascript:;";
+    oA.title = "还原";
+    document.body.appendChild(oA);
+    oA.onclick = function () {
+      oDrag.style.display = "block";
+      document.body.removeChild(this);
+      this.onclick = null;
+    };
+  };
+  //阻止冒泡
+  oMin.onmousedown =
+    oMax.onmousedown =
+    oClose.onmousedown =
+      function (event: any) {
+        this.onfocus = function () {
+          this.blur();
+        };
+        (event || window.event).cancelBubble = true;
+      };
+}
+/*-------------------------- +
+  改变大小函数
+ +-------------------------- */
+function resize(
+  oParent: any,
+  handle: any,
+  isLeft: any,
+  isTop: any,
+  lockX: any,
+  lockY: any
+) {
+  handle.onmousedown = function (event: any) {
+    var event = event || window.event;
+    var disX = event.clientX - handle.offsetLeft;
+    var disY = event.clientY - handle.offsetTop;
+    var iParentTop = oParent.offsetTop;
+    var iParentLeft = oParent.offsetLeft;
+    var iParentWidth = oParent.offsetWidth;
+    var iParentHeight = oParent.offsetHeight;
+
+    document.onmousemove = function (event) {
+      var event = event || window.event;
+
+      var iL = event.clientX - disX;
+      var iT = event.clientY - disY;
+      var maxW = document.documentElement.clientWidth - oParent.offsetLeft - 2;
+      var maxH = document.documentElement.clientHeight - oParent.offsetTop - 2;
+      var iW = isLeft ? iParentWidth - iL : handle.offsetWidth + iL;
+      var iH = isTop ? iParentHeight - iT : handle.offsetHeight + iT;
+
+      isLeft && (oParent.style.left = iParentLeft + iL + "px");
+      isTop && (oParent.style.top = iParentTop + iT + "px");
+
+      iW < dragMinWidth && (iW = dragMinWidth);
+      iW > maxW && (iW = maxW);
+      lockX || (oParent.style.width = iW + "px");
+
+      iH < dragMinHeight && (iH = dragMinHeight);
+      iH > maxH && (iH = maxH);
+      lockY || (oParent.style.height = iH + "px");
+
+      if ((isLeft && iW == dragMinWidth) || (isTop && iH == dragMinHeight))
+        document.onmousemove = null;
+
+      return false;
+    };
+    document.onmouseup = function () {
+      document.onmousemove = null;
+      document.onmouseup = null;
+    };
+    return false;
+  };
+}
+// window.onload = window.onresize = function () {
+//   var oDrag = document.getElementById(props.floatWindow.uuid);
+//   var oTitle = get.byClass("title", oDrag)[0];
+//   var oL = get.byClass("resizeL", oDrag)[0];
+//   var oT = get.byClass("resizeT", oDrag)[0];
+//   var oR = get.byClass("resizeR", oDrag)[0];
+//   var oB = get.byClass("resizeB", oDrag)[0];
+//   var oLT = get.byClass("resizeLT", oDrag)[0];
+//   var oTR = get.byClass("resizeTR", oDrag)[0];
+//   var oBR = get.byClass("resizeBR", oDrag)[0];
+//   var oLB = get.byClass("resizeLB", oDrag)[0];
+
+//   drag(oDrag, oTitle);
+//   //四角
+//   resize(oDrag, oLT, true, true, false, false);
+//   resize(oDrag, oTR, false, true, false, false);
+//   resize(oDrag, oBR, false, false, false, false);
+//   resize(oDrag, oLB, true, false, false, false);
+//   //四边
+//   resize(oDrag, oL, true, false, false, true);
+//   resize(oDrag, oT, false, true, true, false);
+//   resize(oDrag, oR, false, false, false, true);
+//   resize(oDrag, oB, false, false, true, false);
+
+//   if (oDrag) {
+//     oDrag.style.left =
+//       (document.documentElement.clientWidth - oDrag.offsetWidth) / 2 + "px";
+//     oDrag.style.top =
+//       (document.documentElement.clientHeight - oDrag.offsetHeight) / 2 + "px";
+//   }
+// };
+
 const test = ref(false);
 
 EventsBus.on("onBusRevolver", (value) => {
@@ -43,20 +255,50 @@ EventsBus.on("onBusRevolver", (value) => {
   if (val.uuid === props.floatWindow.uuid) {
     test.value = !test.value;
 
+    var oDrag = document.getElementById(`window${props.floatWindow.uuid}`);
+    var oTitle = get.byClass("title", oDrag)[0];
+    var oL = get.byClass("resizeL", oDrag)[0];
+    var oT = get.byClass("resizeT", oDrag)[0];
+    var oR = get.byClass("resizeR", oDrag)[0];
+    var oB = get.byClass("resizeB", oDrag)[0];
+    var oLT = get.byClass("resizeLT", oDrag)[0];
+    var oTR = get.byClass("resizeTR", oDrag)[0];
+    var oBR = get.byClass("resizeBR", oDrag)[0];
+    var oLB = get.byClass("resizeLB", oDrag)[0];
+
+    drag(oDrag, oTitle);
+    //四角
+    resize(oDrag, oLT, true, true, false, false);
+    resize(oDrag, oTR, false, true, false, false);
+    resize(oDrag, oBR, false, false, false, false);
+    resize(oDrag, oLB, true, false, false, false);
+    //四边
+    resize(oDrag, oL, true, false, false, true);
+    resize(oDrag, oT, false, true, true, false);
+    resize(oDrag, oR, false, false, false, true);
+    resize(oDrag, oB, false, false, true, false);
+
+    if (oDrag) {
+      oDrag.style.left =
+        (document.documentElement.clientWidth - oDrag.offsetWidth) / 2 + "px";
+      oDrag.style.top =
+        (document.documentElement.clientHeight - oDrag.offsetHeight) / 2 + "px";
+    }
+
     if (test.value) {
-      $(`#window${val.uuid}`).animate({
-        left: val.unfoldClass.right,
-        top: val.unfoldClass.top,
-        width: val.unfoldClass.width,
-        height: val.unfoldClass.height,
-      });
+      // $(`#window${val.uuid}`).animate({
+      //   left: val.unfoldClass.right,
+      //   top: val.unfoldClass.top,
+      //   width: val.unfoldClass.width,
+      //   height: val.unfoldClass.height,
+      // });
     } else {
-      $(`#window${props.floatWindow.uuid}`).animate({
-        left: 30,
-        top: 30,
-        width: 0,
-        height: 0,
-      });
+      // $(`#window${props.floatWindow.uuid}`).animate({
+      //   left: 30,
+      //   top: 30,
+      //   width: 0,
+      //   height: 0,
+      // });
     }
   }
 });
@@ -135,160 +377,160 @@ onMounted(() => {
 </script>
 
 <style scoped lang="less">
-.mytest {
-  &:hover {
-    transform: translateX(20);
-    box-shadow: 2px 6px 10px rgba(0, 0, 0, 0.5);
-    transition: box-shadow transform 0.5s ease;
-  }
+@charset "utf-8";
+/* 代码整理：懒人之家 lanrenzhijia.com */
+body,
+div,
+h2 {
+  margin: 0;
+  padding: 0;
 }
-.window--minimized {
-  height: 25px !important;
-  width: 180px !important;
+body {
+  font: 12px/1.5 \5fae\8f6f\96c5\9ed1;
+  color: #333;
 }
-
-.box-shadow {
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.6);
-  transition: box-shadow 0.3s ease;
+.drag {
+  z-index: 999;
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  width: 300px;
+  height: 160px;
+  background: #e9e9e9;
+  border: 1px solid #444;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px 2px #666;
 }
-
-.box {
+.drag .title {
+  position: relative;
+  height: 27px;
+  margin: 5px;
+}
+.drag .title h2 {
+  font-size: 14px;
+  height: 27px;
+  line-height: 24px;
+  border-bottom: 1px solid #a1b4b0;
+}
+.drag .title div {
+  position: absolute;
+  height: 19px;
+  top: 2px;
+  right: 0;
+}
+.drag .title a,
+a.open {
+  float: left;
+  width: 21px;
+  height: 19px;
+  display: block;
+  margin-left: 5px;
+  background: url(./tool.png) no-repeat;
+}
+a.open {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  margin-left: -10px;
+  background-position: 0 0;
+}
+a.open:hover {
+  background-position: 0 -29px;
+}
+.drag .title a.min {
+  background-position: -29px 0;
+}
+.drag .title a.min:hover {
+  background-position: -29px -29px;
+}
+.drag .title a.max {
+  background-position: -60px 0;
+}
+.drag .title a.max:hover {
+  background-position: -60px -29px;
+}
+.drag .title a.revert {
+  background-position: -149px 0;
+  display: none;
+}
+.drag .title a.revert:hover {
+  background-position: -149px -29px;
+}
+.drag .title a.close {
+  background-position: -89px 0;
+}
+.drag .title a.close:hover {
+  background-position: -89px -29px;
+}
+.drag .content {
+  overflow: auto;
+  margin: 0 5px;
+}
+.drag .resizeBR {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  cursor: nw-resize;
+  background: url(./resize.png) no-repeat;
+}
+.drag .resizeL,
+.drag .resizeT,
+.drag .resizeR,
+.drag .resizeB,
+.drag .resizeLT,
+.drag .resizeTR,
+.drag .resizeLB {
+  position: absolute;
+  background: #000;
+  overflow: hidden;
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
+.drag .resizeL,
+.drag .resizeR {
+  top: 0;
+  width: 5px;
+  height: 100%;
+  cursor: w-resize;
+}
+.drag .resizeR {
+  right: 0;
+}
+.drag .resizeT,
+.drag .resizeB {
+  width: 100%;
+  height: 5px;
+  cursor: n-resize;
+}
+.drag .resizeT {
+  top: 0;
+}
+.drag .resizeB {
+  bottom: 0;
+}
+.drag .resizeLT,
+.drag .resizeTR,
+.drag .resizeLB {
+  width: 8px;
+  height: 8px;
+  background: #ff0;
+}
+.drag .resizeLT {
   top: 0;
   left: 0;
-  width: 0;
-  height: 0;
-  position: absolute;
-  border-radius: 5px;
-  z-index: 999;
-
-  padding-top: 25px;
-  text-align: center;
-  display: flex;
-
-  background: #dfdfdf;
-  overflow: hidden;
-
-  &:active {
-    cursor: move;
-
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
-  }
-
-  .container {
-    width: 100%;
-    height: 100%;
-    padding: 8px;
-    background-color: #ffffff;
-    transition: all ease-in-out 0.3s;
-  }
-
-  .container.window--maximized {
-    width: 100%;
-    flex-grow: 1;
-  }
-
-  .container.window--destroyed {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  .container-controls {
-    display: flex;
-    height: 25px;
-    justify-content: flex-end;
-    align-items: center;
-    background-color: #eee;
-    width: 100%;
-    position: absolute;
-    right: 0;
-    top: 0;
-
-    pointer-events: none;
-  }
-
-  .container-controls .control-item {
-    width: 25px;
-    height: 25px;
-    text-align: center;
-    color: #333;
-    transition: all ease-in 0.15s;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #ccc;
-    }
-  }
-
-  .control-item.control-minimize {
-    line-height: 22px;
-  }
-
-  .container-content {
-    :deep(.ant-btn) {
-      span {
-        top: 0 !important;
-        left: 0 !important;
-      }
-    }
-  }
-
-  .container-cursor {
-    display: flex;
-    margin: 5px;
-    .i-cursor-indicator {
-      color: #fff;
-      font-size: 1em;
-      font-family: "Consolas", monospace;
-      margin: 0 2px 0 5px;
-    }
-    .i-cursor-underscore {
-      width: 10px;
-      height: 3px;
-      background-color: #fff;
-      align-self: flex-end;
-      margin-right: 5px;
-      animation: blink 1s steps(2, start) infinite;
-    }
-  }
-  .container-input {
-    background-color: inherit;
-    border: none;
-    outline: 0;
-    color: transparent;
-    text-shadow: 0 0 0 #fff;
-    font-family: "Consolas", monospace;
-    flex: 1;
-
-    &:focus {
-      outline: none;
-    }
-  }
-
-  .i-prompt {
-    width: 62px;
-    height: 62px;
-    background: url("https://cdn4.iconfinder.com/data/icons/small-n-flat/24/terminal-48.png")
-      no-repeat center;
-    background-color: rgba(0, 0, 0, 0.35);
-    border-radius: 10px;
-    box-shadow: 0 3px 1px rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-    transition: all ease-in-out 0.15s;
-    &:hover {
-      background-position: center 4px;
-    }
-  }
-  .i-prompt.hidden {
-    width: 0;
-    height: 0;
-    opacity: 0;
-  }
-
-  @keyframes blink {
-    to {
-      visibility: hidden;
-    }
-  }
+  cursor: nw-resize;
+}
+.drag .resizeTR {
+  top: 0;
+  right: 0;
+  cursor: ne-resize;
+}
+.drag .resizeLB {
+  left: 0;
+  bottom: 0;
+  cursor: ne-resize;
 }
 </style>
