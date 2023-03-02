@@ -1,7 +1,10 @@
 <template>
   <div v-if="floatWindow.uuid" :id="`window${floatWindow.uuid}`" class="drag">
     <div class="title">
-      <h2>{{floatWindow.name}}</h2>
+      <h2>
+        {{ floatWindow.name }}-{{ sizeStatus }} {{ oldPosition.width
+        }}{{ oldPosition.height }}
+      </h2>
       <div>
         <a class="min" href="javascript:;" title="最小化"></a>
         <a class="max" href="javascript:;" title="最大化"></a>
@@ -30,6 +33,18 @@ import { message } from "ant-design-vue/es";
 import type { Revolver } from "../revolver/typeStatement";
 import EventsBus from "@/utils/eventBus";
 
+const sizeStatus = ref("自适应"); // 上一次历史, 自适应, 最小化, 最大化, 关闭
+const oldPosition = ref({
+  left: 0,
+  top: 0,
+  width: 0,
+  height: 0,
+});
+let disX = 0;
+let disY = 0;
+let dragMinWidth = 250;
+let dragMinHeight = 124;
+
 // 代码整理：懒人之家 lanrenzhijia.com
 /*-------------------------- +
   获取id, class, tagName
@@ -50,10 +65,7 @@ var get = {
     return (obj || document).getElementsByTagName(elem);
   },
 };
-var disX = 0;
-var disY = 0;
-var dragMinWidth = 250;
-var dragMinHeight = 124;
+
 /*-------------------------- +
   拖拽函数
  +-------------------------- */
@@ -73,7 +85,7 @@ function drag(oDrag: any, handle: any) {
       var event = event || window.event;
       var iL = event.clientX - disX;
       var iT = event.clientY - disY;
-      var maxL = document.documentElement.clientWidth - oDrag.offsetWidth;
+      var maxL = document.documentElement.clientWidth - oDrag.offsetWidth - 10;
       var maxT = document.documentElement.clientHeight - oDrag.offsetHeight;
 
       iL <= 0 && (iL = 0);
@@ -97,36 +109,78 @@ function drag(oDrag: any, handle: any) {
   };
   //最大化按钮
   oMax.onclick = function () {
+    oldPosition.value.left = oDrag.style.left;
+    oldPosition.value.top = oDrag.style.top;
+    let dayu = false;
+    if (
+      Number(oDrag.style.width.split("px")[0]) >
+        document.documentElement.clientWidth ||
+      Number(oDrag.style.height.split("px")[0]) >
+        document.documentElement.clientHeight
+    ) {
+      dayu = true;
+    }
+    // 最小化的时候不保存宽高
+    if (sizeStatus.value !== "最小化" && !dayu) {
+      oldPosition.value.height = oDrag.style.height;
+      oldPosition.value.width = oDrag.style.width;
+    }
     oDrag.style.top = oDrag.style.left = 0;
     oDrag.style.width = document.documentElement.clientWidth - 2 + "px";
     oDrag.style.height = document.documentElement.clientHeight - 2 + "px";
     this.style.display = "none";
+    // 最大化时不显示最小化按钮
+    let oMin = get.byClass("min", oDrag)[0];
+    oMin.style.display = "none";
     oRevert.style.display = "block";
+    sizeStatus.value = "最大化";
   };
   //还原按钮
   oRevert.onclick = function () {
-    oDrag.style.width = dragMinWidth + "px";
-    oDrag.style.height = dragMinHeight + "px";
-    oDrag.style.left =
-      (document.documentElement.clientWidth - oDrag.offsetWidth) / 2 + "px";
-    oDrag.style.top =
-      (document.documentElement.clientHeight - oDrag.offsetHeight) / 2 + "px";
+    sizeStatus.value = "上一次历史";
+    // oDrag.style.width = dragMinWidth + "px";
+    // oDrag.style.height = dragMinHeight + "px";
+    // oDrag.style.width = "auto";
+    // oDrag.style.height = "auto";
+    oDrag.style.top = oldPosition.value.top;
+    oDrag.style.left = oldPosition.value.left;
+    oDrag.style.width = oldPosition.value.width;
+    oDrag.style.height = oldPosition.value.height;
     this.style.display = "none";
     oMax.style.display = "block";
+    // 恢复
+    // 右下角
+    const oBR = get.byClass("resizeBR", oDrag)[0];
+    oBR.style.display = "block";
+    // 显示最小化按钮
+    let oMin = get.byClass("min", oDrag)[0];
+    oMin.style.display = "block";
   };
   //最小化按钮
   oMin.onclick = function () {
-    
     test.value = !test.value;
-    if (test.value) {
-      oDrag.style.height = "auto";
+    if (sizeStatus.value === "最小化") {
+      oDrag.style.width = oldPosition.value.width;
+      oDrag.style.height = oldPosition.value.height;
+      const oBR = get.byClass("resizeBR", oDrag)[0];
+      oBR.style.display = "block";
+      sizeStatus.value = "上一次历史";
     } else {
+      // 不等于最大化时才记录，否则尺寸以后都变不回来
+      if (sizeStatus.value !== "最大化") {
+        oldPosition.value.width = oDrag.style.width;
+        oldPosition.value.height = oDrag.style.height;
+      }
       oDrag.style.height = "33px";
       oDrag.style.overflow = "hidden";
+      const oBR = get.byClass("resizeBR", oDrag)[0];
+      oBR.style.display = "none";
+      sizeStatus.value = "最小化";
     }
   };
   //关闭按钮
   oClose.onclick = function () {
+    sizeStatus.value = "关闭";
     oDrag.style.display = "none";
     test.value = !test.value;
   };
@@ -167,11 +221,21 @@ function resize(
       var iL = event.clientX - disX;
       var iT = event.clientY - disY;
       var maxW = document.documentElement.clientWidth - oParent.offsetLeft - 2;
-      var maxH = document.documentElement.clientHeight - oParent.offsetTop - 2;
+      // var maxH = document.documentElement.clientHeight - oParent.offsetTop - 2;
+      var maxH = document.documentElement.clientHeight - 5;
+
       var iW = isLeft ? iParentWidth - iL : handle.offsetWidth + iL;
       var iH = isTop ? iParentHeight - iT : handle.offsetHeight + iT;
 
-      isLeft && (oParent.style.left = iParentLeft + iL + "px");
+      // isLeft && (oParent.style.left = iParentLeft + iL + "px");
+      if (isLeft) {
+        let oDrag = document.getElementById(`window${props.floatWindow.uuid}`);
+        let maxL =
+          document.documentElement.clientWidth -
+          Number(oDrag?.offsetWidth) -
+          10;
+        oDrag && (oParent.style.left = maxL + "px");
+      }
       isTop && (oParent.style.top = iParentTop + iT + "px");
 
       iW < dragMinWidth && (iW = dragMinWidth);
@@ -180,10 +244,16 @@ function resize(
 
       iH < dragMinHeight && (iH = dragMinHeight);
       iH > maxH && (iH = maxH);
+
       lockY || (oParent.style.height = iH + "px");
 
-      if ((isLeft && iW == dragMinWidth) || (isTop && iH == dragMinHeight))
+      if ((isLeft && iW == dragMinWidth) || (isTop && iH == dragMinHeight)) {
         document.onmousemove = null;
+      }
+
+      if (isTop && iH == maxH) {
+        document.onmousemove = null;
+      }
 
       return false;
     };
@@ -231,11 +301,20 @@ EventsBus.on("onBusRevolver", (value) => {
       //   (document.documentElement.clientWidth - oDrag.offsetWidth) / 2 + "px";
       // oDrag.style.top =
       //   (document.documentElement.clientHeight - oDrag.offsetHeight) / 2 + "px";
+
       oDrag.style.display = "block";
-       oDrag.style.left = (document.documentElement.clientWidth - oDrag.offsetWidth) + "px";
-       oDrag.style.top =
-        (document.documentElement.clientHeight - oDrag.offsetHeight) + "px";
-      
+      oDrag.style.width = `${dragMinWidth}px`;
+      oDrag.style.height = `${dragMinHeight}px`;
+      oDrag.style.left =
+        document.documentElement.clientWidth - oDrag.offsetWidth + "px";
+      oDrag.style.top =
+        document.documentElement.clientHeight - oDrag.offsetHeight + "px";
+      // 重置右下角缩放块
+      const oBR = get.byClass("resizeBR", oDrag)[0];
+      oBR.style.display = "block";
+      // 显示最小化按钮
+      let oMin = get.byClass("min", oDrag)[0];
+      oMin.style.display = "block";
     }
 
     if (test.value) {
@@ -244,14 +323,12 @@ EventsBus.on("onBusRevolver", (value) => {
         left: document.documentElement.clientWidth - Number(oDrag?.offsetWidth),
         top: val.unfoldClass.top,
       });
-      
     } else {
       // $(`#window${val.uuid}`).toggleClass('add_transform');
       $(`#window${props.floatWindow.uuid}`).animate({
         left: document.documentElement.clientWidth - Number(oDrag?.offsetWidth),
         top: document.documentElement.clientHeight + 20,
       });
-      
     }
   }
 });
@@ -285,32 +362,31 @@ const onMinimize = () => {
     )
     .addClass("mytest");
 };
-
 </script>
 
 <style scoped lang="less">
 @charset "utf-8";
-.add_transform{
-    transform:scale(0);
-    -ms-transform:scale(0);/* IE9 */
-    -moz-transform:scale(0);/* Firefox */
-    -webkit-transform:scale(0);/* Safari和Chrome */
-    -o-transform:scale(0);/* Opera */
-    transition:all 1.2s ease-in-out;
-    -moz-transition:all 1.2s ease-in-out;/*Firefox 4 */
-    -webkit-transition:all 1.2s ease-in-out;/* Safari和Chrome */
-    -o-transition:all 1.2s ease-in-out;/* Opera */
+.add_transform {
+  transform: scale(0);
+  -ms-transform: scale(0); /* IE9 */
+  -moz-transform: scale(0); /* Firefox */
+  -webkit-transform: scale(0); /* Safari和Chrome */
+  -o-transform: scale(0); /* Opera */
+  transition: all 1.2s ease-in-out;
+  -moz-transition: all 1.2s ease-in-out; /*Firefox 4 */
+  -webkit-transition: all 1.2s ease-in-out; /* Safari和Chrome */
+  -o-transition: all 1.2s ease-in-out; /* Opera */
 }
-.remove_transform{
-    transform:scale(1);
-    -ms-transform:scale(1);/* IE9 */
-    -moz-transform:scale(1);/* Firefox */
-    -webkit-transform:scale(1);/* Safari和Chrome */
-    -o-transform:scale(1);/* Opera */
-    transition:all 1.2s ease-in-out;
-    -moz-transition:all 1.2s ease-in-out;/*Firefox 4 */
-    -webkit-transition:all 1.2s ease-in-out;/* Safari和Chrome */
-    -o-transition:all 1.2s ease-in-out;/* Opera */
+.remove_transform {
+  transform: scale(1);
+  -ms-transform: scale(1); /* IE9 */
+  -moz-transform: scale(1); /* Firefox */
+  -webkit-transform: scale(1); /* Safari和Chrome */
+  -o-transform: scale(1); /* Opera */
+  transition: all 1.2s ease-in-out;
+  -moz-transition: all 1.2s ease-in-out; /*Firefox 4 */
+  -webkit-transition: all 1.2s ease-in-out; /* Safari和Chrome */
+  -o-transition: all 1.2s ease-in-out; /* Opera */
 }
 /* 代码整理：懒人之家 lanrenzhijia.com */
 body,
