@@ -81,6 +81,15 @@
         </template>
       </floatWindow>
 
+      <floatWindow v-if="o.name === '贴图'" :float-window="o">
+        <template #content>
+          <div class="mt6">
+            <div class="class">贴图面板：</div>
+            <div id="gui-container"></div>
+          </div>
+        </template>
+      </floatWindow>
+
       <!-- </template> -->
     </template>
 
@@ -1199,7 +1208,7 @@ const onDrag = debounce(() => {
 }, 300);
 
 onMounted(() => {
-  init();
+  // init();
 });
 
 onBeforeUnmount(() => {

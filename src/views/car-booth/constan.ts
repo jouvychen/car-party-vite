@@ -50,7 +50,7 @@ const revolverList: Revolver[] = [
         },
     },
     {
-        index: 2,
+        index: 5,
         name: "贴图",
         uuid: "",
         state: false,
@@ -61,54 +61,54 @@ const revolverList: Revolver[] = [
             right: "70%",
         },
     },
-    {
-        index: 2,
-        name: "贴图",
-        uuid: "",
-        state: false,
-        unfoldClass: {
-            width: "500px",
-            height: "300px",
-            top: "50%",
-            right: "70%",
-        },
-    },
-    {
-        index: 2,
-        name: "贴图",
-        uuid: "",
-        state: false,
-        unfoldClass: {
-            width: "500px",
-            height: "300px",
-            top: "60%",
-            right: "70%",
-        },
-    },
-    {
-        index: 2,
-        name: "贴图",
-        uuid: "",
-        state: false,
-        unfoldClass: {
-            width: "500px",
-            height: "300px",
-            top: "70%",
-            right: "70%",
-        },
-    },
-    {
-        index: 2,
-        name: "贴图",
-        uuid: "",
-        state: false,
-        unfoldClass: {
-            width: "500px",
-            height: "300px",
-            top: "80%",
-            right: "70%",
-        },
-    },
+    // {
+    //     index: 2,
+    //     name: "贴图",
+    //     uuid: "",
+    //     state: false,
+    //     unfoldClass: {
+    //         width: "500px",
+    //         height: "300px",
+    //         top: "50%",
+    //         right: "70%",
+    //     },
+    // },
+    // {
+    //     index: 2,
+    //     name: "贴图",
+    //     uuid: "",
+    //     state: false,
+    //     unfoldClass: {
+    //         width: "500px",
+    //         height: "300px",
+    //         top: "60%",
+    //         right: "70%",
+    //     },
+    // },
+    // {
+    //     index: 2,
+    //     name: "贴图",
+    //     uuid: "",
+    //     state: false,
+    //     unfoldClass: {
+    //         width: "500px",
+    //         height: "300px",
+    //         top: "70%",
+    //         right: "70%",
+    //     },
+    // },
+    // {
+    //     index: 2,
+    //     name: "贴图",
+    //     uuid: "",
+    //     state: false,
+    //     unfoldClass: {
+    //         width: "500px",
+    //         height: "300px",
+    //         top: "80%",
+    //         right: "70%",
+    //     },
+    // },
 ];
 
 export { revolverList }

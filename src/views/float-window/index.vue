@@ -1,31 +1,7 @@
 <template>
-  <!-- <div
-    v-if="floatWindow.uuid"
-    :id="`window${floatWindow.uuid}`"
-    class="box blurred-bg tinted"
-    @mousedown="move"
-  >
-    <div class="container">
-      <div class="container-controls">
-        {{ floatWindow.name }}
-        <span
-          class="control-item control-minimize js-minimize"
-          @mousedown="onMinimize"
-          >‒</span
-        >
-      </div>
-      <div class="container-content">
-        <div class="container-cursor">
-          <slot name="content"></slot>
-        </div>
-      </div>
-    </div>
-    <div class="prompt-shortcut i-prompt hidden js-open"></div>
-  </div> -->
-
   <div v-if="floatWindow.uuid" :id="`window${floatWindow.uuid}`" class="drag">
     <div class="title">
-      <h2>这是一个可以拖动的窗口</h2>
+      <h2>{{floatWindow.name}}</h2>
       <div>
         <a class="min" href="javascript:;" title="最小化"></a>
         <a class="max" href="javascript:;" title="最大化"></a>
@@ -139,18 +115,20 @@ function drag(oDrag: any, handle: any) {
     oMax.style.display = "block";
   };
   //最小化按钮
-  oMin.onclick = oClose.onclick = function () {
+  oMin.onclick = function () {
+    
+    test.value = !test.value;
+    if (test.value) {
+      oDrag.style.height = "auto";
+    } else {
+      oDrag.style.height = "33px";
+      oDrag.style.overflow = "hidden";
+    }
+  };
+  //关闭按钮
+  oClose.onclick = function () {
     oDrag.style.display = "none";
-    var oA = document.createElement("a");
-    oA.className = "open";
-    oA.href = "javascript:;";
-    oA.title = "还原";
-    document.body.appendChild(oA);
-    oA.onclick = function () {
-      oDrag.style.display = "block";
-      document.body.removeChild(this);
-      this.onclick = null;
-    };
+    test.value = !test.value;
   };
   //阻止冒泡
   oMin.onmousedown =
@@ -216,37 +194,6 @@ function resize(
     return false;
   };
 }
-// window.onload = window.onresize = function () {
-//   var oDrag = document.getElementById(props.floatWindow.uuid);
-//   var oTitle = get.byClass("title", oDrag)[0];
-//   var oL = get.byClass("resizeL", oDrag)[0];
-//   var oT = get.byClass("resizeT", oDrag)[0];
-//   var oR = get.byClass("resizeR", oDrag)[0];
-//   var oB = get.byClass("resizeB", oDrag)[0];
-//   var oLT = get.byClass("resizeLT", oDrag)[0];
-//   var oTR = get.byClass("resizeTR", oDrag)[0];
-//   var oBR = get.byClass("resizeBR", oDrag)[0];
-//   var oLB = get.byClass("resizeLB", oDrag)[0];
-
-//   drag(oDrag, oTitle);
-//   //四角
-//   resize(oDrag, oLT, true, true, false, false);
-//   resize(oDrag, oTR, false, true, false, false);
-//   resize(oDrag, oBR, false, false, false, false);
-//   resize(oDrag, oLB, true, false, false, false);
-//   //四边
-//   resize(oDrag, oL, true, false, false, true);
-//   resize(oDrag, oT, false, true, true, false);
-//   resize(oDrag, oR, false, false, false, true);
-//   resize(oDrag, oB, false, false, true, false);
-
-//   if (oDrag) {
-//     oDrag.style.left =
-//       (document.documentElement.clientWidth - oDrag.offsetWidth) / 2 + "px";
-//     oDrag.style.top =
-//       (document.documentElement.clientHeight - oDrag.offsetHeight) / 2 + "px";
-//   }
-// };
 
 const test = ref(false);
 
@@ -278,27 +225,33 @@ EventsBus.on("onBusRevolver", (value) => {
     resize(oDrag, oR, false, false, false, true);
     resize(oDrag, oB, false, false, true, false);
 
-    if (oDrag) {
-      oDrag.style.left =
-        (document.documentElement.clientWidth - oDrag.offsetWidth) / 2 + "px";
-      oDrag.style.top =
-        (document.documentElement.clientHeight - oDrag.offsetHeight) / 2 + "px";
+    if (test.value && oDrag) {
+      // 绝对居中
+      // oDrag.style.left =
+      //   (document.documentElement.clientWidth - oDrag.offsetWidth) / 2 + "px";
+      // oDrag.style.top =
+      //   (document.documentElement.clientHeight - oDrag.offsetHeight) / 2 + "px";
+      oDrag.style.display = "block";
+       oDrag.style.left = (document.documentElement.clientWidth - oDrag.offsetWidth) + "px";
+       oDrag.style.top =
+        (document.documentElement.clientHeight - oDrag.offsetHeight) + "px";
+      
     }
 
     if (test.value) {
-      // $(`#window${val.uuid}`).animate({
-      //   left: val.unfoldClass.right,
-      //   top: val.unfoldClass.top,
-      //   width: val.unfoldClass.width,
-      //   height: val.unfoldClass.height,
-      // });
+      // $(`#window${val.uuid}`).removeClass('add_transform');
+      $(`#window${val.uuid}`).animate({
+        left: document.documentElement.clientWidth - Number(oDrag?.offsetWidth),
+        top: val.unfoldClass.top,
+      });
+      
     } else {
-      // $(`#window${props.floatWindow.uuid}`).animate({
-      //   left: 30,
-      //   top: 30,
-      //   width: 0,
-      //   height: 0,
-      // });
+      // $(`#window${val.uuid}`).toggleClass('add_transform');
+      $(`#window${props.floatWindow.uuid}`).animate({
+        left: document.documentElement.clientWidth - Number(oDrag?.offsetWidth),
+        top: document.documentElement.clientHeight + 20,
+      });
+      
     }
   }
 });
@@ -333,51 +286,32 @@ const onMinimize = () => {
     .addClass("mytest");
 };
 
-onMounted(() => {
-  var prompt = {
-    // window: $(`#window${random.value}`),
-    window: $(`#window${props.floatWindow.uuid}`),
-    shortcut: $(".prompt-shortcut"),
-    input: $(".js-prompt-input"),
-
-    init: function () {
-      $(".js-minimize").click(prompt.minimize);
-      $(".js-maximize").click(prompt.maximize);
-      $(".js-close").click(prompt.close);
-      $(".js-open").click(prompt.open);
-      prompt.input.focus();
-      prompt.input.blur(prompt.focus);
-    },
-    focus: function () {
-      prompt.input.focus();
-    },
-    minimize: function () {
-      // prompt.window.removeClass('window--maximized');
-      // prompt.window.toggleClass('window--minimized');
-    },
-    maximize: function () {
-      // prompt.window.removeClass('window--minimized');
-      // prompt.window.toggleClass('window--maximized');
-      // prompt.focus();
-    },
-    close: function () {
-      prompt.window.addClass("window--destroyed");
-      prompt.window.removeClass("window--maximized window--minimized");
-      prompt.shortcut.removeClass("hidden");
-      prompt.input.val("");
-    },
-    open: function () {
-      prompt.window.removeClass("window--destroyed");
-      prompt.shortcut.addClass("hidden");
-      prompt.focus();
-    },
-  };
-  $(document).ready(prompt.init);
-});
 </script>
 
 <style scoped lang="less">
 @charset "utf-8";
+.add_transform{
+    transform:scale(0);
+    -ms-transform:scale(0);/* IE9 */
+    -moz-transform:scale(0);/* Firefox */
+    -webkit-transform:scale(0);/* Safari和Chrome */
+    -o-transform:scale(0);/* Opera */
+    transition:all 1.2s ease-in-out;
+    -moz-transition:all 1.2s ease-in-out;/*Firefox 4 */
+    -webkit-transition:all 1.2s ease-in-out;/* Safari和Chrome */
+    -o-transition:all 1.2s ease-in-out;/* Opera */
+}
+.remove_transform{
+    transform:scale(1);
+    -ms-transform:scale(1);/* IE9 */
+    -moz-transform:scale(1);/* Firefox */
+    -webkit-transform:scale(1);/* Safari和Chrome */
+    -o-transform:scale(1);/* Opera */
+    transition:all 1.2s ease-in-out;
+    -moz-transition:all 1.2s ease-in-out;/*Firefox 4 */
+    -webkit-transition:all 1.2s ease-in-out;/* Safari和Chrome */
+    -o-transition:all 1.2s ease-in-out;/* Opera */
+}
 /* 代码整理：懒人之家 lanrenzhijia.com */
 body,
 div,
@@ -389,11 +323,12 @@ body {
   font: 12px/1.5 \5fae\8f6f\96c5\9ed1;
   color: #333;
 }
+// 初始位置
 .drag {
   z-index: 999;
   position: absolute;
-  top: 100px;
-  left: 100px;
+  top: 0;
+  left: -999px;
   width: 300px;
   height: 160px;
   background: #e9e9e9;
