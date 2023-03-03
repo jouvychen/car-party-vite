@@ -44,6 +44,7 @@ let disX = 0;
 let disY = 0;
 let dragMinWidth = 250;
 let dragMinHeight = 124;
+const rightSafeMargin = 5;
 
 // 代码整理：懒人之家 lanrenzhijia.com
 /*-------------------------- +
@@ -85,7 +86,7 @@ function drag(oDrag: any, handle: any) {
       var event = event || window.event;
       var iL = event.clientX - disX;
       var iT = event.clientY - disY;
-      var maxL = document.documentElement.clientWidth - oDrag.offsetWidth - 10;
+      var maxL = document.documentElement.clientWidth - oDrag.offsetWidth - rightSafeMargin;
       var maxT = document.documentElement.clientHeight - oDrag.offsetHeight;
 
       iL <= 0 && (iL = 0);
@@ -221,21 +222,12 @@ function resize(
       var iL = event.clientX - disX;
       var iT = event.clientY - disY;
       var maxW = document.documentElement.clientWidth - oParent.offsetLeft - 2;
-      // var maxH = document.documentElement.clientHeight - oParent.offsetTop - 2;
       var maxH = document.documentElement.clientHeight - 5;
 
       var iW = isLeft ? iParentWidth - iL : handle.offsetWidth + iL;
       var iH = isTop ? iParentHeight - iT : handle.offsetHeight + iT;
 
-      // isLeft && (oParent.style.left = iParentLeft + iL + "px");
-      if (isLeft) {
-        let oDrag = document.getElementById(`window${props.floatWindow.uuid}`);
-        let maxL =
-          document.documentElement.clientWidth -
-          Number(oDrag?.offsetWidth) -
-          10;
-        oDrag && (oParent.style.left = maxL + "px");
-      }
+      isLeft && (oParent.style.left = iParentLeft + iL + "px");
       isTop && (oParent.style.top = iParentTop + iT + "px");
 
       iW < dragMinWidth && (iW = dragMinWidth);
@@ -260,6 +252,15 @@ function resize(
     document.onmouseup = function () {
       document.onmousemove = null;
       document.onmouseup = null;
+
+      let oDrag = document.getElementById(`window${props.floatWindow.uuid}`);
+      const maxL = document.documentElement.clientWidth - Number(oDrag?.offsetWidth) - rightSafeMargin;
+
+      if (oDrag && maxL < oDrag?.offsetLeft) {
+        oDrag && (oDrag.style.left = maxL + "px");
+      }
+
+      
     };
     return false;
   };
@@ -304,7 +305,8 @@ EventsBus.on("onBusRevolver", (value) => {
 
       oDrag.style.display = "block";
       oDrag.style.width = `${dragMinWidth}px`;
-      oDrag.style.height = `${dragMinHeight}px`;
+      // oDrag.style.height = `${dragMinHeight}px`;
+      oDrag.style.height = 'auto';
       oDrag.style.left =
         document.documentElement.clientWidth - oDrag.offsetWidth + "px";
       oDrag.style.top =
@@ -320,13 +322,13 @@ EventsBus.on("onBusRevolver", (value) => {
     if (test.value) {
       // $(`#window${val.uuid}`).removeClass('add_transform');
       $(`#window${val.uuid}`).animate({
-        left: document.documentElement.clientWidth - Number(oDrag?.offsetWidth),
+        left: document.documentElement.clientWidth - Number(oDrag?.offsetWidth) - rightSafeMargin,
         top: val.unfoldClass.top,
       });
     } else {
       // $(`#window${val.uuid}`).toggleClass('add_transform');
       $(`#window${props.floatWindow.uuid}`).animate({
-        left: document.documentElement.clientWidth - Number(oDrag?.offsetWidth),
+        left: document.documentElement.clientWidth - Number(oDrag?.offsetWidth) - rightSafeMargin,
         top: document.documentElement.clientHeight + 20,
       });
     }
@@ -411,6 +413,7 @@ body {
   border: 1px solid #444;
   border-radius: 5px;
   box-shadow: 0 1px 3px 2px #666;
+  overflow: hidden;
 }
 .drag .title {
   position: relative;
@@ -475,7 +478,7 @@ a.open:hover {
 }
 .drag .content {
   overflow: auto;
-  margin: 0 5px;
+  margin: 0 5px 5px;
 }
 .drag .resizeBR {
   position: absolute;
