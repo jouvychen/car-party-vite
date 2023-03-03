@@ -8,17 +8,35 @@
         <template #content>
           <!-- {{o}} -->
           <span class="colorPicker">
-            <input id="body-color" type="color" value="#ff0000" />
+            <input
+              id="body-color"
+              :disabled="!boothReady"
+              type="color"
+              value="#ff0000"
+              :class="{ disabled: !boothReady }"
+            />
             <br />
             车体
           </span>
           <span class="colorPicker">
-            <input id="details-color" type="color" value="#ffffff" />
+            <input
+              id="details-color"
+              :disabled="!boothReady"
+              type="color"
+              value="#ffffff"
+              :class="{ disabled: !boothReady }"
+            />
             <br />
             车架
           </span>
           <span class="colorPicker">
-            <input id="glass-color" type="color" value="#ffffff" />
+            <input
+              id="glass-color"
+              :disabled="!boothReady"
+              type="color"
+              value="#ffffff"
+              :class="{ disabled: !boothReady }"
+            />
             <br />
             Glass
           </span>
@@ -29,18 +47,18 @@
       <floatWindow v-if="o.name === '动画'" :float-window="o">
         <template #content>
           <div class="class">
-            <a-button @click="onTweenOpenDoor">{{
+            <a-button :disabled="!boothReady" @click="onTweenOpenDoor">{{
               tweenState.openDoor ? "关门" : "开门"
             }}</a-button>
-            <a-button @click="onTweenOpenTailWing">{{
+            <a-button :disabled="!boothReady" @click="onTweenOpenTailWing">{{
               tweenState.openTailWing ? "降下尾翼" : "升起尾翼"
             }}</a-button>
-            <a-button @click="onTweenOpenCoolingGlass">
+            <a-button :disabled="!boothReady" @click="onTweenOpenCoolingGlass">
               {{
                 tweenState.openCoolingGlass ? "降下散热玻璃" : "升起散热玻璃"
               }}
             </a-button>
-            <a-button @click="onTweenWheelSeeding">
+            <a-button :disabled="!boothReady" @click="onTweenWheelSeeding">
               {{
                 !tweenState.openWheelSeedingBroke &&
                 !tweenState.openWheelSeeding
@@ -50,13 +68,20 @@
                   : "停止轮播"
               }}
             </a-button>
-            <a-button @click="onResetCamera">视角复位</a-button>
-            <a-button @click="onTweenOpenLight">{{
+            <a-button :disabled="!boothReady" @click="onResetCamera"
+              >视角复位</a-button
+            >
+            <a-button :disabled="!boothReady" @click="onTweenOpenLight">{{
               tweenState.openLight ? "关灯" : "开灯"
             }}</a-button>
-            <a-button @click="onTweenOpenBooth">{{
-              tweenState.openBooth ? "降下展台" : "升起展台"
-            }}</a-button>
+            <a-button
+              :disabled="!boothAnimationComplete"
+              @click="onTweenOpenBooth"
+              >{{ tweenState.openBooth ? "降下展台" : "升起展台" }}</a-button
+            >
+            <a-button :disabled="!boothReady" @click="onTweenOpenEngine">
+              {{ wheelStart ? "关闭引擎" : "启动引擎" }}
+            </a-button>
           </div>
         </template>
       </floatWindow>
@@ -114,7 +139,7 @@
 </template>
 
 <script lang="ts" setup name="CarBooth">
-// import { message } from 'ant-design-vue/es';
+import { message } from "ant-design-vue/es";
 
 // threejs相关导入
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min"; // 补间动画
@@ -144,6 +169,7 @@ import revolver from "../revolver/index.vue";
 
 // 数据类型导入
 import { Position, ObjectKeys } from "@/utils/interface";
+// import { message } from "ant-design-vue";
 
 let camera: THREE.PerspectiveCamera;
 let scene: THREE.Scene;
@@ -157,6 +183,10 @@ let controls: OrbitControls;
 let boothModel: THREE.Object3D | null = null; // 展台
 let carModel: THREE.Object3D | null = null;
 const wheels: THREE.Object3D[] = [];
+const wheelStart = ref(false); // 车轮动画
+const boothReady = ref(false); // 展台已升起、就绪状态
+const boothAnimationComplete = ref(true);
+const boothAnimationDerection = ref(""); // 升降台动画方向 up / dowm
 
 // 记录升降展台的原始位置, 初始值要为空, 否则下面赋值判断会不执行
 let carBoothPosition: Position | null;
@@ -765,16 +795,19 @@ function render() {
 
   const time = -performance.now() / 1000;
 
-  for (let i = 0; i < wheels.length; i++) {
-    wheels[i].rotation.x = -time * Math.PI * 2;
-  }
-
+  wheelStart.value && startWheel(time);
   // grid && (grid.position.z = time % 1);
 
   renderer.render(scene, camera);
 
   stats.update();
 }
+
+const startWheel = (time: number) => {
+  for (let i = 0; i < wheels.length; i++) {
+    wheels[i].rotation.x = -time * Math.PI * 2;
+  }
+};
 
 /**
  * 包围盒全自动计算：模型整体居中
@@ -1120,9 +1153,15 @@ const onTweenOpenBooth = () => {
   );
   boothOriginParamsTween.easing(TWEEN.Easing.Sinusoidal.InOut).repeat(0);
   boothOrigin &&
-    boothOriginParamsTween.onUpdate(function () {
-      boothOrigin.position.y = boothOriginParams.y as number;
-    });
+    boothOriginParamsTween
+      .onUpdate(function () {
+        boothOrigin.position.y = boothOriginParams.y as number;
+      })
+      .onComplete(() => {
+        tweenState.value.openBooth = !tweenState.value.openBooth;
+        boothAnimationComplete.value = true; // 升降动画已完成
+        message.success("下降完成");
+      });
 
   // 载车承台升降
   if (!carBoothPosition) {
@@ -1140,12 +1179,21 @@ const onTweenOpenBooth = () => {
   );
   carBoothTween.easing(TWEEN.Easing.Sinusoidal.InOut).repeat(0);
   carBooth &&
-    carBoothTween.onUpdate(function () {
-      carBooth.position.y = Number(carBoothParams.y);
-    });
+    carBoothTween
+      .onUpdate(function () {
+        carBooth.position.y = Number(carBoothParams.y);
+      })
+      .onComplete(() => {
+        tweenState.value.openBooth = !tweenState.value.openBooth;
+        boothReady.value = true; // 展台已就绪
+        boothAnimationComplete.value = true; // 升降动画已完成
+        message.success("上升完成");
+      });
 
+  boothAnimationComplete.value = false; // 升降动画未完成
   // 上升
   if (!tweenState.value.openBooth) {
+    boothAnimationDerection.value = "up";
     boothOriginParamsTween.start();
     boothOriginParamsTween.onComplete(() => {
       booth1Tween.start();
@@ -1158,6 +1206,8 @@ const onTweenOpenBooth = () => {
     });
   } else {
     // 下降
+    boothAnimationDerection.value = "dowm"; // 展台动画方向是下降
+    boothReady.value = false; // 展台未就绪
     carBoothTween.start();
     carBoothTween.onComplete(() => {
       booth1Tween.start();
@@ -1170,7 +1220,12 @@ const onTweenOpenBooth = () => {
     });
   }
 
-  tweenState.value.openBooth = !tweenState.value.openBooth;
+  // tweenState.value.openBooth = !tweenState.value.openBooth;
+};
+
+// 引擎启动、车轮动画
+const onTweenOpenEngine = () => {
+  wheelStart.value = !wheelStart.value;
 };
 
 // 所有配置重置为初始值
@@ -1208,7 +1263,7 @@ const onDrag = debounce(() => {
 }, 300);
 
 onMounted(() => {
-  // init();
+  init();
 });
 
 onBeforeUnmount(() => {
@@ -1258,5 +1313,10 @@ onBeforeUnmount(() => {
   :deep(#stats) {
     position: relative !important;
   }
+}
+
+// 禁用鼠标
+.disabled {
+  cursor: not-allowed;
 }
 </style>

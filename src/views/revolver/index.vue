@@ -14,7 +14,9 @@
             <div class="placeholder">
               <div class="upside">
                 <!-- 轮盘展示文字或下标，以后可以使用插槽拓展成展示svg或图片 -->
-                <span class="button" @click="onClickRevolver(o)">{{ o.name ? o.name.slice(0, 1) : i }}</span>
+                <span class="button" @click="onClickRevolver(o)">{{
+                  o.name ? o.name.slice(0, 1) : i
+                }}</span>
               </div>
             </div>
           </li>
@@ -24,11 +26,15 @@
       <div class="menu__arrow menu__arrow--button">
         <ul>
           <li>
-            <label for="degree--up-0"><div class="arrow to--up" @click="onMousewheel('down')"></div></label>
+            <label for="degree--up-0"
+              ><div class="arrow to--up" @click="onMousewheel('up')"></div
+            ></label>
           </li>
 
           <li>
-            <label for="degree--up-1"><div class="arrow to--down" @click="onMousewheel('up')"></div></label>
+            <label for="degree--up-1"
+              ><div class="arrow to--down" @click="onMousewheel('down')"></div
+            ></label>
           </li>
         </ul>
       </div>
@@ -40,11 +46,11 @@
 // const store = useStore();
 // import { SAVE_REVOLVER_SELECTED } from '@/store/mutation-types';
 
-import { message } from 'ant-design-vue/es';
-import $ from 'jquery';
-import EventsBus from '@/utils/eventBus';
-import type { Revolver } from './typeStatement';
-import { debounce } from '@/utils/common';
+import { message } from "ant-design-vue/es";
+import $ from "jquery";
+import EventsBus from "@/utils/eventBus";
+import type { Revolver } from "./typeStatement";
+import { debounce } from "@/utils/common";
 
 defineProps({
   revolverList: {
@@ -58,7 +64,7 @@ const onClickRevolver = (o: Revolver) => {
   // store.commit(SAVE_REVOLVER_SELECTED, o);
 
   // 向事件总线发起广播
-  EventsBus.emit('onBusRevolver', o);
+  EventsBus.emit("onBusRevolver", o);
 };
 
 let menuState = false;
@@ -67,23 +73,23 @@ let menuState = false;
 const onMenuToggle = () => {
   menuState = !menuState;
   if (menuState) {
-    $('.hamburger').addClass('hamburger-active');
-    $('.menu__toggle').addClass('menu__toggle-active');
-    $('.menu__listings').addClass('menu__listings-transform');
-    $('.menu__arrow').addClass('menu__arrow-active');
+    $(".hamburger").addClass("hamburger-active");
+    $(".menu__toggle").addClass("menu__toggle-active");
+    $(".menu__listings").addClass("menu__listings-transform");
+    $(".menu__arrow").addClass("menu__arrow-active");
   } else {
-    $('.hamburger').removeClass('hamburger-active');
-    $('.menu__toggle').removeClass('menu__toggle-active');
-    $('.menu__listings').removeClass('menu__listings-transform');
-    $('.menu__listings').removeAttr('style'); // 移除添加的旋转行内样式
-    $('.menu__arrow').removeClass('menu__arrow-active');
+    $(".hamburger").removeClass("hamburger-active");
+    $(".menu__toggle").removeClass("menu__toggle-active");
+    $(".menu__listings").removeClass("menu__listings-transform");
+    $(".menu__listings").removeAttr("style"); // 移除添加的旋转行内样式
+    $(".menu__arrow").removeClass("menu__arrow-active");
   }
 };
 
 let scrollTop = 0;
 let scrollTopOld = 0;
 let scrollReg = 10; // menu__listings初始值
-let direction = '';
+let direction = "";
 
 // div滚轮事件
 const onMousewheel = (direction1: string) => {
@@ -93,16 +99,16 @@ const onMousewheel = (direction1: string) => {
 
 const onDebounce = debounce(() => {
   // 向上
-  if (direction === 'up') {
-    $('.menu__listings').animate({}, 1000, () => {
-      $('.menu__listings').removeClass('menu__listings-transform');
-      $('.menu__listings').css({ transform: `rotate(${scrollReg + 90}deg)` });
+  if (direction === "up") {
+    $(".menu__listings").animate({}, 1000, () => {
+      $(".menu__listings").removeClass("menu__listings-transform");
+      $(".menu__listings").css({ transform: `rotate(${scrollReg + 90}deg)` });
     });
     scrollReg += 90;
   } else {
-    $('.menu__listings').animate({}, 1000, () => {
-      $('.menu__listings').removeClass('menu__listings-transform');
-      $('.menu__listings').css({ transform: `rotate(${scrollReg - 90}deg)` });
+    $(".menu__listings").animate({}, 1000, () => {
+      $(".menu__listings").removeClass("menu__listings-transform");
+      $(".menu__listings").css({ transform: `rotate(${scrollReg - 90}deg)` });
     });
     scrollReg -= 90;
   }
@@ -164,7 +170,7 @@ onMounted(() => {
   transform: translateX(-50%) translateY(-50%);
 }
 .hamburger {
-  content: ' ';
+  content: " ";
   position: relative;
   width: 20px;
   border: 2px solid #392338;
@@ -173,7 +179,7 @@ onMounted(() => {
 }
 .hamburger:after,
 .hamburger:before {
-  content: ' ';
+  content: " ";
   position: absolute;
   left: 50%;
   width: 100%;
@@ -239,7 +245,7 @@ onMounted(() => {
   visibility: hidden;
   position: absolute;
 }
-.menu__arrow input[type='radio'] {
+.menu__arrow input[type="radio"] {
   position: fixed;
   top: -99999px;
   left: -99999px;
