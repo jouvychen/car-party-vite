@@ -1,6 +1,10 @@
 <template>
   <div class="car-booth">
     <div v-show="loadManager.showMask" class="loading">
+      <three-js-font-svg
+        :sources-num="5"
+        :hasBeenLoaded="loaded"
+      ></three-js-font-svg>
       <a-progress
         v-if="loadManager.schedule !== 100"
         :stroke-color="{
