@@ -1,5 +1,23 @@
 <template>
   <div class="car-booth">
+    <div v-show="loadManager.showMask" class="loading">
+      <a-progress
+        v-if="loadManager.schedule !== 100"
+        :stroke-color="{
+          from: '#108ee9',
+          to: '#87d068',
+        }"
+        :trailColor="'#9e9e9e1c'"
+        :strokeWidth="5"
+        :percent="loadManager.schedule"
+        :showInfo="false"
+      />
+
+      <a-button v-if="loadManager.schedule === 100" @click="onPlay"
+        >开始探索</a-button
+      >
+    </div>
+
     <revolver :revolver-list="revolverList"></revolver>
 
     <template v-for="o in revolverList" :key="o.uuid">
@@ -218,6 +236,7 @@ const loadManager = ref({
   name: "",
   schedule: 0,
   success: false,
+  showMask: true,
 });
 
 let rectLight: THREE.RectAreaLight;
@@ -238,6 +257,22 @@ for (let i = 0, l = revolverList.length; i < l; i++) {
   }px`;
 }
 uuid();
+
+// 进场动画
+const onPlay = () => {
+  loadManager.value.showMask = false;
+  loadManager.value.success = true;
+  entranceAnimations.animateCamera(
+    camera,
+    controls,
+    { x: 4.25, y: 1.4, z: 4.5 },
+    { x: 0, y: 0.5, z: 0 },
+    2400,
+    () => {
+      camera.position.set(4.25, 1.4, 4.5);
+    }
+  );
+};
 
 const createGUIFun = () => {
   const infoContainer = document.getElementById(
@@ -591,17 +626,6 @@ const init = async () => {
     loadManager.value.name = loadingType[loadingType.length - 1];
     if (Math.floor((loaded / total) * 100) === 100) {
       loadManager.value.schedule = 100;
-      loadManager.value.success = true;
-      entranceAnimations.animateCamera(
-        camera,
-        controls,
-        { x: 4.25, y: 1.4, z: 4.5 },
-        { x: 0, y: 0.5, z: 0 },
-        2400,
-        () => {
-          camera.position.set(4.25, 1.4, 4.5);
-        }
-      );
     } else {
       loadManager.value.schedule = Math.floor((loaded / total) * 100);
     }
@@ -1272,6 +1296,19 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="less">
+.loading {
+  position: absolute;
+  z-index: 999;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #444444;
+  :deep(.ant-progress-outer) {
+    width: 250px !important;
+  }
+}
 .car-booth {
   :deep(.left-container) {
     min-width: 300px;

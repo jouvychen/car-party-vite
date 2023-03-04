@@ -201,7 +201,7 @@ onMounted(() => {
 .menu--circle {
   position: absolute;
   top: 0;
-  z-index: 999;
+  z-index: 990;
   width: 243.33333333333334px;
   height: 243.33333333333334px;
   overflow: hidden;
