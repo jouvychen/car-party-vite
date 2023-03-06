@@ -686,6 +686,8 @@ const init = async () => {
           "左车门外部",
           "右车门内部",
           "右车门外部",
+          "Object_68002",
+          "挡叶",
         ],
         bodyMaterial
       );
@@ -703,13 +705,16 @@ const init = async () => {
   const glassColorInput = document.getElementById("glass-color");
   glassColorInput?.addEventListener("input", (event: Event) => {
     glassMaterial.color.set((event.target as HTMLInputElement).value);
+    if (carModel) {
+      changeBodyColor(["挡风玻璃", "右车窗玻璃", "左车窗玻璃"], glassMaterial);
+    }
   });
 
   // 建筑面材质
   let buildMaterial = new THREE.MeshBasicMaterial({
     color: "#009EFF", // 颜色
     transparent: true, // 是否开启使用透明度
-    opacity: 0.5, // 透明度0.25
+    opacity: 0.8, // 透明度0.25
     depthWrite: false, // 关闭深度写入 透视效果
     side: THREE.DoubleSide, // 双面显示
   });
@@ -725,24 +730,30 @@ const init = async () => {
 
   // Car
   carModel = gltf.scene;
+  console.log("车", carModel);
 
-  carModel.traverse((e: any) => {
-    // 遍历模型中所有mesh
-    let line;
-    e.material = buildMaterial; // 赋模型材质
-    if (e.geometry) {
-      const edges = new THREE.EdgesGeometry(e.geometry);
-      line = new THREE.LineSegments(
-        edges,
-        lineMaterial // 赋线条材质
-      );
-      line.position.set(e.position.x, e.position.y, e.position.z);
+  // carModel.traverse((e: any) => {
+  //   // 遍历模型中所有mesh
+  //   let line;
+  //   e.material = buildMaterial; // 赋模型材质
+  //   // const tPosition = new THREE.Vector3();
+  //   if (e.geometry) {
+  //     // if (e instanceof THREE.Mesh) {
+  //     //   e.getWorldPosition(tPosition);
+  //     // }
+  //     const edges = new THREE.EdgesGeometry(e.geometry);
+  //     line = new THREE.LineSegments(
+  //       edges,
+  //       lineMaterial // 赋线条材质
+  //     );
+  //     line.position.set(e.position.x, e.position.y, e.position.z);
 
-      line.name = e.name + "-copy";
-      line.parent = e.parent; // 要指定父节点才行
-      e.parent.children.push(line);
-    }
-  });
+  //     line.name = e.name + "-copy";
+  //     // line.parent = e.parent; // 要指定父节点才行
+  //     // e.parent.children.push(line);
+  //     e.parent.add(line);
+  //   }
+  // });
 
   boothModel = boothGltf.scene;
   boothModel.scale.set(1.2, 1.2, 1.2);
@@ -1314,12 +1325,12 @@ const onResetCamera = () => {
 
 const onSvgComplete = () => {
   svgCompleted.value = true;
-  init();
+  // init();
 };
 
-// onMounted(() => {
-//   init();
-// });
+onMounted(() => {
+  init();
+});
 
 // onBeforeUnmount(() => {
 //   debugger;
