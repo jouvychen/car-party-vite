@@ -1,23 +1,24 @@
 <template>
   <div class="car-booth">
     <div v-show="loadManager.showMask" class="loading">
-      <three-js-font-svg
-        :sources-num="5"
-        :hasBeenLoaded="loaded"
-      ></three-js-font-svg>
+      <three-js-font-svg @onSvgComplete="onSvgComplete"></three-js-font-svg>
       <a-progress
-        v-if="loadManager.schedule !== 100"
+        v-if="svgCompleted && loadManager.schedule !== 100"
         :stroke-color="{
           from: '#108ee9',
           to: '#87d068',
         }"
+        style="position: absolute"
         :trailColor="'#9e9e9e1c'"
         :strokeWidth="5"
         :percent="loadManager.schedule"
         :showInfo="false"
       />
 
-      <a-button v-if="loadManager.schedule === 100" @click="onPlay"
+      <a-button
+        v-if="loadManager.schedule === 100"
+        style="position: absolute"
+        @click="onPlay"
         >开始探索</a-button
       >
     </div>
@@ -140,21 +141,7 @@
       <!-- </template> -->
     </template>
 
-    <div class="left">
-      <div id="info" class="info">
-        <div class="mt6">
-          <div class="class">加载信息：</div>
-          <div class="class">
-            加载项目:{{
-              loadManager.schedule === 100 ? "--" : loadManager.name
-            }}
-          </div>
-          <div>加载进度:{{ loadManager.schedule }}%</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="right">
+    <div class="threejs-container">
       <div id="container"></div>
     </div>
   </div>
@@ -188,6 +175,7 @@ import { revolverList } from "./constan";
 // 组件导入
 import floatWindow from "../float-window/index.vue";
 import revolver from "../revolver/index.vue";
+import threeJsFontSvg from "../svg-animation/three-js-font-svg.vue";
 
 // 数据类型导入
 import { Position, ObjectKeys } from "@/utils/interface";
@@ -236,6 +224,7 @@ const initialConfiguration = {
   controlsPosition: new THREE.Vector3(0, 0.5, 0),
 };
 
+const svgCompleted = ref(false);
 const loadManager = ref({
   name: "",
   schedule: 0,
@@ -264,6 +253,7 @@ uuid();
 
 // 进场动画
 const onPlay = () => {
+  renderer.setAnimationLoop(render);
   loadManager.value.showMask = false;
   loadManager.value.success = true;
   entranceAnimations.animateCamera(
@@ -577,7 +567,7 @@ const init = async () => {
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setAnimationLoop(render);
+  // renderer.setAnimationLoop(render);
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 0.85;
@@ -715,10 +705,9 @@ const init = async () => {
     glassMaterial.color.set((event.target as HTMLInputElement).value);
   });
 
-
-// 建筑面材质
+  // 建筑面材质
   let buildMaterial = new THREE.MeshBasicMaterial({
-    color: '#009EFF', // 颜色
+    color: "#009EFF", // 颜色
     transparent: true, // 是否开启使用透明度
     opacity: 0.5, // 透明度0.25
     depthWrite: false, // 关闭深度写入 透视效果
@@ -727,7 +716,7 @@ const init = async () => {
 
   // 建筑线材质
   let lineMaterial = new THREE.LineBasicMaterial({
-    color: '#36BCFF',
+    color: "#36BCFF",
     transparent: true,
     opacity: 0.7,
     depthWrite: false,
@@ -737,23 +726,23 @@ const init = async () => {
   // Car
   carModel = gltf.scene;
 
-  carModel.traverse((e:any) => {
-      // 遍历模型中所有mesh
-      let line;
-      e.material = buildMaterial; // 赋模型材质
-      if (e.geometry) {
-        const edges = new THREE.EdgesGeometry(e.geometry);
-        line = new THREE.LineSegments(
-          edges,
-          lineMaterial, // 赋线条材质
-        );
-        line.position.set(e.position.x, e.position.y, e.position.z);
+  carModel.traverse((e: any) => {
+    // 遍历模型中所有mesh
+    let line;
+    e.material = buildMaterial; // 赋模型材质
+    if (e.geometry) {
+      const edges = new THREE.EdgesGeometry(e.geometry);
+      line = new THREE.LineSegments(
+        edges,
+        lineMaterial // 赋线条材质
+      );
+      line.position.set(e.position.x, e.position.y, e.position.z);
 
-        line.name = e.name + '-copy';
-        line.parent = e.parent; // 要指定父节点才行
-        e.parent.children.push(line);
-      }
-    });
+      line.name = e.name + "-copy";
+      line.parent = e.parent; // 要指定父节点才行
+      e.parent.children.push(line);
+    }
+  });
 
   boothModel = boothGltf.scene;
   boothModel.scale.set(1.2, 1.2, 1.2);
@@ -1323,17 +1312,21 @@ const onResetCamera = () => {
   );
 };
 
-const onDrag = debounce(() => {
-  onWindowResize();
-}, 300);
-
-onMounted(() => {
+const onSvgComplete = () => {
+  svgCompleted.value = true;
   init();
-});
+};
 
-onBeforeUnmount(() => {
-  // debugger;
-});
+// onMounted(() => {
+//   init();
+// });
+
+// onBeforeUnmount(() => {
+//   debugger;
+// });
+// onUnmounted(() => {
+//   debugger;
+// });
 </script>
 
 <style scoped lang="less">
@@ -1362,27 +1355,14 @@ onBeforeUnmount(() => {
   a {
     color: #08f;
   }
-  .left {
-    position: absolute;
-    z-index: 2;
-  }
-  .right {
+
+  .threejs-container {
     position: absolute;
     z-index: 1;
   }
   .colorPicker {
     display: inline-block;
     margin: 0 10px;
-  }
-  .info {
-    // position: absolute;
-    // width: 300px;
-    // background: #767676;
-    // height: 100vh;
-  }
-  .info-open {
-  }
-  .info-close {
   }
   .mt6 {
     margin-top: 6px;

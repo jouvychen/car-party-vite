@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     AButton: typeof import('ant-design-vue/es')['Button']
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     AEmpty: typeof import('ant-design-vue/es')['Empty']
+    AProgress: typeof import('ant-design-vue/es')['Progress']
     ASpin: typeof import('ant-design-vue/es')['Spin']
     Exception: typeof import('./src/components/Exception/index.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
