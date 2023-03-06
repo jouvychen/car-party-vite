@@ -715,8 +715,45 @@ const init = async () => {
     glassMaterial.color.set((event.target as HTMLInputElement).value);
   });
 
+
+// 建筑面材质
+  let buildMaterial = new THREE.MeshBasicMaterial({
+    color: '#009EFF', // 颜色
+    transparent: true, // 是否开启使用透明度
+    opacity: 0.5, // 透明度0.25
+    depthWrite: false, // 关闭深度写入 透视效果
+    side: THREE.DoubleSide, // 双面显示
+  });
+
+  // 建筑线材质
+  let lineMaterial = new THREE.LineBasicMaterial({
+    color: '#36BCFF',
+    transparent: true,
+    opacity: 0.7,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+
   // Car
   carModel = gltf.scene;
+
+  carModel.traverse((e:any) => {
+      // 遍历模型中所有mesh
+      let line;
+      e.material = buildMaterial; // 赋模型材质
+      if (e.geometry) {
+        const edges = new THREE.EdgesGeometry(e.geometry);
+        line = new THREE.LineSegments(
+          edges,
+          lineMaterial, // 赋线条材质
+        );
+        line.position.set(e.position.x, e.position.y, e.position.z);
+
+        line.name = e.name + '-copy';
+        line.parent = e.parent; // 要指定父节点才行
+        e.parent.children.push(line);
+      }
+    });
 
   boothModel = boothGltf.scene;
   boothModel.scale.set(1.2, 1.2, 1.2);
