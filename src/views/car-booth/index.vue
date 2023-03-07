@@ -150,6 +150,8 @@
 <script lang="ts" setup name="CarBooth">
 import { message } from "ant-design-vue/es";
 
+// 面镜 ['Object_77', 'Object_65']
+
 // threejs相关导入
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min"; // 补间动画
 import * as THREE from "three";
