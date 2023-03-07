@@ -151,7 +151,7 @@
 import { message } from "ant-design-vue/es";
 
 // 面镜 ['Object_77', 'Object_65']
-
+// 色调映射 https://threejs.org/examples/#webgl_tonemapping
 // threejs相关导入
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min"; // 补间动画
 import * as THREE from "three";
@@ -161,6 +161,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"; // gltf�
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper.js";
+import { Reflector } from "three/examples/jsm/objects/Reflector.js";
 import { createGUI, createLightGUI } from "./gui";
 import { EntranceAnimations } from "@/utils/entranceTweenClass";
 import {
@@ -178,6 +179,8 @@ import { revolverList } from "./constan";
 import floatWindow from "../float-window/index.vue";
 import revolver from "../revolver/index.vue";
 import threeJsFontSvg from "../svg-animation/three-js-font-svg.vue";
+
+// THREE.ColorManagement.enabled = true;
 
 // 数据类型导入
 import { Position, ObjectKeys } from "@/utils/interface";
@@ -763,6 +766,23 @@ const init = async () => {
   // scene.add(boothModel);
   boothGroup?.add(carModel);
   scene.add(boothModel);
+
+  const jingzi = boothModel.getObjectByName("超长镜面") as THREE.Mesh;
+  jingzi.visible = false;
+  const groundMirror = new Reflector(jingzi.geometry.scale(1.2, 1.5, 1.2), {
+    clipBias: 0.0003,
+    textureWidth: window.innerWidth * window.devicePixelRatio,
+    textureHeight: window.innerHeight * window.devicePixelRatio,
+    color: 0xb5b5b5,
+  });
+
+  const mirrorPosition = new THREE.Vector3();
+  jingzi?.getWorldPosition(mirrorPosition);
+
+  groundMirror.position.x = mirrorPosition.x;
+  groundMirror.position.y = mirrorPosition.y + 0.4;
+  groundMirror.position.z = mirrorPosition.z;
+  scene.add(groundMirror);
 
   // carModel.getObjectByName('车身').material = bodyMaterial;
   // carModel.getObjectByName('挡叶').material = bodyMaterial;
