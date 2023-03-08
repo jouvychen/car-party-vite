@@ -195,7 +195,7 @@ let hdrTexture: THREE.Texture;
 let grid: THREE.GridHelper;
 let controls: OrbitControls;
 
-let videoSource:HTMLVideoElement;
+let videoSource: HTMLVideoElement;
 
 let boothModel: THREE.Object3D | null = null; // 展台
 let carModel: THREE.Object3D | null = null;
@@ -1351,40 +1351,41 @@ const onResetCamera = () => {
 };
 
 const createBackgroundVideo = () => {
-      // 舞台背景视频
-      videoSource = document.createElement('video');
-      videoSource.src = '/video/stageDesign.mp4';
-      // videoSource.oncanplaythrough = videoLoaded(); // 视频加载至一段时间内无卡顿播放执行
+  // 舞台背景视频
+  videoSource = document.createElement("video");
+  videoSource.src = "/video/Lamborghini-Centenario-Lp-770-4.mp4";
+  videoSource.loop = true; //循环播放
+  // videoSource.oncanplaythrough = videoLoaded(); // 视频加载至一段时间内无卡顿播放执行
 
-      // video对象作为VideoTexture参数创建纹理对象
-      let stageBGVideoTexture = new THREE.VideoTexture(videoSource);
-      // stageBGVideoTexture.wrapS = stageBGVideoTexture.wrapT = THREE.ClampToEdgeWrapping;
-      let stageBGVideoGeo = new THREE.PlaneGeometry(38, 19); // 矩形平面
-      // 视频贴图使用基础材质，其他材质会被光照影响
-      let stageBGVideoMat = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        // side: THREE.DoubleSide,
-        map: stageBGVideoTexture, // 设置纹理贴图
-      });
-      const bigScreen = boothModel?.getObjectByName("屏幕") as THREE.Mesh;
-      // bigScreen.visible = false;
+  // video对象作为VideoTexture参数创建纹理对象
+  let stageBGVideoTexture = new THREE.VideoTexture(videoSource);
+  stageBGVideoTexture.center.set(0.5, 0.5); // 2项配合将texture沿X翻转和拉伸占满
+  stageBGVideoTexture.repeat.set(0.8, -0.9);
+  let stageBGVideoGeo = new THREE.PlaneGeometry(38, 19); // 矩形平面
+  // 视频贴图使用基础材质，其他材质会被光照影响
+  let stageBGVideoMat = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    // side: THREE.DoubleSide,
+    map: stageBGVideoTexture, // 设置纹理贴图
+  });
+  const bigScreen = boothModel?.getObjectByName("屏幕") as THREE.Mesh;
 
-      const mirrorPosition = new THREE.Vector3();
-      bigScreen?.getWorldPosition(mirrorPosition);
+  const mirrorPosition = new THREE.Vector3();
+  bigScreen?.getWorldPosition(mirrorPosition);
 
-      bigScreen.material = stageBGVideoMat;
+  bigScreen.material = stageBGVideoMat;
 
-      // groundMirror.position.x = mirrorPosition.x;
-      // groundMirror.position.y = mirrorPosition.y + 0.4;
-      // groundMirror.position.z = mirrorPosition.z;
-      // scene.add(groundMirror);
-      // let stageBGVideoMeshLeft = new THREE.Mesh(stageBGVideoMat, stageBGVideoMat); // 网格模型对象Mesh
-      // stageBGVideoMeshLeft.position.set(-35, 0, 0);
-      // stageBGVideoMeshRight = stageBGVideoMeshLeft.clone();
-      // stageBGVideoMeshRight.position.set(35, 0, 0);
-      // stageBGVideoMeshGroup.add(stageBGVideoMeshLeft);
-      // stageBGVideoMeshGroup.add(stageBGVideoMeshRight);
-    }
+  // groundMirror.position.x = mirrorPosition.x;
+  // groundMirror.position.y = mirrorPosition.y + 0.4;
+  // groundMirror.position.z = mirrorPosition.z;
+  // scene.add(groundMirror);
+  // let stageBGVideoMeshLeft = new THREE.Mesh(stageBGVideoMat, stageBGVideoMat); // 网格模型对象Mesh
+  // stageBGVideoMeshLeft.position.set(-35, 0, 0);
+  // stageBGVideoMeshRight = stageBGVideoMeshLeft.clone();
+  // stageBGVideoMeshRight.position.set(35, 0, 0);
+  // stageBGVideoMeshGroup.add(stageBGVideoMeshLeft);
+  // stageBGVideoMeshGroup.add(stageBGVideoMeshRight);
+};
 
 const onSvgComplete = () => {
   svgCompleted.value = true;
