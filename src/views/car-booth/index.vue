@@ -195,6 +195,8 @@ let hdrTexture: THREE.Texture;
 let grid: THREE.GridHelper;
 let controls: OrbitControls;
 
+let videoSource:HTMLVideoElement;
+
 let boothModel: THREE.Object3D | null = null; // 展台
 let carModel: THREE.Object3D | null = null;
 const wheels: THREE.Object3D[] = [];
@@ -269,6 +271,7 @@ const onPlay = () => {
     2400,
     () => {
       camera.position.set(4.25, 1.4, 4.5);
+      videoSource.play();
     }
   );
 };
@@ -766,6 +769,8 @@ const init = async () => {
   // scene.add(boothModel);
   boothGroup?.add(carModel);
   scene.add(boothModel);
+
+  createBackgroundVideo();
 
   const jingzi = boothModel.getObjectByName("超长镜面") as THREE.Mesh;
   jingzi.visible = false;
@@ -1344,6 +1349,42 @@ const onResetCamera = () => {
     }
   );
 };
+
+const createBackgroundVideo = () => {
+      // 舞台背景视频
+      videoSource = document.createElement('video');
+      videoSource.src = '/video/stageDesign.mp4';
+      // videoSource.oncanplaythrough = videoLoaded(); // 视频加载至一段时间内无卡顿播放执行
+
+      // video对象作为VideoTexture参数创建纹理对象
+      let stageBGVideoTexture = new THREE.VideoTexture(videoSource);
+      // stageBGVideoTexture.wrapS = stageBGVideoTexture.wrapT = THREE.ClampToEdgeWrapping;
+      let stageBGVideoGeo = new THREE.PlaneGeometry(38, 19); // 矩形平面
+      // 视频贴图使用基础材质，其他材质会被光照影响
+      let stageBGVideoMat = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        // side: THREE.DoubleSide,
+        map: stageBGVideoTexture, // 设置纹理贴图
+      });
+      const bigScreen = boothModel?.getObjectByName("屏幕") as THREE.Mesh;
+      // bigScreen.visible = false;
+
+      const mirrorPosition = new THREE.Vector3();
+      bigScreen?.getWorldPosition(mirrorPosition);
+
+      bigScreen.material = stageBGVideoMat;
+
+      // groundMirror.position.x = mirrorPosition.x;
+      // groundMirror.position.y = mirrorPosition.y + 0.4;
+      // groundMirror.position.z = mirrorPosition.z;
+      // scene.add(groundMirror);
+      // let stageBGVideoMeshLeft = new THREE.Mesh(stageBGVideoMat, stageBGVideoMat); // 网格模型对象Mesh
+      // stageBGVideoMeshLeft.position.set(-35, 0, 0);
+      // stageBGVideoMeshRight = stageBGVideoMeshLeft.clone();
+      // stageBGVideoMeshRight.position.set(35, 0, 0);
+      // stageBGVideoMeshGroup.add(stageBGVideoMeshLeft);
+      // stageBGVideoMeshGroup.add(stageBGVideoMeshRight);
+    }
 
 const onSvgComplete = () => {
   svgCompleted.value = true;
