@@ -181,6 +181,11 @@ import revolver from "../revolver/index.vue";
 import threeJsFontSvg from "../svg-animation/three-js-font-svg.vue";
 import colorControl from "../control-window/color-control.vue";
 
+/**
+ * store
+ */
+import { useBoothModalStore } from "@/store";
+const boothStore = useBoothModalStore();
 
 // THREE.ColorManagement.enabled = true;
 
@@ -1280,6 +1285,7 @@ const onTweenOpenBooth = () => {
       .onComplete(() => {
         tweenState.value.openBooth = !tweenState.value.openBooth;
         boothReady.value = true; // 展台已就绪
+        boothStore.boothReady = true;
         boothAnimationComplete.value = true; // 升降动画已完成
         message.success("上升完成");
       });
@@ -1302,6 +1308,7 @@ const onTweenOpenBooth = () => {
     // 下降
     boothAnimationDerection.value = "dowm"; // 展台动画方向是下降
     boothReady.value = false; // 展台未就绪
+    boothStore.boothReady = false;
     carBoothTween.start();
     carBoothTween.onComplete(() => {
       booth1Tween.start();

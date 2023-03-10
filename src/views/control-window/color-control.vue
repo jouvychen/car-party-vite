@@ -1,37 +1,37 @@
 <template>
   <!-- 控制颜色面板 -->
-  <floatWindow :float-window="floatWindow1">
+  <floatWindow :float-window="floatWindow1" class="color-control">
     <template #content>
       <span class="colorPicker">
-        <!-- <input
+        <input
           id="body-color"
           :disabled="!boothReady"
           type="color"
           value="#ff0000"
-          :class="{ disabled: !boothReady }"
-        /> -->
+          :class="{ 'not-allow': !boothReady }"
+        />
         <br />
         车体
       </span>
       <span class="colorPicker">
-        <!-- <input
+        <input
           id="details-color"
           :disabled="!boothReady"
           type="color"
           value="#ffffff"
-          :class="{ disabled: !boothReady }"
-        /> -->
+          :class="{ 'not-allow': !boothReady }"
+        />
         <br />
         车架
       </span>
       <span class="colorPicker">
-        <!-- <input
+        <input
           id="glass-color"
           :disabled="!boothReady"
           type="color"
           value="#ffffff"
-          :class="{ disabled: !boothReady }"
-        /> -->
+          :class="{ 'not-allow': !boothReady }"
+        />
         <br />
         Glass
       </span>
@@ -39,18 +39,24 @@
   </floatWindow>
 </template>
 <script setup lang="ts">
+import { useBoothModalStore } from "@/store";
 import floatWindow from "../float-window/index.vue";
 const props = defineProps({
   floatWindow: {
     type: Object,
-    default: () => {}
-  }
-})
+    default: () => {},
+  },
+});
+const boothStore = useBoothModalStore();
+const boothReady = computed(() => boothStore.boothReady);
 const floatWindow1 = props.floatWindow;
 </script>
 
 <style scoped lang="less">
 .color-control {
-  
+  .colorPicker {
+    display: inline-block;
+    margin: 0 10px;
+  }
 }
 </style>
