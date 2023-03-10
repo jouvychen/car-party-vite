@@ -27,9 +27,9 @@
 
     <template v-for="o in revolverList" :key="o.uuid">
       <!-- 控制颜色面板 -->
-      <floatWindow v-if="o.name === '颜色'" :float-window="o">
+      <color-control v-if="o.name === '颜色'" :float-window="o"></color-control>
+      <!-- <floatWindow v-if="o.name === '颜色'" :float-window="o">
         <template #content>
-          <!-- {{o}} -->
           <span class="colorPicker">
             <input
               id="body-color"
@@ -64,7 +64,7 @@
             Glass
           </span>
         </template>
-      </floatWindow>
+      </floatWindow> -->
 
       <!-- 控制动画面板 -->
       <floatWindow v-if="o.name === '动画'" :float-window="o">
@@ -179,6 +179,8 @@ import { revolverList } from "./constan";
 import floatWindow from "../float-window/index.vue";
 import revolver from "../revolver/index.vue";
 import threeJsFontSvg from "../svg-animation/three-js-font-svg.vue";
+import colorControl from "../control-window/color-control.vue";
+
 
 // THREE.ColorManagement.enabled = true;
 
