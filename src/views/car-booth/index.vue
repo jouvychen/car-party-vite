@@ -27,7 +27,11 @@
 
     <template v-for="o in revolverList" :key="o.uuid">
       <!-- 控制颜色面板 -->
-      <color-control v-if="o.name === '颜色'" :float-window="o"></color-control>
+      <color-control
+        v-if="o.name === '颜色'"
+        :float-window="o"
+        @on-change-color="onChangeColor"
+      ></color-control>
       <!-- <floatWindow v-if="o.name === '颜色'" :float-window="o">
         <template #content>
           <span class="colorPicker">
@@ -221,8 +225,6 @@ let boothPosition: ObjectKeys = {
   booth3: null,
   booth4: null,
 };
-
-let bodyMaterial: THREE.MeshPhysicalMaterial;
 
 const sideDragRef = ref(null);
 
@@ -667,63 +669,41 @@ const init = async () => {
 
   // materials
 
-  bodyMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0xff0000,
-    metalness: 1.0,
-    roughness: 0.5,
-    clearcoat: 1.0,
-    clearcoatRoughness: 0.03,
-    sheen: 0.5,
-  });
+  // const bodyColorInput = document.getElementById("body-color");
+  // bodyColorInput?.addEventListener("input", (event: Event) => {
+  //   bodyMaterial.color.set((event.target as HTMLInputElement).value);
+  //   if (carModel) {
+  //     changeBodyColor(
+  //       [
+  //         "车身",
+  //         "前轮连接板",
+  //         "左车门内部",
+  //         "左车门外部",
+  //         "右车门内部",
+  //         "右车门外部",
+  //         "Object_68002",
+  //         "挡叶",
+  //       ],
+  //       bodyMaterial
+  //     );
+  //   }
+  // });
 
-  const detailsMaterial = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    metalness: 1.0,
-    roughness: 0.5,
-  });
+  // const detailsColorInput = document.getElementById("details-color");
+  // detailsColorInput?.addEventListener("input", (event: Event) => {
+  //   detailsMaterial.color.set((event.target as HTMLInputElement).value);
+  //   if (carModel) {
+  //     changeBodyColor(["车架"], detailsMaterial);
+  //   }
+  // });
 
-  const glassMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0xffffff,
-    metalness: 0.25,
-    roughness: 0,
-    transmission: 1.0,
-  });
-
-  const bodyColorInput = document.getElementById("body-color");
-  bodyColorInput?.addEventListener("input", (event: Event) => {
-    bodyMaterial.color.set((event.target as HTMLInputElement).value);
-    if (carModel) {
-      changeBodyColor(
-        [
-          "车身",
-          "前轮连接板",
-          "左车门内部",
-          "左车门外部",
-          "右车门内部",
-          "右车门外部",
-          "Object_68002",
-          "挡叶",
-        ],
-        bodyMaterial
-      );
-    }
-  });
-
-  const detailsColorInput = document.getElementById("details-color");
-  detailsColorInput?.addEventListener("input", (event: Event) => {
-    detailsMaterial.color.set((event.target as HTMLInputElement).value);
-    if (carModel) {
-      changeBodyColor(["车架"], detailsMaterial);
-    }
-  });
-
-  const glassColorInput = document.getElementById("glass-color");
-  glassColorInput?.addEventListener("input", (event: Event) => {
-    glassMaterial.color.set((event.target as HTMLInputElement).value);
-    if (carModel) {
-      changeBodyColor(["挡风玻璃", "右车窗玻璃", "左车窗玻璃"], glassMaterial);
-    }
-  });
+  // const glassColorInput = document.getElementById("glass-color");
+  // glassColorInput?.addEventListener("input", (event: Event) => {
+  //   glassMaterial.color.set((event.target as HTMLInputElement).value);
+  //   if (carModel) {
+  //     changeBodyColor(["挡风玻璃", "右车窗玻璃", "左车窗玻璃"], glassMaterial);
+  //   }
+  // });
 
   // 建筑面材质
   let buildMaterial = new THREE.MeshBasicMaterial({
@@ -879,7 +859,9 @@ const init = async () => {
   rectAreaLight();
 };
 
-const changeBodyColor = (array: string[], material: THREE.Material) => {
+const onChangeColor = (material: THREE.Material, array: string[]) => {
+  console.log(array);
+  console.log(material);
   array.forEach((o) => {
     const m = (carModel?.getObjectByName(o) as THREE.Mesh)?.material;
     if (m instanceof THREE.Material) {
