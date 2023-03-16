@@ -154,6 +154,7 @@ bodyMaterial = new THREE.MeshPhysicalMaterial({
   clearcoat: 1.0,
   clearcoatRoughness: 0.03,
   sheen: 0.5,
+  side: THREE.DoubleSide
 });
 
 detailsMaterial = new THREE.MeshStandardMaterial({
