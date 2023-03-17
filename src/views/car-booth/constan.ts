@@ -3,18 +3,6 @@ import type { Revolver } from "../revolver/typeStatement";
 const revolverList: Revolver[] = [
     {
         index: 1,
-        name: "颜色",
-        uuid: "",
-        state: false,
-        unfoldClass: {
-            width: "500px",
-            height: "300px",
-            top: "0%",
-            right: "70%",
-        },
-    },
-    {
-        index: 2,
         name: "动画",
         uuid: "",
         state: false,
@@ -26,7 +14,31 @@ const revolverList: Revolver[] = [
         },
     },
     {
+        index: 2,
+        name: "颜色",
+        uuid: "",
+        state: false,
+        unfoldClass: {
+            width: "500px",
+            height: "300px",
+            top: "0%",
+            right: "70%",
+        },
+    },
+    {
         index: 3,
+        name: "材质",
+        uuid: "",
+        state: false,
+        unfoldClass: {
+            width: "500px",
+            height: "300px",
+            top: "50%",
+            right: "70%",
+        },
+    },
+    {
+        index: 4,
         name: "性能",
         uuid: "",
         state: false,
@@ -38,7 +50,7 @@ const revolverList: Revolver[] = [
         },
     },
     {
-        index: 4,
+        index: 5,
         name: "光照",
         uuid: "",
         state: false,
@@ -50,7 +62,7 @@ const revolverList: Revolver[] = [
         },
     },
     {
-        index: 5,
+        index: 6,
         name: "贴图",
         uuid: "",
         state: false,

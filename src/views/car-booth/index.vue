@@ -32,6 +32,13 @@
         :float-window="o"
         @on-change-color="onChangeColor"
       ></color-control>
+
+      <!-- 材质面板 -->
+      <material-control
+        v-if="o.name === '材质'"
+        :float-window="o"
+        @on-change-material="onChangeMaterial"
+      ></material-control>
       <!-- <floatWindow v-if="o.name === '颜色'" :float-window="o">
         <template #content>
           <span class="colorPicker">
@@ -184,6 +191,7 @@ import floatWindow from "../float-window/index.vue";
 import revolver from "../revolver/index.vue";
 import threeJsFontSvg from "../svg-animation/three-js-font-svg.vue";
 import colorControl from "../control-window/color-control.vue";
+import materialControl from "../control-window/material-control.vue";
 
 /**
  * store
@@ -859,6 +867,7 @@ const init = async () => {
   rectAreaLight();
 };
 
+// 颜色面板
 const onChangeColor = (material: THREE.Material, array: string[]) => {
   console.log(array);
   console.log(material);
@@ -868,6 +877,11 @@ const onChangeColor = (material: THREE.Material, array: string[]) => {
       (carModel?.getObjectByName(o) as THREE.Mesh).material = material;
     }
   });
+};
+
+// 材质面板
+const onChangeMaterial = () => {
+  // console.log('打印', xxx);
 };
 
 function render() {
