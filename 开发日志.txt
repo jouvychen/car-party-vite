@@ -78,3 +78,8 @@ https://threejs.org/examples/webgl_worker_offscreencanvas.html
 https://discourse.threejs.org/t/some-of-my-art-works-three-js-is-so-good-to-use/43783
 
 https://sudhir9297.github.io/misfit-product/
+
+
+ts里使用webWorker报：Cannot use import statement outside a module
+new worker时添加: { type: "module" } as any
+new Worker(new URL("./worker/script.ts", import.meta.url), { type: "module" } as any);

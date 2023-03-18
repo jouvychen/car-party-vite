@@ -160,7 +160,7 @@
 
 <script lang="ts" setup name="CarBooth">
 import { message } from "ant-design-vue/es";
-
+import { initWebWorker } from "@/utils/webWorker";
 // 面镜 ['Object_77', 'Object_65']
 // 色调映射 https://threejs.org/examples/#webgl_tonemapping
 // threejs相关导入
@@ -1398,7 +1398,8 @@ const onSvgComplete = () => {
 };
 
 onMounted(() => {
-  init();
+  // init();
+  initWebWorker();
 });
 
 // onBeforeUnmount(() => {
