@@ -7,7 +7,7 @@
  */
 
 import * as THREE from "three";
-import { THREEMaterialType, Vector3Arr, IBaseProps, IGroupParams, IMeshParams, IPointLight } from "../types";
+import { THREEMaterialType, Vector3Arr, IBaseProps, IGroupParams, IMeshParams, IPointLight } from "./worker/helper/types";
 
 /**
  * glb模型并发加载工作原理
