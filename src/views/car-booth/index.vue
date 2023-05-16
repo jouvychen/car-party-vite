@@ -16,7 +16,6 @@
         :showInfo="false"
       />
 
-      <!-- <span style="position: absolute">{{ loadManager.schedule }}</span> -->
       <a-button
         v-if="loadManager.schedule === 100"
         style="position: absolute"
@@ -86,8 +85,6 @@
 
 <script lang="ts" setup name="CarBooth">
 import { message } from "ant-design-vue/es";
-import { initWebWorker } from "@/utils/webWorker";
-// 面镜 ['Object_77', 'Object_65']
 // 色调映射 https://threejs.org/examples/#webgl_tonemapping
 // threejs相关导入
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min"; // 补间动画
@@ -156,12 +153,17 @@ const wheels: THREE.Object3D[] = [];
 
 const entranceAnimations = new EntranceAnimations();
 
+/**
+ * Threejs的文字svg动画
+ */
 const svgCompleted = ref(false);
+// 加载信息
 const loadManager = ref({
   name: "",
   schedule: 0,
   success: false,
   showMask: true,
+  total: 20, // 总共加载的资源数(从默认加载器得知)
 });
 
 let rectLight: THREE.RectAreaLight;
@@ -185,7 +187,6 @@ uuid();
 
 // 进场动画
 const onPlay = () => {
-  // renderer.setAnimationLoop(render);
   loadManager.value.showMask = false;
   loadManager.value.success = true;
   entranceAnimations.animateCamera(
@@ -196,50 +197,9 @@ const onPlay = () => {
     2400,
     () => {
       camera.position.set(4.25, 1.4, 4.5);
-      videoSource.play();
+      // videoSource.play();
     }
   );
-};
-
-const createGUIFun = () => {
-  const infoContainer = document.getElementById(
-    "gui-container"
-  ) as HTMLDivElement;
-
-  createGUI({ container: infoContainer });
-  createLightGUI({ rectLight: rectLight });
-};
-
-// 展厅灯光管理
-const rectAreaLight = () => {
-  // WellLeft.001
-  // Top.001
-  const Top = scene.getObjectByName("Top001");
-  const WellLeft = scene.getObjectByName("WellLeft001");
-  const width = 12;
-  const height = 12;
-  const intensity = 10;
-  rectLight = new THREE.RectAreaLight(0xffffff, intensity, width, height);
-  const rectLight2 = new THREE.RectAreaLight(
-    0xff00ff,
-    intensity,
-    width,
-    height
-  );
-  rectLight.position.set(0, 4, 0);
-  rectLight2.position.set(1, 0.3, 0);
-  // rectLight.rotateX(Math.PI * 0.5);
-  rectLight.lookAt(0, 0, 0);
-  rectLight2.lookAt(0, 0, 0);
-  scene.add(rectLight);
-  // WellLeft.add(rectLight2);
-
-  const rectLightHelper = new RectAreaLightHelper(rectLight);
-  const rectLightHelper2 = new RectAreaLightHelper(rectLight2);
-  rectLight.add(rectLightHelper);
-  // rectLight2.add(rectLightHelper2);
-
-  createGUIFun();
 };
 
 const init = async () => {
@@ -281,11 +241,9 @@ const init = async () => {
   threejsModule.controls = controls;
 
   scene = new THREE.Scene();
-  threejsModule.scene = scene;
+  scene.fog = new THREE.Fog(0x333333, 15, 20);
   scene.background = new THREE.Color(0x333333);
-
-  const axes = new THREE.AxesHelper(200);
-  scene.add(axes);
+  threejsModule.scene = scene;
 
   const textureLoader = new THREE.TextureLoader();
   const rgbeLoader = new RGBELoader().setPath("/textures/equirectangular/");
@@ -298,16 +256,19 @@ const init = async () => {
   // 默认加载
   THREE.DefaultLoadingManager.onProgress = async (url, loaded, total) => {
     let loadingType = url.split(".");
+    // gltf三层导出文件加载时，会先访问.gltf文件，若第一次“已加载/总需加载”!=1则返回，此时数据不准确
     if (loadingType[loadingType.length - 1] === "gltf" && loaded / total != 1) {
       return;
-    } // gltf三层导出文件加载时，会先访问.gltf文件，若第一次“已加载/总需加载”!=1则返回，此时数据不准确
+    }
     loadManager.value.name = loadingType[loadingType.length - 1];
     if (Math.floor((loaded / total) * 100) === 100) {
       loadManager.value.schedule = 100;
     } else {
-      loadManager.value.schedule = Math.floor((loaded / total) * 100);
+      // 不用这里的total是因为模型压缩成bin解压后资源数量会变化
+      loadManager.value.schedule = Math.floor((loaded / loadManager.value.total) * 100);
     }
   };
+
   const [texture, boothGltf, gltf, textureFlare0, textureFlare3] =
     await Promise.all([
       rgbeLoader.loadAsync("venice_sunset_1k.hdr"),
@@ -317,112 +278,50 @@ const init = async () => {
       textureLoader.load("/textures/lensflare/lensflare3.png"),
     ]);
 
-  hdrTexture = texture;
   carStore.source.texture.textureFlare0 = textureFlare0;
   carStore.source.texture.textureFlare3 = textureFlare3;
-  // source.texture.textureFlare0 = textureFlare0;
-  // source.texture.textureFlare3 = textureFlare3;
-
   carStore.carModal = gltf.scene;
 
+  hdrTexture = texture;
   scene.environment = texture;
   scene.environment.mapping = THREE.EquirectangularReflectionMapping;
-  console.log("场景信息scene.environment", scene.environment);
-  scene.fog = new THREE.Fog(0x333333, 15, 20);
 
-  grid = new THREE.GridHelper(20, 40, 0xffffff, 0xffffff);
-  if (grid && grid.material instanceof THREE.Material) {
-    grid.material.opacity = 0.2;
-    grid.material.depthWrite = false;
-    grid.material.transparent = true;
-  }
-  // scene.add(grid);
-
-  // 建筑面材质
-  let buildMaterial = new THREE.MeshBasicMaterial({
-    color: "#009EFF", // 颜色
-    transparent: true, // 是否开启使用透明度
-    opacity: 0.8, // 透明度0.25
-    depthWrite: false, // 关闭深度写入 透视效果
-    side: THREE.DoubleSide, // 双面显示
-  });
-
-  // 建筑线材质
-  let lineMaterial = new THREE.LineBasicMaterial({
-    color: "#36BCFF",
-    transparent: true,
-    opacity: 0.7,
-    depthWrite: false,
-    side: THREE.DoubleSide,
-  });
-
-  // Car
+  // 车
   carModel = gltf.scene;
-  console.log("车", carModel);
 
-  // carModel.traverse((e: any) => {
-  //   // 遍历模型中所有mesh
-  //   let line;
-  //   e.material = buildMaterial; // 赋模型材质
-  //   // const tPosition = new THREE.Vector3();
-  //   if (e.geometry) {
-  //     // if (e instanceof THREE.Mesh) {
-  //     //   e.getWorldPosition(tPosition);
-  //     // }
-  //     const edges = new THREE.EdgesGeometry(e.geometry);
-  //     line = new THREE.LineSegments(
-  //       edges,
-  //       lineMaterial // 赋线条材质
-  //     );
-  //     line.position.set(e.position.x, e.position.y, e.position.z);
-
-  //     line.name = e.name + "-copy";
-  //     // line.parent = e.parent; // 要指定父节点才行
-  //     // e.parent.children.push(line);
-  //     e.parent.add(line);
-  //   }
-  // });
-
+  // 展台
   boothModel = boothGltf.scene;
   boothModel.scale.set(1.2, 1.2, 1.2);
   const boothGroup = boothModel.getObjectByName("车承台父节点");
-  // scene.add(boothModel);
   boothGroup?.add(carModel);
   scene.add(boothModel);
 
+  // 创建视频
   createBackgroundVideo();
 
-  const jingzi = boothModel.getObjectByName("超长镜面") as THREE.Mesh;
-  jingzi.visible = false;
-  const groundMirror = new Reflector(jingzi.geometry.scale(1.2, 1.5, 1.2), {
+  /**
+   * 创建镜子
+   */
+  const mirrorMesh = boothModel.getObjectByName("超长镜面") as THREE.Mesh;
+  mirrorMesh.visible = false;
+  const groundMirror = new Reflector(mirrorMesh.geometry.scale(1.2, 2.8, 1.2), {
     clipBias: 0.0003,
     textureWidth: window.innerWidth * window.devicePixelRatio,
     textureHeight: window.innerHeight * window.devicePixelRatio,
     color: 0xb5b5b5,
   });
 
+  // 获取镜子的世界坐标
   const mirrorPosition = new THREE.Vector3();
-  jingzi?.getWorldPosition(mirrorPosition);
+  mirrorMesh?.getWorldPosition(mirrorPosition);
 
   groundMirror.position.x = mirrorPosition.x;
   groundMirror.position.y = mirrorPosition.y + 0.4;
   groundMirror.position.z = mirrorPosition.z;
   scene.add(groundMirror);
 
-  // carModel.getObjectByName('车身').material = bodyMaterial;
-  // carModel.getObjectByName('挡叶').material = bodyMaterial;
-  // carModel.getObjectByName('前轮连接板').material = bodyMaterial;
-  // carModel.getObjectByName('左车门内部').material = bodyMaterial;
-  // carModel.getObjectByName('左车门外部').material = bodyMaterial;
-  // carModel.getObjectByName('右车门内部').material = bodyMaterial;
-  // carModel.getObjectByName('右车门外部').material = bodyMaterial;
-
-  // carModel.getObjectByName('rim_fr').material = detailsMaterial;
-  // carModel.getObjectByName('rim_rr').material = detailsMaterial;
-  // carModel.getObjectByName('rim_rl').material = detailsMaterial;
-  // carModel.getObjectByName('trim').material = detailsMaterial;
-
-  // carModel.getObjectByName('glass').material = glassMaterial;
+  // 创建灯光
+  createLight();
 
   wheels.push(
     carModel.getObjectByName("左前轮") as THREE.Object3D,
@@ -430,69 +329,58 @@ const init = async () => {
     carModel.getObjectByName("右前轮") as THREE.Object3D,
     carModel.getObjectByName("右后轮") as THREE.Object3D
   );
-
-  // shadow
-  // const mesh = new THREE.Mesh(
-  //   new THREE.PlaneGeometry(0.655 * 4, 1.3 * 4),
-  //   new THREE.MeshBasicMaterial({
-  //     // map: shadow,
-  //     blending: THREE.MultiplyBlending,
-  //     toneMapped: false,
-  //     transparent: true,
-  //   }),
-  // );
-  // mesh.rotation.x = -Math.PI / 2;
-  // mesh.renderOrder = 2;
-  // carModel.add(mesh);
-
-  // scene.add(carModel);
-
-  // const shadow = new THREE.TextureLoader().load('models/gltf/ferrari_ao.png');
-
-  // const dracoLoader = new DRACOLoader();
-  // dracoLoader.setDecoderPath('jsm/libs/draco/gltf/');
-
-  // const loader = new GLTFLoader();
-  // loader.setDRACOLoader(dracoLoader);
-
-  // loader.load('models/gltf/ferrari.glb', function (gltf) {
-  //   const carModel = gltf.scene.children[0];
-
-  //   carModel.getObjectByName('rim_fl').material = detailsMaterial;
-  //   carModel.getObjectByName('rim_fr').material = detailsMaterial;
-  //   carModel.getObjectByName('rim_rr').material = detailsMaterial;
-  //   carModel.getObjectByName('rim_rl').material = detailsMaterial;
-  //   carModel.getObjectByName('trim').material = detailsMaterial;
-
-  //   carModel.getObjectByName('glass').material = glassMaterial;
-
-  //   wheels.push(
-  //     carModel.getObjectByName('wheel_fl'),
-  //     carModel.getObjectByName('wheel_fr'),
-  //     carModel.getObjectByName('wheel_rl'),
-  //     carModel.getObjectByName('wheel_rr'),
-  //   );
-
-  //   // shadow
-  //   const mesh = new THREE.Mesh(
-  //     new THREE.PlaneGeometry(0.655 * 4, 1.3 * 4),
-  //     new THREE.MeshBasicMaterial({
-  //       // map: shadow,
-  //       blending: THREE.MultiplyBlending,
-  //       toneMapped: false,
-  //       transparent: true,
-  //     }),
-  //   );
-  //   mesh.rotation.x = -Math.PI / 2;
-  //   mesh.renderOrder = 2;
-  //   carModel.add(mesh);
-
-  //   scene.add(carModel);
-  // });
-  rectAreaLight();
 };
 
-// 颜色面板
+/**
+ * 展厅灯光管理
+ */
+ const createLight = () => {
+  // WellLeft.001
+  // Top.001
+  const Top = scene.getObjectByName("Top001");
+  const WellLeft = scene.getObjectByName("WellLeft001");
+  const width = 12;
+  const height = 12;
+  const intensity = 10;
+  rectLight = new THREE.RectAreaLight(0xffffff, intensity, width, height);
+  const rectLight2 = new THREE.RectAreaLight(
+    0xff00ff,
+    intensity,
+    width,
+    height
+  );
+  rectLight.position.set(0, 4, 0);
+  rectLight2.position.set(1, 0.3, 0);
+  // rectLight.rotateX(Math.PI * 0.5);
+  rectLight.lookAt(0, 0, 0);
+  rectLight2.lookAt(0, 0, 0);
+  scene.add(rectLight);
+  // WellLeft.add(rectLight2);
+
+  const rectLightHelper = new RectAreaLightHelper(rectLight);
+  const rectLightHelper2 = new RectAreaLightHelper(rectLight2);
+  rectLight.add(rectLightHelper);
+  // rectLight2.add(rectLightHelper2);
+
+  // 创建完灯光后再创建GUI控制面板，因为依赖灯光实例
+  createGUIFun();
+};
+
+/**
+ * GUI控制面板
+ */
+ const createGUIFun = () => {
+  const infoContainer = document.getElementById(
+    "gui-container"
+  ) as HTMLDivElement;
+  createGUI({ container: infoContainer });
+  createLightGUI({ rectLight: rectLight });
+};
+
+/**
+ * 子组件回调方法
+ */
+// 颜色控制组件回调
 const onChangeColor = (material: THREE.Material, array: string[]) => {
   console.log(array);
   console.log(material);
@@ -504,23 +392,21 @@ const onChangeColor = (material: THREE.Material, array: string[]) => {
   });
 };
 
-// 材质面板
+// 材质控制组件回调
 const onChangeMaterial = () => {
   // console.log('打印', xxx);
 };
 
-function render() {
+const render = () => {
   controls.update();
   TWEEN.update();
+  stats.update();
 
   const time = -performance.now() / 1000;
 
   carStore.wheelStart && startWheel(time);
-  // grid && (grid.position.z = time % 1);
 
   renderer.render(scene, camera);
-
-  stats.update();
 }
 
 const startWheel = (time: number) => {
@@ -535,21 +421,18 @@ const startWheel = (time: number) => {
 const calcBoundingBox = () => {
   if (carModel) {
     let box3 = new THREE.Box3();
-    // 计算层级模型model的包围盒
     // 模型model是加载一个三维模型返回的对象，包含多个网格模型
     box3.expandByObject(carModel);
     // 计算一个层级模型对应包围盒的几何体中心在世界坐标中的位置
     let center = new THREE.Vector3();
     box3.getCenter(center);
-    // console.log('查看几何体中心坐标', center);
-
     // 重新设置模型的位置，使之居中。
     carModel.position.x = carModel.position.x - center.x;
-    // carModel.position.y = carModel.position.y - center.y;
     carModel.position.z = carModel.position.z - center.z;
   }
 };
 
+// 窗口大小变化
 const onWindowResize = () => {
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -559,6 +442,9 @@ const onWindowResize = () => {
   renderer.setSize(width, height);
 };
 
+/**
+ * 创建视频
+ */
 const createBackgroundVideo = () => {
   // 舞台背景视频
   videoSource = document.createElement("video");
@@ -574,7 +460,6 @@ const createBackgroundVideo = () => {
   // 视频贴图使用基础材质，其他材质会被光照影响
   let stageBGVideoMat = new THREE.MeshBasicMaterial({
     color: 0xffffff,
-    // side: THREE.DoubleSide,
     map: stageBGVideoTexture, // 设置纹理贴图
   });
   const bigScreen = boothModel?.getObjectByName("屏幕") as THREE.Mesh;
@@ -583,28 +468,15 @@ const createBackgroundVideo = () => {
   bigScreen?.getWorldPosition(mirrorPosition);
 
   bigScreen.material = stageBGVideoMat;
-
-  // groundMirror.position.x = mirrorPosition.x;
-  // groundMirror.position.y = mirrorPosition.y + 0.4;
-  // groundMirror.position.z = mirrorPosition.z;
-  // scene.add(groundMirror);
-  // let stageBGVideoMeshLeft = new THREE.Mesh(stageBGVideoMat, stageBGVideoMat); // 网格模型对象Mesh
-  // stageBGVideoMeshLeft.position.set(-35, 0, 0);
-  // stageBGVideoMeshRight = stageBGVideoMeshLeft.clone();
-  // stageBGVideoMeshRight.position.set(35, 0, 0);
-  // stageBGVideoMeshGroup.add(stageBGVideoMeshLeft);
-  // stageBGVideoMeshGroup.add(stageBGVideoMeshRight);
 };
 
 const onSvgComplete = () => {
   svgCompleted.value = true;
-  // renderer.setAnimationLoop(render);
   init();
 };
 
 onMounted(() => {
   // init();
-  // initWebWorker();
 });
 
 // onBeforeUnmount(() => {
