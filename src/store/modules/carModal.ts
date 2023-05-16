@@ -1,13 +1,19 @@
 import { defineStore } from 'pinia'
-
-const useWindowControlStore = defineStore('windowControl', {
+import * as THREE from 'three';
+const useCarModalStore = defineStore('carModal', {
     state: () => {
         return {
-            colorWindow: {
-
-            }
+            carModal: {} as THREE.Object3D,
+            wheelStart: false, // 车轮动画,
+            source: {
+                texture: {
+                  textureFlare0: {} as THREE.Texture,
+                  textureFlare3: {} as THREE.Texture,
+                },
+              },
+              
         }
     },
 })
 
-export default useWindowControlStore
+export default useCarModalStore

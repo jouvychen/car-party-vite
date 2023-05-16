@@ -25,7 +25,7 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="ts" name="floatWindow">
 import $ from "jquery";
 import { MouseMove } from "./tools";
 import { PropType } from "vue";
