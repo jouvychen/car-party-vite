@@ -11,8 +11,17 @@ export const routes: Array<RouteRecordRaw> = [
       title: '首页',
     },
     name: 'index',
+    redirect: '/home',
     component: () => import(/* webpackChunkName: "about" */ '../views/index.vue'),
     children: [
+      {
+        path: '/home',
+        name: 'home',
+        meta: {
+          title: '首页',
+        },
+        component: () => import(/* webpackChunkName: "about" */ '@/views/home/index.vue'),
+      },
       {
         path: '/hello',
         name: 'hello',
@@ -20,20 +29,8 @@ export const routes: Array<RouteRecordRaw> = [
           title: '个人中心',
           icon: 'BarsOutlined',
         },
-        // redirect: '/personal-set/personal-msg',
         component: () => import(/* webpackChunkName: "about" */ '@/views/car-booth/index.vue'),
-        // children: [
-        //   {
-        //     path: '/personal-set/personal-msg',
-        //     name: 'personal-msg',
-        //     meta: {
-        //       title: '个人信息',
-        //     },
-        //     component: () => import(/* webpackChunkName: "about" */ '@/views/personal/basic-info.vue'),
-        //   },
-        // ],
       },
-      // ...systemModule,
     ],
   },
   {
