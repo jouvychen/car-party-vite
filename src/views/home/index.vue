@@ -22,37 +22,6 @@
             </div>
           </div>
         </div>
-        <!-- 底部按钮组 -->
-        <div class="product_btns" id="product_btns">
-          <div class="content">
-            <div class="btns_area">
-              <div class="btns_box" id="control_box">
-                <a
-                  href="#"
-                  target="_blank"
-                  class="btn_ipr btn_shoulei cur"
-                  title="懒人素材111"
-                  ><span class="ic_shoulei hide_txt png">懒人素材111</span></a
-                >
-                <a href="#" target="_blank" class="btn_xnet" title="懒人素材222"
-                  ><span class="ic_xnet hide_txt png">懒人素材222</span></a
-                >
-                <a
-                  href="#"
-                  target="_blank"
-                  class="btn_member"
-                  title="懒人素材333"
-                  ><span class="ic_member hide_txt png">懒人素材333</span></a
-                >
-                <a href="#" target="_blank" class="btn_xav" title="懒人素材444"
-                  ><span class="ic_xav hide_txt png">懒人素材444</span></a
-                >
-                <span class="ic_line" id="ic_line"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="rpt_bg png" id="rpt_bg"></div>
       </div>
     </div>
   </div>
@@ -95,14 +64,6 @@ onMounted(() => {
 const pageInit = () => {
   let $wrap = $("#wrap"),
     $pages = $("#product_list").find(".product_box"),
-    $controlBox = $("#control_box"),
-    $productBtns = $("#product_btns"),
-    $controls = $controlBox.find("a"),
-    $icLine = $("#ic_line"),
-    $listTops = $("#list_top").find("li"),
-    $hSubnav = $("#h_subnav"),
-    $hSubDD = $hSubnav.find("dd"),
-    $hSdot = $("#h_sdot"),
     $footer = $("#footer"),
     $bgs = $pages.find(".bg_box img"),
     $mainBoxs = $pages.find(".main_box"),
@@ -116,9 +77,6 @@ const pageInit = () => {
     dur: 3500,
     cNum: 0,
   };
-  let aDD =
-    $controls.eq(0).width() +
-    parseInt($controls.eq(0).css("margin-right").slice(0, -2)) * 2;
   let cId;
   let isCss3 = (function () {
     let style = document.createElement("div").style;
@@ -195,7 +153,6 @@ const pageInit = () => {
           .find(".content")
           .attr("class", "content " + cls);
       }
-      $productBtns.find(".content").attr("class", "content " + cls);
     } else {
       switch (true) {
         case w >= 1600: {
@@ -222,9 +179,6 @@ const pageInit = () => {
         location.reload();
       wrap.className = "wrap " + cls;
     }
-    aDD =
-      $controls.eq(0).width() +
-      parseInt($controls.eq(0).css("margin-right").slice(0, -2)) * 2;
   };
   $(window).resize(resize);
   resize();
@@ -236,10 +190,7 @@ const pageInit = () => {
       data.cNum++;
       clearInterval(cId);
       idx = idx == -1 ? data.pLength - 1 : idx;
-      $controls.removeClass("cur").eq(idx).addClass("cur");
       $pages.eq(data.curP).css({ zIndex: 0 });
-      $icLine.css({ left: aDD * idx });
-      // $footer.attr("class","footer f_color"+data.fColor[idx]);
       $pages
         .eq(idx)
         .addClass("show")
@@ -258,15 +209,6 @@ const pageInit = () => {
         });
     }
   };
-  $controls.on("mouseenter", function () {
-    data.isCan = true;
-    pageChange($controls.index(this));
-    $icLine.css({ left: aDD * $controls.index(this) });
-    data.isOnbtn = true;
-  });
-  $controls.on("mouseleave", function () {
-    data.isOnbtn = false;
-  });
 
   let isBottom = false;
   let bAni;
@@ -275,7 +217,6 @@ const pageInit = () => {
       isBottom = false;
       if (bAni) clearTimeout(bAni), (bAni = null);
       $footer.removeClass("show");
-      $productBtns.removeClass("show");
       $rptBg.removeClass("show");
     }
   };
@@ -283,7 +224,6 @@ const pageInit = () => {
     if (!isBottom) {
       isBottom = true;
       $footer.addClass("show");
-      $productBtns.addClass("show");
       $rptBg.addClass("show");
       if (bAni) clearTimeout(bAni);
       bAni = setTimeout(bottomHide, 2000);
@@ -494,75 +434,6 @@ const pageInit = () => {
 }
 
 // all
-/*
-author:chenlijian;
-design:huangjunkai;
-update:2015-10-16;
-*/
-html {
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-}
-body {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-  font: 12px/1.5 tahoma, arial, \5FAE\8F6F\96C5\9ED1, sans-serif;
-  font-family: "Microsoft YaHei", "微软雅黑", tahoma, arial, simsun, "宋体";
-  background: #000;
-}
-body,
-div,
-p,
-ul,
-ol,
-li,
-dl,
-dt,
-dd,
-h1,
-h2,
-h3,
-h4,
-p,
-table,
-input {
-  margin: 0;
-  padding: 0;
-  font-weight: normal;
-}
-table {
-  width: auto;
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-li {
-  list-style: none;
-  vertical-align: bottom;
-}
-em,
-i {
-  font-style: normal;
-}
-a {
-  outline: none;
-  text-decoration: none;
-  transition: color 0.3s, opacity 0.3s, transform 0.3s;
-  -webkit-transition: color 0.3s, opacity 0.3s, transform 0.3s;
-}
-a:hover {
-  outline: none;
-  text-decoration: underline;
-}
-img {
-  border: 0;
-}
-.hidden {
-  display: none;
-}
 .hide_txt {
   text-indent: -9999em;
   font-size: 0;
@@ -709,117 +580,25 @@ img {
   position: absolute;
 }
 .btn_product {
-  position: absolute;
-  top: 50%;
+  font-size: 18px;
+  padding: 8px 12px;
+  position: fixed;
+  transform: translate(-50%, 85%);
+  top: 85%;
   left: 50%;
+  color: #ffffff;
   text-align: center;
   border-width: 1px;
   border-style: solid;
-  transition: transform 0.3s;
-  -webkit-transition: transform 0.3s;
 }
 .btn_product:hover {
   text-decoration: none;
-  transform: scale(1.04);
-  -webkit-transform: scale(1.04);
+  transform: translate(-50%, 85%) scale(1.02);
+  -webkit-transform: translate(-50%, 85%) scale(1.02);
 }
 .product_box.show h2 {
   animation: tt_effect 0.6s 0.3s linear both;
   -webkit-animation: tt_effect 0.6s 0.3s linear both;
-}
-.product_box.show .btn_product {
-  animation: opacity 0.5s 1s linear both;
-  -webkit-animation: opacity 0.5s 1s linear both;
-}
-
-.shoulei .btn_product {
-  border-color: #ffffff;
-  color: #ffffff;
-}
-
-.xnet .btn_product {
-  border-color: #88b1eb;
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
-}
-
-.member .btn_product {
-  border-color: #b3a38b;
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
-}
-
-.xkn .btn_product {
-  border-color: #7e7a60;
-  border-color: rgba(0, 0, 0, 0.5);
-  color: #000;
-}
-
-.xav .btn_product {
-  border-color: #a1b3cb;
-  border-color: rgba(255, 255, 255, 0.5);
-  color: #fff;
-}
-
-.product_btns {
-  position: absolute;
-  width: 100%;
-  bottom: 35px;
-  z-index: 6;
-  transition: bottom 0.3s;
-  -webkit-transition: bottom 0.3s;
-  z-index: 10;
-}
-.product_btns.show {
-  bottom: 100px;
-}
-.product_btns .content {
-  width: 1000px;
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  margin-left: -500px;
-}
-.product_btns .btns_area {
-  margin: 0 auto;
-  border-bottom: 3px solid #92a0b4;
-  border-color: rgba(255, 255, 255, 0.2);
-}
-.product_btns .btns_box {
-  position: absolute;
-  width: auto;
-  height: 84px;
-  top: 3px;
-  font-size: 0;
-  line-height: 0;
-}
-.product_btns .btns_box a {
-  display: inline-block;
-  // +display: inline;
-
-  position: relative;
-}
-.product_btns .btns_box a span {
-  display: block;
-  background-repeat: no-repeat;
-  cursor: pointer;
-  position: absolute;
-  top: 0;
-  left: 50%;
-}
-.product_btns .btns_box a:hover,
-.product_btns .btns_box a.cur {
-  background: url(about:blank);
-}
-
-.product_btns .ic_line {
-  position: absolute;
-  height: 3px;
-  background: #fff;
-  left: 0;
-  bottom: 0;
-  transition: left 0.3s;
-  -webkit-transition: left 0.3s;
 }
 
 .rpt_bg {
@@ -841,25 +620,15 @@ img {
 }
 
 /*big size*/
-.big_view .btn_product {
-  margin-left: -75px;
-  width: 148px;
-  height: 40px;
-  line-height: 40px;
-  font-size: 18px;
-}
 
 .big_view .shoulei h2 {
   width: 900px;
   height: 140px;
-  margin: -400px 0 0 -415px;
+  margin: -360px 0 0 -415px;
   background-image: url("@/assets/images/home/ic_l/Lamborghini-Centenario01.png");
 }
 .big_view.xbig .shoulei h2 {
   background-image: url("@/assets/images/home/ic_xl/Lamborghini-Centenario01.png");
-}
-.big_view .shoulei .btn_product {
-  margin-top: -220px;
 }
 
 .big_view .xnet h2 {
@@ -871,9 +640,6 @@ img {
 .big_view.xbig .xnet h2 {
   background-image: url("@/assets/images/home/ic_xl/Lamborghini-Centenario02.png");
 }
-.big_view .xnet .btn_product {
-  margin-top: -20px;
-}
 
 .big_view .member h2 {
   width: 750px;
@@ -884,22 +650,6 @@ img {
 .big_view.xbig .member h2 {
   background-image: url("@/assets/images/home/ic_xl/Lamborghini-Centenario03.png");
 }
-.big_view .member .btn_product {
-  margin-top: -186px;
-}
-
-// .big_view .xkn h2 {
-//   width: 604px;
-//   height: 62px;
-//   margin: -275px 0 0 -302px;
-//   background-image: url("@/assets/images/home/ic_l/Lamborghini-Centenario04.png");
-// }
-// .big_view.xbig .xkn h2 {
-//   background-image: url("@/assets/images/home/ic_xl/Lamborghini-Centenario04.png");
-// }
-// .big_view .xkn .btn_product {
-//   margin-top: -182px;
-// }
 
 .big_view .xav h2 {
   width: 780px;
@@ -910,68 +660,7 @@ img {
 .big_view.xbig .xav h2 {
   background-image: url("@/assets/images/home/ic_xl/Lamborghini-Centenario04.png");
 }
-.big_view .xav .btn_product {
-  margin-top: 80px;
-}
 
-.big_view .product_btns .btns_area {
-  width: 371px;
-  _width: 373px;
-  height: 84px;
-}
-.big_view .product_btns .btns_box {
-  height: 84px;
-}
-.big_view .product_btns .btns_box a {
-  width: 70px;
-  height: 84px;
-  margin: 0 15px;
-}
-.big_view .product_btns .btns_box a span {
-  height: 68px;
-  background-image: url("@/assets/images/home/ic_l/ic_spr.png");
-}
-.big_view .product_btns .btns_box a:hover span,
-.big_view .product_btns .btns_box a.cur span {
-  _height: 69px;
-}
-.big_view .product_btns .ic_line {
-  width: 70px;
-}
-.big_view .product_btns .btns_box .btn_ipr {
-  margin: 0 15px 0 0;
-}
-.big_view .product_btns .btns_box .btn_xav {
-  margin: 0 0 0 15px;
-}
-
-.big_view .ic_shoulei {
-  background-position: 0 0;
-  width: 61px;
-  margin-left: -30px;
-}
-.big_view a:hover .ic_shoulei,
-.big_view a.cur .ic_shoulei {
-  background-position: 0 -108px;
-}
-.big_view .ic_xnet {
-  background-position: -106px 0;
-  width: 65px;
-  margin-left: -32px;
-}
-.big_view a:hover .ic_xnet,
-.big_view a.cur .ic_xnet {
-  background-position: -106px -108px;
-}
-.big_view .ic_member {
-  background-position: -224px 0;
-  width: 48px;
-  margin-left: -24px;
-}
-.big_view a:hover .ic_member,
-.big_view a.cur .ic_member {
-  background-position: -224px -108px;
-}
 .big_view .ic_xkn {
   background-position: -318px 0;
   width: 55px;
@@ -980,15 +669,6 @@ img {
 .big_view a:hover .ic_xkn,
 .big_view a.cur .ic_xkn {
   background-position: -318px -108px;
-}
-.big_view .ic_xav {
-  background-position: -406px 0;
-  width: 55px;
-  margin-left: -27px;
-}
-.big_view a:hover .ic_xav,
-.big_view a.cur .ic_xav {
-  background-position: -406px -108px;
 }
 .big_view .ic_ipr {
   background-position: -522px 0;
@@ -1001,22 +681,12 @@ img {
 }
 
 /*mid size*/
-.mid_view .btn_product {
-  margin-left: -60px;
-  width: 118px;
-  height: 32px;
-  line-height: 32px;
-  font-size: 14px;
-}
 
 .mid_view .shoulei h2 {
   width: 345px;
   height: 78px;
   margin: -286px 0 0 -173px;
   background-image: url("@/assets/images/home/ic_m/Lamborghini-Centenario01.png");
-}
-.mid_view .shoulei .btn_product {
-  margin-top: -176px;
 }
 
 .mid_view .xnet h2 {
@@ -1025,9 +695,6 @@ img {
   margin: -211px 0 0 -27px;
   background-image: url("@/assets/images/home/ic_m/Lamborghini-Centenario02.png");
 }
-.mid_view .xnet .btn_product {
-  margin-top: 143px;
-}
 
 .mid_view .member h2 {
   width: 371px;
@@ -1035,18 +702,11 @@ img {
   margin: -230px 0 0 -185px;
   background-image: url("@/assets/images/home/ic_m/Lamborghini-Centenario03.png");
 }
-.mid_view .member .btn_product {
-  margin-top: -149px;
-}
-
 .mid_view .xkn h2 {
   width: 483px;
   height: 50px;
   margin: -220px 0 0 -241px;
   background-image: url("@/assets/images/home/ic_m/Lamborghini-Centenario04.png");
-}
-.mid_view .xkn .btn_product {
-  margin-top: -146px;
 }
 
 .mid_view .xav h2 {
@@ -1055,113 +715,14 @@ img {
   margin: -288px 0 0 -203px;
   background-image: url("@/assets/images/home/ic_m/Lamborghini-Centenario04.png");
 }
-.mid_view .xav .btn_product {
-  margin-top: -224px;
-}
-
-.mid_view .product_btns .btns_area {
-  width: 298px;
-  _width: 299px;
-  height: 68px;
-}
-.mid_view .product_btns .btns_box {
-  height: 68px;
-}
-.mid_view .product_btns .btns_box a {
-  width: 56px;
-  height: 68px;
-  margin: 0 12px;
-}
-.mid_view .product_btns .btns_box a span {
-  height: 55px;
-  background-image: url("@/assets/images/home/ic_m/ic_spr.png");
-}
-.mid_view .product_btns .btns_box a:hover span,
-.mid_view .product_btns .btns_box a.cur span {
-  _height: 56px;
-}
-.mid_view .product_btns .ic_line {
-  width: 56px;
-}
-.mid_view .product_btns .btns_box .btn_ipr {
-  margin: 0 12px 0 0;
-}
-.mid_view .product_btns .btns_box .btn_xav {
-  margin: 0 0 0 12px;
-}
-
-.mid_view .ic_shoulei {
-  background-position: 0 0;
-  width: 49px;
-  margin-left: -25px;
-}
-.mid_view a:hover .ic_shoulei,
-.mid_view a.cur .ic_shoulei {
-  background-position: 0 -87px;
-}
-.mid_view .ic_xnet {
-  background-position: -84px 0;
-  width: 53px;
-  margin-left: -27px;
-}
-.mid_view a:hover .ic_xnet,
-.mid_view a.cur .ic_xnet {
-  background-position: -84px -87px;
-}
-.mid_view .ic_member {
-  background-position: -178px 0;
-  width: 40px;
-  margin-left: -20px;
-}
-.mid_view a:hover .ic_member,
-.mid_view a.cur .ic_member {
-  background-position: -178px -87px;
-}
-.mid_view .ic_xkn {
-  background-position: -254px 0;
-  width: 45px;
-  margin-left: -23px;
-}
-.mid_view a:hover .ic_xkn,
-.mid_view a.cur .ic_xkn {
-  background-position: -254px -87px;
-}
-.mid_view .ic_xav {
-  background-position: -324px 0;
-  width: 45px;
-  margin-left: -23px;
-}
-.mid_view a:hover .ic_xav,
-.mid_view a.cur .ic_xav {
-  background-position: -324px -87px;
-}
-.mid_view .ic_ipr {
-  background-position: -417px 0;
-  width: 33px;
-  margin-left: -17px;
-}
-.mid_view a:hover .ic_ipr,
-.mid_view a.cur .ic_ipr {
-  background-position: -417px -87px;
-}
 
 /*small size*/
-.small_view .btn_product {
-  margin-left: -48px;
-  width: 94px;
-  height: 26px;
-  line-height: 26px;
-  font-size: 11px;
-}
 
 .small_view .shoulei h2 {
   width: 276px;
   height: 62px;
   margin: -229px 0 0 -138px;
   background-image: url("@/assets/images/home/ic_s/Lamborghini-Centenario01.png");
-}
-.small_view .shoulei .btn_product {
-  margin-top: -141px;
 }
 
 .small_view .xnet h2 {
@@ -1170,18 +731,12 @@ img {
   margin: -169px 0 0 -22px;
   background-image: url("@/assets/images/home/ic_s/Lamborghini-Centenario02.png");
 }
-.small_view .xnet .btn_product {
-  margin-top: 115px;
-}
 
 .small_view .member h2 {
   width: 297px;
   height: 47px;
   margin: -184px 0 0 -148px;
   background-image: url("@/assets/images/home/ic_s/Lamborghini-Centenario03.png");
-}
-.small_view .member .btn_product {
-  margin-top: -119px;
 }
 
 .small_view .xkn h2 {
@@ -1190,9 +745,6 @@ img {
   margin: -176px 0 0 -193px;
   background-image: url("@/assets/images/home/ic_s/Lamborghini-Centenario04.png");
 }
-.small_view .xkn .btn_product {
-  margin-top: -117px;
-}
 
 .small_view .xav h2 {
   width: 325px;
@@ -1200,68 +752,7 @@ img {
   margin: -230px 0 0 -162px;
   background-image: url("@/assets/images/home/ic_s/Lamborghini-Centenario04.png");
 }
-.small_view .xav .btn_product {
-  margin-top: -179px;
-}
 
-.small_view .product_btns .btns_area {
-  width: 306px;
-  _width: 309px; /*width: 242px;_width: 243px;*/
-  height: 54px;
-}
-.small_view .product_btns .btns_box {
-  height: 54px;
-}
-.small_view .product_btns .btns_box a {
-  width: 45px;
-  height: 54px;
-  margin: 0 10px;
-}
-.small_view .product_btns .btns_box a span {
-  height: 44px;
-  background-image: url("@/assets/images/home/ic_s/ic_spr.png");
-}
-.small_view .product_btns .btns_box a:hover span,
-.small_view .product_btns .btns_box a.cur span {
-  _height: 45px;
-}
-.small_view .product_btns .ic_line {
-  width: 45px;
-}
-.small_view .product_btns .btns_box .btn_ipr {
-  margin: 0 10px 0 0;
-}
-.small_view .product_btns .btns_box .btn_xav {
-  margin: 0 0 0 10px;
-}
-
-.small_view .ic_shoulei {
-  background-position: 0 0;
-  width: 39px;
-  margin-left: -20px;
-}
-.small_view a:hover .ic_shoulei,
-.small_view a.cur .ic_shoulei {
-  background-position: 0 -69px;
-}
-.small_view .ic_xnet {
-  background-position: -67px 0;
-  width: 43px;
-  margin-left: -22px;
-}
-.small_view a:hover .ic_xnet,
-.small_view a.cur .ic_xnet {
-  background-position: -67px -69px;
-}
-.small_view .ic_member {
-  background-position: -143px 0;
-  width: 32px;
-  margin-left: -15px;
-}
-.small_view a:hover .ic_member,
-.small_view a.cur .ic_member {
-  background-position: -143px -69px;
-}
 .small_view .ic_xkn {
   background-position: -203px 0;
   width: 36px;
@@ -1270,15 +761,6 @@ img {
 .small_view a:hover .ic_xkn,
 .small_view a.cur .ic_xkn {
   background-position: -203px -69px;
-}
-.small_view .ic_xav {
-  background-position: -259px 0;
-  width: 37px;
-  margin-left: -19px;
-}
-.small_view a:hover .ic_xav,
-.small_view a.cur .ic_xav {
-  background-position: -259px -69px;
 }
 .small_view .ic_ipr {
   background-position: -334px 0;
@@ -1514,8 +996,6 @@ img {
 
 .news_detail_sec .content {
   padding-top: 130px;
-}
-.news_sec .news_detail_wp {
 }
 .news_sec .news_detail_wp:hover {
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
