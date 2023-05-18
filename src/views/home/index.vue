@@ -15,7 +15,7 @@
             <div class="content">
               <div class="main_box">
                 <h2 class="hide_txt png">这里由文字改成图片显示</h2>
-                <a class="btn_product" @click="router.push('/hello')"
+                <a class="btn_product" @click="router.push('/lamborghini')"
                   >开启3D体验</a
                 >
               </div>

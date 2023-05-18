@@ -23,13 +23,12 @@ export const routes: Array<RouteRecordRaw> = [
         component: () => import(/* webpackChunkName: "about" */ '@/views/home/index.vue'),
       },
       {
-        path: '/hello',
-        name: 'hello',
+        path: '/lamborghini',
+        name: 'lamborghini',
         meta: {
-          title: '个人中心',
-          icon: 'BarsOutlined',
+          title: 'Lamborghini',
         },
-        component: () => import(/* webpackChunkName: "about" */ '@/views/car-booth/index.vue'),
+        component: () => import(/* webpackChunkName: "about" */ '@/views/lamborghini/index.vue'),
       },
     ],
   },
