@@ -2,7 +2,7 @@
   <div class="car-booth">
     <div v-show="loadManager.showMask" class="loading">
       <three-js-font-svg @onSvgComplete="onSvgComplete"></three-js-font-svg>
-      
+
       <a-progress
         v-if="svgCompleted && loadManager.schedule !== 100"
         :stroke-color="{
@@ -16,12 +16,25 @@
         :showInfo="false"
       />
 
-      <a-button
+      <!-- <a-button
         v-if="loadManager.schedule === 100"
         style="position: absolute"
         @click="onPlay"
         >开始探索</a-button
+      > -->
+      <div
+        v-if="loadManager.schedule === 100"
+        @click="onPlay"
+        class="neon-button"
       >
+        <a @click="onPlay">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          开始探索
+        </a>
+      </div>
     </div>
 
     <revolver :revolver-list="revolverList"></revolver>
@@ -42,7 +55,13 @@
       ></material-control>
 
       <!-- 动画控制面板 -->
-      <animation-control v-if="o.name === '动画'" :float-window="o" :boothModel="boothModel" :carModel="carModel" :hdrTexture="hdrTexture">
+      <animation-control
+        v-if="o.name === '动画'"
+        :float-window="o"
+        :boothModel="boothModel"
+        :carModel="carModel"
+        :hdrTexture="hdrTexture"
+      >
       </animation-control>
 
       <!-- 性能指标面板 -->
@@ -122,7 +141,11 @@ import materialControl from "../control-window/material-control.vue";
 /**
  * 状态仓库
  */
-import { useBoothModalStore, useCarModalStore, useThreejsModuleStore } from "@/store";
+import {
+  useBoothModalStore,
+  useCarModalStore,
+  useThreejsModuleStore,
+} from "@/store";
 const boothStore = useBoothModalStore();
 const carStore = useCarModalStore();
 const threejsModule = useThreejsModuleStore();
@@ -147,9 +170,6 @@ let videoSource: HTMLVideoElement;
 let boothModel: THREE.Object3D | null = null; // 展台
 let carModel: THREE.Object3D | null = null;
 const wheels: THREE.Object3D[] = [];
-
-
-
 
 const entranceAnimations = new EntranceAnimations();
 
@@ -265,7 +285,9 @@ const init = async () => {
       loadManager.value.schedule = 100;
     } else {
       // 不用这里的total是因为模型压缩成bin解压后资源数量会变化
-      loadManager.value.schedule = Math.floor((loaded / loadManager.value.total) * 100);
+      loadManager.value.schedule = Math.floor(
+        (loaded / loadManager.value.total) * 100
+      );
     }
   };
 
@@ -334,7 +356,7 @@ const init = async () => {
 /**
  * 展厅灯光管理
  */
- const createLight = () => {
+const createLight = () => {
   // WellLeft.001
   // Top.001
   const Top = scene.getObjectByName("Top001");
@@ -369,7 +391,7 @@ const init = async () => {
 /**
  * GUI控制面板
  */
- const createGUIFun = () => {
+const createGUIFun = () => {
   const infoContainer = document.getElementById(
     "gui-container"
   ) as HTMLDivElement;
@@ -407,7 +429,7 @@ const render = () => {
   carStore.wheelStart && startWheel(time);
 
   renderer.render(scene, camera);
-}
+};
 
 const startWheel = (time: number) => {
   for (let i = 0; i < wheels.length; i++) {
@@ -534,5 +556,115 @@ onMounted(() => {
 // 禁用鼠标
 .disabled {
   cursor: not-allowed;
+}
+
+.neon-button {
+  position: absolute;
+
+  a {
+    position: relative;
+    display: inline-block;
+    padding: 10px 20px;
+    color: #94deeb;
+    font-size: 16px;
+    text-decoration: none;
+    text-transform: uppercase;
+    overflow: hidden;
+    transition: 0.5s;
+    margin-top: 40px;
+    letter-spacing: 4px;
+
+    &:hover {
+      background: #94deeb;
+      color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 5px #94deeb, 0 0 25px #94deeb, 0 0 50px #94deeb,
+        0 0 100px #94deeb;
+    }
+
+    span {
+      position: absolute;
+      display: block;
+
+      &:nth-child(1) {
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #94deeb);
+        animation: btn-anim1 1s linear infinite;
+      }
+
+      &:nth-child(2) {
+        top: -100%;
+        right: 0;
+        width: 2px;
+        height: 100%;
+        background: linear-gradient(180deg, transparent, #94deeb);
+        animation: btn-anim2 1s linear infinite;
+        animation-delay: 0.25s;
+      }
+
+      &:nth-child(3) {
+        bottom: 0;
+        right: -100%;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(270deg, transparent, #94deeb);
+        animation: btn-anim3 1s linear infinite;
+        animation-delay: 0.5s;
+      }
+
+      &:nth-child(4) {
+        bottom: -100%;
+        left: 0;
+        width: 2px;
+        height: 100%;
+        background: linear-gradient(360deg, transparent, #94deeb);
+        animation: btn-anim4 1s linear infinite;
+        animation-delay: 0.75s;
+      }
+    }
+  }
+
+  @keyframes btn-anim1 {
+    0% {
+      left: -100%;
+    }
+    50%,
+    100% {
+      left: 100%;
+    }
+  }
+
+  @keyframes btn-anim2 {
+    0% {
+      top: -100%;
+    }
+    50%,
+    100% {
+      top: 100%;
+    }
+  }
+
+  @keyframes btn-anim3 {
+    0% {
+      right: -100%;
+    }
+    50%,
+    100% {
+      right: 100%;
+    }
+  }
+
+  @keyframes btn-anim4 {
+    0% {
+      bottom: -100%;
+    }
+    50%,
+    100% {
+      bottom: 100%;
+    }
+  }
 }
 </style>

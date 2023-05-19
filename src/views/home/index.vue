@@ -15,7 +15,10 @@
             <div class="content">
               <div class="main_box">
                 <h2 class="hide_txt png">这里由文字改成图片显示</h2>
-                <a class="btn_product" @click="router.push('/lamborghini')"
+                <a
+                  v-show="!jumped"
+                  class="custom-btn btn-gradient-green"
+                  @click="onPushLamborghini"
                   >开启3D体验</a
                 >
               </div>
@@ -58,7 +61,14 @@ const bannerList = [
   },
 ];
 
+const jumped = ref(false);
+const onPushLamborghini = () => {
+  jumped.value = true;
+  router.push("/lamborghini");
+};
+
 onMounted(() => {
+  jumped.value = false;
   pageInit();
 });
 const pageInit = () => {
@@ -596,6 +606,94 @@ const pageInit = () => {
   transform: translate(-50%, 85%) scale(1.02);
   -webkit-transform: translate(-50%, 85%) scale(1.02);
 }
+
+.custom-btn {
+  width: 130px;
+  height: 40px;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px 25px;
+  font-family: "Lato", sans-serif;
+  font-weight: 500;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  // position: relative;
+  display: inline-block;
+  box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+    7px 7px 20px 0px rgba(0, 0, 0, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+  outline: none;
+
+  position: fixed;
+  transform: translate(-50%, 85%);
+  top: 85%;
+  left: 50%;
+}
+
+.btn-gradient-green {
+  background-color: #4dccc6;
+  background-image: linear-gradient(315deg, #4dccc6 0%, #96e4df 74%);
+  line-height: 42px;
+  padding: 0;
+  border: none;
+}
+.btn-gradient-green:hover {
+  background-color: #89d8d3;
+  background-image: linear-gradient(315deg, #89d8d3 0%, #03c8a8 74%);
+  transform: translate(-50%, 85%) scale(1.05);
+  -webkit-transform: translate(-50%, 85%) scale(1.05);
+}
+.btn-gradient-green span {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.btn-gradient-green:before,
+.btn-gradient-green:after {
+  position: absolute;
+  content: "";
+  right: 0;
+  top: 0;
+  box-shadow: 4px 4px 6px 0 rgba(255, 255, 255, 0.9),
+    -4px -4px 6px 0 rgba(116, 125, 136, 0.2),
+    inset -4px -4px 6px 0 rgba(255, 255, 255, 0.9),
+    inset 4px 4px 6px 0 rgba(116, 125, 136, 0.3);
+  transition: all 0.3s ease;
+}
+.btn-gradient-green:hover:before {
+  height: 100%;
+}
+.btn-gradient-green:hover:after {
+  width: 100%;
+}
+.btn-gradient-green span:before,
+.btn-gradient-green span:after {
+  position: absolute;
+  content: "";
+  left: 0;
+  bottom: 0;
+  box-shadow: 4px 4px 6px 0 rgba(255, 255, 255, 0.9),
+    -4px -4px 6px 0 rgba(116, 125, 136, 0.2),
+    inset -4px -4px 6px 0 rgba(255, 255, 255, 0.9),
+    inset 4px 4px 6px 0 rgba(116, 125, 136, 0.3);
+  transition: all 0.3s ease;
+}
+.btn-gradient-green span:before {
+  width: 0.1px;
+  height: 0%;
+}
+.btn-gradient-green span:after {
+  width: 0%;
+  height: 0.1px;
+}
+.btn-gradient-green span:hover:before {
+  height: 100%;
+}
+.btn-gradient-green span:hover:after {
+  width: 100%;
+}
+
 .product_box.show h2 {
   animation: tt_effect 0.6s 0.3s linear both;
   -webkit-animation: tt_effect 0.6s 0.3s linear both;

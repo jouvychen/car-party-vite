@@ -27,6 +27,7 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'lamborghini',
         meta: {
           title: 'Lamborghini',
+          keepAlive:  true,
         },
         component: () => import(/* webpackChunkName: "about" */ '@/views/lamborghini/index.vue'),
       },
