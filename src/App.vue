@@ -3,13 +3,26 @@
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import { useLocale } from "@/locales/useLocale";
+import { View } from "@/utils/interface";
 dayjs.locale("zh-cn");
 // support Multi-language
 const { getAntdLocale } = useLocale();
 
-import { useStoreApp } from "@/store";
+import { useStoreApp, useStoreCache } from "@/store";
 const storeApp = useStoreApp();
+const storeCache = useStoreCache();
 const loading = computed(() => storeApp.loading);
+const route = useRoute();
+watch(
+  () => route,
+  () => {
+    storeCache.addCachedView(route as unknown as View);
+  },
+  {
+    immediate: true,
+    deep: true,
+  }
+);
 </script>
 
 <template>

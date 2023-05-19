@@ -7,4 +7,16 @@ interface ObjectKeys {
     [key: string]: any;
   }
 
-export type { Position, ObjectKeys }
+  interface State {
+    cachedViews: string[]
+  }
+  interface View {
+    name: string,
+    meta: {
+      title: string,
+      keepAlive: boolean,
+    },
+    [key: string]: any;
+  }
+
+export type { Position, ObjectKeys, State, View }

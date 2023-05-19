@@ -83,3 +83,17 @@ https://sudhir9297.github.io/misfit-product/
 ts里使用webWorker报：Cannot use import statement outside a module
 new worker时添加: { type: "module" } as any
 new Worker(new URL("./worker/script.ts", import.meta.url), { type: "module" } as any);
+
+@types/three选择149版本(仅做类型提示)
+
+自动导入：
+在vite.config文件下配置
+plugins: [
+  vue(),
+    AutoImport({
+      // 遇到Vue和useRoute之类的就不用手动导入了
+      imports: ['vue', 'vue-router'],
+      // 可以选择auto-import.d.ts生成的位置，使用ts建议设置为'src/auto-import.d.ts'
+      dts: 'src/auto-import.d.ts'
+  }),
+],
