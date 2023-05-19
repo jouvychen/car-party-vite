@@ -16,12 +16,6 @@
         :showInfo="false"
       />
 
-      <!-- <a-button
-        v-if="loadManager.schedule === 100"
-        style="position: absolute"
-        @click="onPlay"
-        >开始探索</a-button
-      > -->
       <div
         v-if="loadManager.schedule === 100"
         @click="onPlay"
@@ -116,6 +110,8 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper.js";
 import { Reflector } from "three/examples/jsm/objects/Reflector.js";
 import { createGUI, createLightGUI } from "./gui";
+import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { MeshBVH, MeshBVHVisualizer, StaticGeometryGenerator } from 'three-mesh-bvh';
 
 import {
   Lensflare,

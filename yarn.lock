@@ -1764,6 +1764,11 @@ tar@^6.1.13:
     mkdirp "^1.0.3"
     yallist "^4.0.0"
 
+three-mesh-bvh@^0.5.24:
+  version "0.5.24"
+  resolved "https://registry.npmmirror.com/three-mesh-bvh/-/three-mesh-bvh-0.5.24.tgz#56dd27ad35bfbafacedaba4a4d567723bbdd686c"
+  integrity sha512-VTIgfjz8aFoPKTQoMIQQv9jJD4ybFRZuKKE1/kqy78FQcuHQ0+iIWv7C5cSb2inlvs7bNMVY3yRx3RXGZfrvzQ==
+
 three@^0.145.0:
   version "0.145.0"
   resolved "https://registry.npmjs.org/three/-/three-0.145.0.tgz#a613d71e75effc2aed88be630027ca01e2b6502e"
