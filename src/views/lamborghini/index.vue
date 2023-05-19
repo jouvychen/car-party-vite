@@ -110,8 +110,13 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper.js";
 import { Reflector } from "three/examples/jsm/objects/Reflector.js";
 import { createGUI, createLightGUI } from "./gui";
-import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { MeshBVH, MeshBVHVisualizer, StaticGeometryGenerator } from 'three-mesh-bvh';
+import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
+import {
+  MeshBVH,
+  MeshBVHVisualizer,
+  StaticGeometryGenerator,
+} from "three-mesh-bvh";
 
 import {
   Lensflare,
@@ -168,6 +173,159 @@ let carModel: THREE.Object3D | null = null;
 const wheels: THREE.Object3D[] = [];
 
 const entranceAnimations = new EntranceAnimations();
+
+let environment: any;
+let collider: any;
+let visualizer: any;
+let clock: any;
+let player: any;
+let playerIsOnGround = false;
+let fwdPressed = false;
+let bkdPressed = false;
+let lftPressed = false;
+let rgtPressed = false;
+let playerVelocity = new THREE.Vector3();
+let upVector = new THREE.Vector3(0, 1, 0);
+let tempVector = new THREE.Vector3();
+let tempVector2 = new THREE.Vector3();
+let tempBox = new THREE.Box3();
+let tempMat = new THREE.Matrix4();
+let tempSegment = new THREE.Line3(
+  new THREE.Vector3(0, 0, 0),
+  new THREE.Vector3(0, 0, 0)
+);
+const params = {
+  firstPerson: false,
+
+  displayCollider: false,
+  displayBVH: false,
+  visualizeDepth: 10,
+  gravity: -30,
+  playerSpeed: 10,
+  physicsSteps: 5,
+
+  reset: reset,
+};
+
+function reset() {
+  playerVelocity.set(0, 0, 0);
+  player.position.set(4, 10, 0);
+  camera.position.sub(controls.target);
+  controls.target.copy(player.position);
+  camera.position.add(player.position);
+  controls.update();
+}
+
+function updatePlayer(delta: number) {
+  if (playerIsOnGround) {
+    playerVelocity.y = delta * params.gravity;
+  } else {
+    playerVelocity.y += delta * params.gravity;
+  }
+
+  player.position.addScaledVector(playerVelocity, delta);
+
+  // 移动玩家
+  const angle = controls.getAzimuthalAngle();
+  if (fwdPressed) {
+    tempVector.set(0, 0, -1).applyAxisAngle(upVector, angle);
+    player.position.addScaledVector(tempVector, params.playerSpeed * delta);
+  }
+
+  if (bkdPressed) {
+    tempVector.set(0, 0, 1).applyAxisAngle(upVector, angle);
+    player.position.addScaledVector(tempVector, params.playerSpeed * delta);
+  }
+
+  if (lftPressed) {
+    tempVector.set(-1, 0, 0).applyAxisAngle(upVector, angle);
+    player.position.addScaledVector(tempVector, params.playerSpeed * delta);
+  }
+
+  if (rgtPressed) {
+    tempVector.set(1, 0, 0).applyAxisAngle(upVector, angle);
+    player.position.addScaledVector(tempVector, params.playerSpeed * delta);
+  }
+
+  player.updateMatrixWorld();
+
+  // 根据碰撞调整球员位置
+  const capsuleInfo = player.capsuleInfo;
+  tempBox.makeEmpty();
+  tempMat.copy(collider.matrixWorld).invert();
+  tempSegment.copy(capsuleInfo.segment);
+
+  // 获得胶囊在碰撞器的局部空间中的位置
+  tempSegment.start.applyMatrix4(player.matrixWorld).applyMatrix4(tempMat);
+  tempSegment.end.applyMatrix4(player.matrixWorld).applyMatrix4(tempMat);
+
+  // 获取胶囊的轴对齐边界框
+  tempBox.expandByPoint(tempSegment.start);
+  tempBox.expandByPoint(tempSegment.end);
+
+  tempBox.min.addScalar(-capsuleInfo.radius);
+  tempBox.max.addScalar(capsuleInfo.radius);
+
+  collider.geometry.boundsTree.shapecast({
+    intersectsBounds: (box: any) => box.intersectsBox(tempBox),
+
+    intersectsTriangle: (tri: any) => {
+      // 检查三角形是否与胶囊相交，如果相交则调整胶囊位置。
+      const triPoint = tempVector;
+      const capsulePoint = tempVector2;
+
+      const distance = tri.closestPointToSegment(
+        tempSegment,
+        triPoint,
+        capsulePoint
+      );
+      if (distance < capsuleInfo.radius) {
+        const depth = capsuleInfo.radius - distance;
+        const direction = capsulePoint.sub(triPoint).normalize();
+
+        tempSegment.start.addScaledVector(direction, depth);
+        tempSegment.end.addScaledVector(direction, depth);
+      }
+    },
+  });
+
+  // 在检查三角形碰撞并移动后，获得胶囊碰撞器在世界空间中的调整位置。假设capsule . info .segment.start是玩家模型的原点。
+  const newPosition = tempVector;
+  newPosition.copy(tempSegment.start).applyMatrix4(collider.matrixWorld);
+
+  // 检查碰撞器移动了多少
+  const deltaVector = tempVector2;
+  deltaVector.subVectors(newPosition, player.position);
+
+  // 如果玩家主要是垂直调整，我们就会认为它是在地面上
+  playerIsOnGround = deltaVector.y > Math.abs(delta * playerVelocity.y * 0.25);
+
+  const offset = Math.max(0.0, deltaVector.length() - 1e-5);
+  deltaVector.normalize().multiplyScalar(offset);
+
+  // 调整玩家模型
+  player.position.add(deltaVector);
+
+  if (!playerIsOnGround) {
+    deltaVector.normalize();
+    playerVelocity.addScaledVector(
+      deltaVector,
+      -deltaVector.dot(playerVelocity)
+    );
+  } else {
+    playerVelocity.set(0, 0, 0);
+  }
+
+  // 调整摄像机
+  camera.position.sub(controls.target);
+  controls.target.copy(player.position);
+  camera.position.add(player.position);
+
+  // 如果玩家跌得太低，将他们的位置重置到起点
+  if (player.position.y < -25) {
+    reset();
+  }
+}
 
 /**
  * Threejs的文字svg动画
@@ -237,6 +395,49 @@ const init = async () => {
 
   window.addEventListener("resize", onWindowResize);
 
+  window.addEventListener("keydown", function (e) {
+    switch (e.code) {
+      case "KeyW":
+        fwdPressed = true;
+        break;
+      case "KeyS":
+        bkdPressed = true;
+        break;
+      case "KeyD":
+        rgtPressed = true;
+        break;
+      case "KeyA":
+        lftPressed = true;
+        break;
+      case "Space":
+        if (playerIsOnGround) {
+          playerVelocity.y = 10.0;
+          playerIsOnGround = false;
+        }
+
+        break;
+    }
+  });
+
+  window.addEventListener("keyup", function (e) {
+    switch (e.code) {
+      case "KeyW":
+        fwdPressed = false;
+        break;
+      case "KeyS":
+        bkdPressed = false;
+        break;
+      case "KeyD":
+        rgtPressed = false;
+        break;
+      case "KeyA":
+        lftPressed = false;
+        break;
+    }
+  });
+
+  clock = new THREE.Clock();
+
   camera = new THREE.PerspectiveCamera(
     40,
     window.innerWidth / window.innerHeight,
@@ -299,6 +500,86 @@ const init = async () => {
   carStore.source.texture.textureFlare0 = textureFlare0;
   carStore.source.texture.textureFlare3 = textureFlare3;
   carStore.carModal = gltf.scene;
+  const gltfScene = boothGltf.scene;
+
+  // 视觉几何设置
+  const toMerge: any = {};
+  gltfScene.traverse((c: THREE.Object3D) => {
+    // if (c.name === '顶部灯路') {
+    //   debugger
+    // }
+    if (c.isMesh && c.name === '顶部灯路') {
+      const hex = c.material.color.getHex();
+      toMerge[hex] = toMerge[hex] || [];
+      toMerge[hex].push(c);
+    }
+  });
+
+  environment = new THREE.Group();
+  for (const hex in toMerge) {
+    const arr = toMerge[hex];
+    let visualGeometries: any[] = [];
+    arr.forEach((mesh: THREE.Mesh) => {
+      if (mesh.material.emissive.r !== 0) {
+        environment.attach(mesh);
+      } else {
+        const geom = mesh.geometry.clone();
+        geom.applyMatrix4(mesh.matrixWorld);
+        visualGeometries.push(geom);
+      }
+    });
+
+    if (visualGeometries.length) {
+      const newGeom =
+        BufferGeometryUtils.mergeBufferGeometries(visualGeometries);
+      const newMesh = new THREE.Mesh(
+        newGeom,
+        new THREE.MeshStandardMaterial({ color: parseInt(hex), shadowSide: 2 })
+      );
+      newMesh.castShadow = true;
+      newMesh.receiveShadow = true;
+      newMesh.material.shadowSide = 2;
+
+      environment.add(newMesh);
+    }
+  }
+
+  const staticGenerator = new StaticGeometryGenerator(environment);
+  staticGenerator.attributes = ["position"];
+
+  const mergedGeometry = staticGenerator.generate();
+  mergedGeometry.boundsTree = new MeshBVH(mergedGeometry, {
+    lazyGeneration: false,
+  });
+
+  collider = new THREE.Mesh(mergedGeometry);
+  collider.material.wireframe = true;
+  collider.material.opacity = 0.5;
+  collider.material.transparent = true;
+
+  visualizer = new MeshBVHVisualizer(collider, params.visualizeDepth);
+  scene.add(visualizer);
+  scene.add(collider);
+  scene.add(environment);
+
+  // 人物胶囊
+  player = new THREE.Mesh(
+    new RoundedBoxGeometry(1.0, 2.0, 1.0, 10, 0.5),
+    new THREE.MeshStandardMaterial()
+  );
+  player.geometry.translate(0, -0.5, 0);
+  player.capsuleInfo = {
+    radius: 0.5,
+    segment: new THREE.Line3(
+      new THREE.Vector3(),
+      new THREE.Vector3(0, -1.0, 0.0)
+    ),
+  };
+  player.castShadow = true;
+  player.receiveShadow = true;
+  player.material.shadowSide = 2;
+  scene.add(player);
+  reset();
 
   hdrTexture = texture;
   scene.environment = texture;
@@ -419,6 +700,18 @@ const render = () => {
   controls.update();
   TWEEN.update();
   stats.update();
+
+  if (collider) {
+    const delta = Math.min(clock.getDelta(), 0.1);
+    collider.visible = params.displayCollider;
+    visualizer.visible = params.displayBVH;
+
+    const physicsSteps = params.physicsSteps;
+
+    for (let i = 0; i < physicsSteps; i++) {
+      updatePlayer(delta / physicsSteps);
+    }
+  }
 
   const time = -performance.now() / 1000;
 
