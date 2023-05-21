@@ -42,7 +42,7 @@ export const getImageUrl = (name:string)=>{
   return new URL(`../../assets/images/home/${name}`, import.meta.url).href;
 };
 
-export const getImageUrlRelative = (prefix: string, name: string) => {
+export const getAssetsUrlRelative = (prefix: string, name: string) => {
   return new URL(`${prefix}${name}`, import.meta.url).href;
 };
 

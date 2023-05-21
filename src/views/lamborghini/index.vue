@@ -124,8 +124,15 @@ import {
 } from "three/examples/jsm/objects/Lensflare.js";
 
 // 工具类导入
-import { debounce, uuid } from "@/utils/common";
+import { debounce, uuid, getAssetsUrlRelative } from "@/utils/common";
 import { EntranceAnimations } from "@/utils/entranceTweenClass";
+
+
+// 创建场景类导入
+import {CreateFlag} from '../function/createFlag';
+let flag : CreateFlag;
+import {CreatePromotionalFilm} from '../function/createPromotionalFilm';
+let promotionalFilm : CreatePromotionalFilm;
 
 // 常量导入
 import { revolverList } from "./constan";
@@ -371,7 +378,10 @@ const onPlay = () => {
     2400,
     () => {
       camera.position.set(4.25, 1.4, 4.5);
-      // videoSource.play();
+      // 播放视频
+      setTimeout(()=>{
+        promotionalFilm.onPlay();
+      }, 3000)
     }
   );
 };
@@ -462,6 +472,9 @@ const init = async () => {
   scene.background = new THREE.Color(0x333333);
   threejsModule.scene = scene;
 
+  flag = new CreateFlag(scene, camera, renderer);
+  flag.initFlag();
+
   const textureLoader = new THREE.TextureLoader();
   const rgbeLoader = new RGBELoader().setPath("/textures/equirectangular/");
   const gltfLoader = new GLTFLoader().setPath("/models/");
@@ -503,83 +516,80 @@ const init = async () => {
   const gltfScene = boothGltf.scene;
 
   // 视觉几何设置
-  const toMerge: any = {};
-  gltfScene.traverse((c: THREE.Object3D) => {
-    // if (c.name === '顶部灯路') {
-    //   debugger
-    // }
-    if (c.isMesh && c.name === '顶部灯路') {
-      const hex = c.material.color.getHex();
-      toMerge[hex] = toMerge[hex] || [];
-      toMerge[hex].push(c);
-    }
-  });
+  // const toMerge: any = {};
+  // gltfScene.traverse((c: THREE.Object3D) => {
+  //   if (c.isMesh && c.name === '顶部灯路') {
+  //     const hex = c.material.color.getHex();
+  //     toMerge[hex] = toMerge[hex] || [];
+  //     toMerge[hex].push(c);
+  //   }
+  // });
 
-  environment = new THREE.Group();
-  for (const hex in toMerge) {
-    const arr = toMerge[hex];
-    let visualGeometries: any[] = [];
-    arr.forEach((mesh: THREE.Mesh) => {
-      if (mesh.material.emissive.r !== 0) {
-        environment.attach(mesh);
-      } else {
-        const geom = mesh.geometry.clone();
-        geom.applyMatrix4(mesh.matrixWorld);
-        visualGeometries.push(geom);
-      }
-    });
+  // environment = new THREE.Group();
+  // for (const hex in toMerge) {
+  //   const arr = toMerge[hex];
+  //   let visualGeometries: any[] = [];
+  //   arr.forEach((mesh: THREE.Mesh) => {
+  //     if (mesh.material.emissive.r !== 0) {
+  //       environment.attach(mesh);
+  //     } else {
+  //       const geom = mesh.geometry.clone();
+  //       geom.applyMatrix4(mesh.matrixWorld);
+  //       visualGeometries.push(geom);
+  //     }
+  //   });
 
-    if (visualGeometries.length) {
-      const newGeom =
-        BufferGeometryUtils.mergeBufferGeometries(visualGeometries);
-      const newMesh = new THREE.Mesh(
-        newGeom,
-        new THREE.MeshStandardMaterial({ color: parseInt(hex), shadowSide: 2 })
-      );
-      newMesh.castShadow = true;
-      newMesh.receiveShadow = true;
-      newMesh.material.shadowSide = 2;
+  //   if (visualGeometries.length) {
+  //     const newGeom =
+  //       BufferGeometryUtils.mergeBufferGeometries(visualGeometries);
+  //     const newMesh = new THREE.Mesh(
+  //       newGeom,
+  //       new THREE.MeshStandardMaterial({ color: parseInt(hex), shadowSide: 2 })
+  //     );
+  //     newMesh.castShadow = true;
+  //     newMesh.receiveShadow = true;
+  //     newMesh.material.shadowSide = 2;
 
-      environment.add(newMesh);
-    }
-  }
+  //     environment.add(newMesh);
+  //   }
+  // }
 
-  const staticGenerator = new StaticGeometryGenerator(environment);
-  staticGenerator.attributes = ["position"];
+  // const staticGenerator = new StaticGeometryGenerator(environment);
+  // staticGenerator.attributes = ["position"];
 
-  const mergedGeometry = staticGenerator.generate();
-  mergedGeometry.boundsTree = new MeshBVH(mergedGeometry, {
-    lazyGeneration: false,
-  });
+  // const mergedGeometry = staticGenerator.generate();
+  // mergedGeometry.boundsTree = new MeshBVH(mergedGeometry, {
+  //   lazyGeneration: false,
+  // });
 
-  collider = new THREE.Mesh(mergedGeometry);
-  collider.material.wireframe = true;
-  collider.material.opacity = 0.5;
-  collider.material.transparent = true;
+  // collider = new THREE.Mesh(mergedGeometry);
+  // collider.material.wireframe = true;
+  // collider.material.opacity = 0.5;
+  // collider.material.transparent = true;
 
-  visualizer = new MeshBVHVisualizer(collider, params.visualizeDepth);
-  scene.add(visualizer);
-  scene.add(collider);
-  scene.add(environment);
+  // visualizer = new MeshBVHVisualizer(collider, params.visualizeDepth);
+  // scene.add(visualizer);
+  // scene.add(collider);
+  // scene.add(environment);
 
-  // 人物胶囊
-  player = new THREE.Mesh(
-    new RoundedBoxGeometry(1.0, 2.0, 1.0, 10, 0.5),
-    new THREE.MeshStandardMaterial()
-  );
-  player.geometry.translate(0, -0.5, 0);
-  player.capsuleInfo = {
-    radius: 0.5,
-    segment: new THREE.Line3(
-      new THREE.Vector3(),
-      new THREE.Vector3(0, -1.0, 0.0)
-    ),
-  };
-  player.castShadow = true;
-  player.receiveShadow = true;
-  player.material.shadowSide = 2;
-  scene.add(player);
-  reset();
+  // // 人物胶囊
+  // player = new THREE.Mesh(
+  //   new RoundedBoxGeometry(1.0, 2.0, 1.0, 10, 0.5),
+  //   new THREE.MeshStandardMaterial()
+  // );
+  // player.geometry.translate(0, -0.5, 0);
+  // player.capsuleInfo = {
+  //   radius: 0.5,
+  //   segment: new THREE.Line3(
+  //     new THREE.Vector3(),
+  //     new THREE.Vector3(0, -1.0, 0.0)
+  //   ),
+  // };
+  // player.castShadow = true;
+  // player.receiveShadow = true;
+  // player.material.shadowSide = 2;
+  // scene.add(player);
+  // reset();
 
   hdrTexture = texture;
   scene.environment = texture;
@@ -596,7 +606,7 @@ const init = async () => {
   scene.add(boothModel);
 
   // 创建视频
-  createBackgroundVideo();
+  promotionalFilm = new CreatePromotionalFilm(boothModel, '屏幕');
 
   /**
    * 创建镜子
@@ -695,23 +705,25 @@ const onChangeColor = (material: THREE.Material, array: string[]) => {
 const onChangeMaterial = () => {
   // console.log('打印', xxx);
 };
-
 const render = () => {
   controls.update();
   TWEEN.update();
   stats.update();
+  flag.flagUpdate();
 
-  if (collider) {
-    const delta = Math.min(clock.getDelta(), 0.1);
-    collider.visible = params.displayCollider;
-    visualizer.visible = params.displayBVH;
+  
 
-    const physicsSteps = params.physicsSteps;
+  // if (collider) {
+  //   const delta = Math.min(clock.getDelta(), 0.1);
+  //   collider.visible = params.displayCollider;
+  //   visualizer.visible = params.displayBVH;
 
-    for (let i = 0; i < physicsSteps; i++) {
-      updatePlayer(delta / physicsSteps);
-    }
-  }
+  //   const physicsSteps = params.physicsSteps;
+
+  //   for (let i = 0; i < physicsSteps; i++) {
+  //     updatePlayer(delta / physicsSteps);
+  //   }
+  // }
 
   const time = -performance.now() / 1000;
 
@@ -751,34 +763,6 @@ const onWindowResize = () => {
   calcBoundingBox();
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
-};
-
-/**
- * 创建视频
- */
-const createBackgroundVideo = () => {
-  // 舞台背景视频
-  videoSource = document.createElement("video");
-  videoSource.src = "/video/Lamborghini-Centenario-Lp-770-4.mp4";
-  videoSource.loop = true; //循环播放
-  // videoSource.oncanplaythrough = videoLoaded(); // 视频加载至一段时间内无卡顿播放执行
-
-  // video对象作为VideoTexture参数创建纹理对象
-  let stageBGVideoTexture = new THREE.VideoTexture(videoSource);
-  stageBGVideoTexture.center.set(0.5, 0.5); // 2项配合将texture沿X翻转和拉伸占满
-  stageBGVideoTexture.repeat.set(0.8, -0.9);
-  let stageBGVideoGeo = new THREE.PlaneGeometry(38, 19); // 矩形平面
-  // 视频贴图使用基础材质，其他材质会被光照影响
-  let stageBGVideoMat = new THREE.MeshBasicMaterial({
-    color: 0xffffff,
-    map: stageBGVideoTexture, // 设置纹理贴图
-  });
-  const bigScreen = boothModel?.getObjectByName("屏幕") as THREE.Mesh;
-
-  const mirrorPosition = new THREE.Vector3();
-  bigScreen?.getWorldPosition(mirrorPosition);
-
-  bigScreen.material = stageBGVideoMat;
 };
 
 const onSvgComplete = () => {
