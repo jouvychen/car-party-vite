@@ -42,6 +42,10 @@ export const getImageUrl = (name:string)=>{
   return new URL(`../../assets/images/home/${name}`, import.meta.url).href;
 };
 
+export const getImageUrlRelative = (prefix: string, name: string) => {
+  return new URL(`${prefix}${name}`, import.meta.url).href;
+};
+
 export const uuid = () => {
   const tempUrl = URL.createObjectURL(new Blob());
   const uuid = tempUrl.toString();
