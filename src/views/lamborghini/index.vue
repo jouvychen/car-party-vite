@@ -532,9 +532,11 @@ const init = async () => {
   // debugger;
   setTimeout(()=>{
     const imgList = [
-    'https://img-qn.51miz.com/preview/photo/00/01/55/49/P-1554956-E905CFB5.jpg',
-    'https://img-qn.51miz.com/preview/photo/00/01/57/32/P-1573277-268E2C0C.jpg',
-    'https://img-qn.51miz.com/preview/photo/00/01/60/10/P-1601019-51A36283.jpg',
+    // 'https://img-qn.51miz.com/preview/photo/00/01/55/49/P-1554956-E905CFB5.jpg',
+    // 'https://img-qn.51miz.com/preview/photo/00/01/57/32/P-1573277-268E2C0C.jpg',
+    // 'https://img-qn.51miz.com/preview/photo/00/01/60/10/P-1601019-51A36283.jpg',
+    '16pic_8211096_s.png',
+    'cat-1046343_960_720.jpg',
   ]
   const ppp = new WebglTransitions(scene, camera, renderer, testMesh, clock, [perlin], imgList);
 ppp.main();
