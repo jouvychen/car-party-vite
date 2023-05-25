@@ -133,6 +133,9 @@ let flag: CreateFlag;
 import { CreatePromotionalFilm } from "../function/createPromotionalFilm";
 let promotionalFilm: CreatePromotionalFilm;
 
+import { WebglTransitions } from './test';
+import { perlin } from './perlin';
+
 // 常量导入
 import { revolverList } from "./constan";
 
@@ -379,7 +382,7 @@ const onPlay = () => {
       camera.position.set(4.25, 1.4, 4.5);
       // 播放视频
       setTimeout(() => {
-        promotionalFilm.onPlay();
+        // promotionalFilm.onPlay();
       }, 3000);
     }
   );
@@ -521,9 +524,21 @@ const init = async () => {
 
   // 车
   carModel = gltf.scene;
-
+  
   // 展台
   boothModel = boothGltf.scene;
+  const testMesh = boothModel.getObjectByName('视频面版') as THREE.Mesh;
+
+  // debugger;
+  setTimeout(()=>{
+    const imgList = [
+    'https://img-qn.51miz.com/preview/photo/00/01/55/49/P-1554956-E905CFB5.jpg',
+    'https://img-qn.51miz.com/preview/photo/00/01/57/32/P-1573277-268E2C0C.jpg',
+    'https://img-qn.51miz.com/preview/photo/00/01/60/10/P-1601019-51A36283.jpg',
+  ]
+  const ppp = new WebglTransitions(scene, camera, renderer, testMesh, clock, [perlin], imgList);
+ppp.main();
+  }, 5000)
 
   // 设置展台材质
   // const glass = boothModel.getObjectByName("Glass") as THREE.Mesh;
