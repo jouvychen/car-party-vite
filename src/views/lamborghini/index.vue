@@ -127,12 +127,11 @@ import {
 import { debounce, uuid, getAssetsUrlRelative } from "@/utils/common";
 import { EntranceAnimations } from "@/utils/entranceTweenClass";
 
-
 // 创建场景类导入
-import {CreateFlag} from '../function/createFlag';
-let flag : CreateFlag;
-import {CreatePromotionalFilm} from '../function/createPromotionalFilm';
-let promotionalFilm : CreatePromotionalFilm;
+import { CreateFlag } from "../function/createFlag";
+let flag: CreateFlag;
+import { CreatePromotionalFilm } from "../function/createPromotionalFilm";
+let promotionalFilm: CreatePromotionalFilm;
 
 // 常量导入
 import { revolverList } from "./constan";
@@ -344,7 +343,7 @@ const loadManager = ref({
   schedule: 0,
   success: false,
   showMask: true,
-  total: 20, // 总共加载的资源数(从默认加载器得知)
+  total: 23, // 总共加载的资源数(从默认加载器得知)
 });
 
 let rectLight: THREE.RectAreaLight;
@@ -379,9 +378,9 @@ const onPlay = () => {
     () => {
       camera.position.set(4.25, 1.4, 4.5);
       // 播放视频
-      setTimeout(()=>{
+      setTimeout(() => {
         promotionalFilm.onPlay();
-      }, 3000)
+      }, 3000);
     }
   );
 };
@@ -395,7 +394,7 @@ const init = async () => {
   renderer.setAnimationLoop(render);
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.85;
+  renderer.toneMappingExposure = 0.85; // 可以改变曝光度从而改变hdr贴图亮度，需要重新渲染
   container?.appendChild(renderer.domElement);
 
   stats = Stats();
@@ -485,16 +484,14 @@ const init = async () => {
 
   // 默认加载
   THREE.DefaultLoadingManager.onProgress = async (url, loaded, total) => {
+    // console.log('total', total);
+    // console.log('进度', Math.floor((loaded / loadManager.value.total) * 100));
     let loadingType = url.split(".");
-    // gltf三层导出文件加载时，会先访问.gltf文件，若第一次“已加载/总需加载”!=1则返回，此时数据不准确
-    if (loadingType[loadingType.length - 1] === "gltf" && loaded / total != 1) {
-      return;
-    }
     loadManager.value.name = loadingType[loadingType.length - 1];
-    if (Math.floor((loaded / total) * 100) === 100) {
+    if (Math.floor((loaded / loadManager.value.total) * 100) === 100) {
       loadManager.value.schedule = 100;
     } else {
-      // 不用这里的total是因为模型压缩成bin解压后资源数量会变化
+      // 这里不用回调里的total是因为模型压缩成bin后再解压后资源数量会变化
       loadManager.value.schedule = Math.floor(
         (loaded / loadManager.value.total) * 100
       );
@@ -510,86 +507,13 @@ const init = async () => {
       textureLoader.load("/textures/lensflare/lensflare3.png"),
     ]);
 
+  // 反射镜像
+  const hdrEquirect = texture;
+  hdrEquirect.mapping = THREE.EquirectangularReflectionMapping;
+
   carStore.source.texture.textureFlare0 = textureFlare0;
   carStore.source.texture.textureFlare3 = textureFlare3;
   carStore.carModal = gltf.scene;
-  const gltfScene = boothGltf.scene;
-
-  // 视觉几何设置
-  // const toMerge: any = {};
-  // gltfScene.traverse((c: THREE.Object3D) => {
-  //   if (c.isMesh && c.name === '顶部灯路') {
-  //     const hex = c.material.color.getHex();
-  //     toMerge[hex] = toMerge[hex] || [];
-  //     toMerge[hex].push(c);
-  //   }
-  // });
-
-  // environment = new THREE.Group();
-  // for (const hex in toMerge) {
-  //   const arr = toMerge[hex];
-  //   let visualGeometries: any[] = [];
-  //   arr.forEach((mesh: THREE.Mesh) => {
-  //     if (mesh.material.emissive.r !== 0) {
-  //       environment.attach(mesh);
-  //     } else {
-  //       const geom = mesh.geometry.clone();
-  //       geom.applyMatrix4(mesh.matrixWorld);
-  //       visualGeometries.push(geom);
-  //     }
-  //   });
-
-  //   if (visualGeometries.length) {
-  //     const newGeom =
-  //       BufferGeometryUtils.mergeBufferGeometries(visualGeometries);
-  //     const newMesh = new THREE.Mesh(
-  //       newGeom,
-  //       new THREE.MeshStandardMaterial({ color: parseInt(hex), shadowSide: 2 })
-  //     );
-  //     newMesh.castShadow = true;
-  //     newMesh.receiveShadow = true;
-  //     newMesh.material.shadowSide = 2;
-
-  //     environment.add(newMesh);
-  //   }
-  // }
-
-  // const staticGenerator = new StaticGeometryGenerator(environment);
-  // staticGenerator.attributes = ["position"];
-
-  // const mergedGeometry = staticGenerator.generate();
-  // mergedGeometry.boundsTree = new MeshBVH(mergedGeometry, {
-  //   lazyGeneration: false,
-  // });
-
-  // collider = new THREE.Mesh(mergedGeometry);
-  // collider.material.wireframe = true;
-  // collider.material.opacity = 0.5;
-  // collider.material.transparent = true;
-
-  // visualizer = new MeshBVHVisualizer(collider, params.visualizeDepth);
-  // scene.add(visualizer);
-  // scene.add(collider);
-  // scene.add(environment);
-
-  // // 人物胶囊
-  // player = new THREE.Mesh(
-  //   new RoundedBoxGeometry(1.0, 2.0, 1.0, 10, 0.5),
-  //   new THREE.MeshStandardMaterial()
-  // );
-  // player.geometry.translate(0, -0.5, 0);
-  // player.capsuleInfo = {
-  //   radius: 0.5,
-  //   segment: new THREE.Line3(
-  //     new THREE.Vector3(),
-  //     new THREE.Vector3(0, -1.0, 0.0)
-  //   ),
-  // };
-  // player.castShadow = true;
-  // player.receiveShadow = true;
-  // player.material.shadowSide = 2;
-  // scene.add(player);
-  // reset();
 
   hdrTexture = texture;
   scene.environment = texture;
@@ -600,13 +524,47 @@ const init = async () => {
 
   // 展台
   boothModel = boothGltf.scene;
+
+  // 设置展台材质
+  // const glass = boothModel.getObjectByName("Glass") as THREE.Mesh;
+  // const glassParams = {
+  //   color: 0xffffff,
+  //   transmission: 1,
+  //   opacity: 1,
+  //   metalness: 0,
+  //   roughness: 0,
+  //   ior: 1.5,
+  //   thickness: 0.01,
+  //   specularIntensity: 1,
+  //   specularColor: new THREE.Color(0xffffff),
+  //   envMapIntensity: 1,
+  //   lightIntensity: 1,
+  //   exposure: 1,
+  // };
+  // const sphereMaterial = new THREE.MeshPhysicalMaterial({
+  //   color: glassParams.color,
+  //   metalness: glassParams.metalness,
+  //   roughness: glassParams.roughness,
+  //   ior: glassParams.ior,
+  //   alphaMap: texture,
+  //   envMap: hdrEquirect,
+  //   envMapIntensity: glassParams.envMapIntensity,
+  //   transmission: glassParams.transmission, // use material.transmission for glass materials
+  //   specularIntensity: glassParams.specularIntensity,
+  //   specularColor: glassParams.specularColor,
+  //   opacity: glassParams.opacity,
+  //   // side: THREE.DoubleSide,
+  //   transparent: true,
+  // });
+  // glass.material = sphereMaterial;
+
   boothModel.scale.set(1.2, 1.2, 1.2);
   const boothGroup = boothModel.getObjectByName("车承台父节点");
   boothGroup?.add(carModel);
   scene.add(boothModel);
 
   // 创建视频
-  promotionalFilm = new CreatePromotionalFilm(boothModel, '屏幕');
+  promotionalFilm = new CreatePromotionalFilm(boothModel, "屏幕");
 
   /**
    * 创建镜子
@@ -705,32 +663,23 @@ const onChangeColor = (material: THREE.Material, array: string[]) => {
 const onChangeMaterial = () => {
   // console.log('打印', xxx);
 };
+const r = ref(false);
 const render = () => {
   controls.update();
   TWEEN.update();
   stats.update();
   flag.flagUpdate();
 
-  
+  // const time = -performance.now() / 1000;
+  // carStore.wheelStart && startWheel(time);
 
-  // if (collider) {
-  //   const delta = Math.min(clock.getDelta(), 0.1);
-  //   collider.visible = params.displayCollider;
-  //   visualizer.visible = params.displayBVH;
-
-  //   const physicsSteps = params.physicsSteps;
-
-  //   for (let i = 0; i < physicsSteps; i++) {
-  //     updatePlayer(delta / physicsSteps);
-  //   }
-  // }
-
-  const time = -performance.now() / 1000;
-
-  carStore.wheelStart && startWheel(time);
-
-  renderer.render(scene, camera);
+  !r.value && renderer.render(scene, camera);
 };
+
+// setTimeout(()=>{
+//     r.value = true;
+//     console.log('变化');
+//   }, 30000)
 
 const startWheel = (time: number) => {
   for (let i = 0; i < wheels.length; i++) {
