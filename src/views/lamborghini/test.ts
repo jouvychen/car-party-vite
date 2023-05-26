@@ -47,12 +47,44 @@ export class WebglTransitions {
     this.camera = camera;
     this.renderer = renderer;
     // this.mesh = mesh;
-    const g = new THREE.PlaneGeometry(16, 9);
-    const mesh1 = new THREE.Mesh(g, mesh.material);
-    this.mesh = mesh1;
-    // this.mesh.scale.multiplyScalar(20);
-    this.mesh.position.set(0, 2, 0);
-    scene.add(this.mesh);
+    const g = new THREE.PlaneGeometry(3.26, 2.38);
+    // const mesh1 = new THREE.Mesh(g, mesh.material);
+
+    const sphereMaterial = new THREE.MeshStandardMaterial({
+      color: '#ffffff',
+      opacity: 0,
+      // side: THREE.DoubleSide,
+      transparent: true,
+    });
+
+    this.mesh = mesh;
+
+    // mesh.material = sphereMaterial;
+
+    // this.mesh = new THREE.Mesh(g, mesh.material);
+
+    // mesh.attach(this.mesh);
+
+    // // 获取 mesh 的世界矩阵
+    // const worldMatrix = new THREE.Matrix4().copy(mesh.matrixWorld);
+
+    // // 获取 this.mesh 的父级对象的世界矩阵
+    // const parentWorldMatrix = new THREE.Matrix4().copy(mesh.matrixWorld);
+
+    // // 计算相对于 this.mesh 的局部矩阵
+    // const relativeMatrix = worldMatrix.multiply(parentWorldMatrix.invert());
+
+    // // 将相对矩阵赋值给 this.mesh
+    // this.mesh.matrix.copy(relativeMatrix);
+
+    // // 更新 this.mesh 的位置和旋转
+    // this.mesh.matrix.decompose(this.mesh.position, this.mesh.quaternion, this.mesh.scale);
+
+    // this.mesh.rotateY(Math.PI * 0.5)
+
+    // // 更新 this.mesh 的世界矩阵
+    // this.mesh.updateMatrixWorld(true);
+
     this.clock = clock;
     this.playPicList = playPicList;
     // this.checkInitResource(parent.domId, transitionList, playPicList);

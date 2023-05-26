@@ -346,7 +346,7 @@ const loadManager = ref({
   schedule: 0,
   success: false,
   showMask: true,
-  total: 23, // 总共加载的资源数(从默认加载器得知)
+  total: 25, // 总共加载的资源数(从默认加载器得知)
 });
 
 let rectLight: THREE.RectAreaLight;
@@ -527,7 +527,7 @@ const init = async () => {
   
   // 展台
   boothModel = boothGltf.scene;
-  const testMesh = boothModel.getObjectByName('视频面版') as THREE.Mesh;
+  const testMesh = boothModel.getObjectByName('Glass002') as THREE.Mesh;
 
   // debugger;
   setTimeout(()=>{
