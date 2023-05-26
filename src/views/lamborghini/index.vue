@@ -133,8 +133,9 @@ let flag: CreateFlag;
 import { CreatePromotionalFilm } from "../function/createPromotionalFilm";
 let promotionalFilm: CreatePromotionalFilm;
 
-import { WebglTransitions } from './test';
+import { WebglTransitions } from '../image/test';
 import { perlin } from './perlin';
+import { flyEye } from './fly-eye';
 
 // 常量导入
 import { revolverList } from "./constan";
@@ -346,7 +347,7 @@ const loadManager = ref({
   schedule: 0,
   success: false,
   showMask: true,
-  total: 25, // 总共加载的资源数(从默认加载器得知)
+  total: 26, // 总共加载的资源数(从默认加载器得知)
 });
 
 let rectLight: THREE.RectAreaLight;
@@ -487,7 +488,7 @@ const init = async () => {
 
   // 默认加载
   THREE.DefaultLoadingManager.onProgress = async (url, loaded, total) => {
-    // console.log('total', total);
+    console.log('total', total);
     // console.log('进度', Math.floor((loaded / loadManager.value.total) * 100));
     let loadingType = url.split(".");
     loadManager.value.name = loadingType[loadingType.length - 1];
@@ -532,13 +533,13 @@ const init = async () => {
   // debugger;
   setTimeout(()=>{
     const imgList = [
-    // 'https://img-qn.51miz.com/preview/photo/00/01/55/49/P-1554956-E905CFB5.jpg',
-    // 'https://img-qn.51miz.com/preview/photo/00/01/57/32/P-1573277-268E2C0C.jpg',
-    // 'https://img-qn.51miz.com/preview/photo/00/01/60/10/P-1601019-51A36283.jpg',
-    '16pic_8211096_s.png',
-    'cat-1046343_960_720.jpg',
+    'https://img-qn.51miz.com/preview/photo/00/01/55/49/P-1554956-E905CFB5.jpg',
+    'https://img-qn.51miz.com/preview/photo/00/01/57/32/P-1573277-268E2C0C.jpg',
+    'https://img-qn.51miz.com/preview/photo/00/01/60/10/P-1601019-51A36283.jpg',
+    // 'test.png',
+    // 'test.png',
   ]
-  const ppp = new WebglTransitions(scene, camera, renderer, testMesh, clock, [perlin], imgList);
+  const ppp = new WebglTransitions(scene, camera, renderer, testMesh, clock, [perlin, flyEye], imgList);
 ppp.main();
   }, 5000)
 

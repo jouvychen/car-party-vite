@@ -97,3 +97,46 @@ plugins: [
       dts: 'src/auto-import.d.ts'
   }),
 ],
+
+#20230526#
+复制一个mesh的位置和旋转信息：
+this.mesh = new THREE.Mesh(g, mesh.material);
+
+mesh.attach(this.mesh);
+
+// 获取 mesh 的世界矩阵
+const worldMatrix = new THREE.Matrix4().copy(mesh.matrixWorld);
+
+// 获取 this.mesh 的父级对象的世界矩阵
+const parentWorldMatrix = new THREE.Matrix4().copy(mesh.matrixWorld);
+
+// 计算相对于 this.mesh 的局部矩阵
+const relativeMatrix = worldMatrix.multiply(parentWorldMatrix.invert());
+
+// 将相对矩阵赋值给 this.mesh
+this.mesh.matrix.copy(relativeMatrix);
+
+// 更新 this.mesh 的位置和旋转
+this.mesh.matrix.decompose(this.mesh.position, this.mesh.quaternion, this.mesh.scale);
+
+this.mesh.rotateY(Math.PI * 0.5)
+
+// 更新 this.mesh 的世界矩阵
+this.mesh.updateMatrixWorld(true);
+
+二、禁用纹理texture的 Y 轴反转
+/**
+* 禁用纹理的 Y 轴反转，表现是图片在水平方向上翻转
+* Three.js 默认将纹理的 Y 轴坐标进行了反转。这是因为在计算机图形学中，纹理坐标的原点通常是左上角，
+* 而不是左下角。因此，当应用纹理时，默认情况下 Three.js 会将纹理的 Y 轴坐标进行反转，以保持与标准
+* 约定的一致性。
+*/
+texture.flipY = false;
+
+三、设置纹理的旋转角度为 180 度
+texture.rotation = -Math.PI * 0.5;
+
+四：替换着色器要注意
+替换u_Sampler(from)和u_Sampler1(to)位置，
+gl_FragColor =  transition(vUV);参数改成vUV
+顶点着色器全部换

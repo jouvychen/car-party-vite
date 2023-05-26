@@ -52,3 +52,8 @@ export const uuid = () => {
   URL.revokeObjectURL(tempUrl); // 释放这个url
   return uuid.substring(uuid.lastIndexOf('/') + 1);
 };
+
+// 判断是否是字符串数组
+export const isArrayOfStrings = (value: unknown): value is string[] => {
+  return Array.isArray(value) && value.every(item => typeof item === "string");
+}

@@ -30,12 +30,12 @@ export const perlin = {
     
     // 获取目标颜色
     vec4 getToColor(vec2 uv) {
-        return texture2D(u_Sampler, uv);
+        return texture2D(u_Sampler1, uv);
     }
     
     // 获取源颜色
     vec4 getFromColor(vec2 uv) {
-        return texture2D(u_Sampler1, uv);
+        return texture2D(u_Sampler, uv);
     }
     
     // 随机数生成函数
