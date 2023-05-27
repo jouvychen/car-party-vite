@@ -123,14 +123,15 @@ export class ThreeGlTransitions {
   }
 
   async main() {
+    
+    // 初始化着色器
     this.initShaderProgram();
 
-    // 只初始化获取一次图片资源
-    if (!this.loadImageSelf) {
-      await this.asyncLoadImage();
-      // 创建纹理贴图
-      await this.asyncCreateTextures();
-    }
+    // 只获取一次图片资源
+    !this.loadImageSelf && await this.asyncLoadImage();
+
+    // 创建纹理贴图
+    await this.asyncCreateTextures();
 
     // 开始轮播
     this.startCarousel();
@@ -161,7 +162,7 @@ export class ThreeGlTransitions {
     return new Promise((resolve: any) => {
       for (let i = 0, l = this.playPicList.length; i < l; i++) {
         const img = new Image();
-        img.src = this.playPicList[i];
+        img.src = (this.playPicList[i] as string);
         img.setAttribute('crossOrigin', 'Anonymous');
         img.onload = () => {
           this.playPicPreloadList.push(img);

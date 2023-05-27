@@ -349,7 +349,7 @@ const loadManager = ref({
   schedule: 0,
   success: false,
   showMask: true,
-  total: 26, // 总共加载的资源数(从默认加载器得知)
+  total: 23, // 总共加载的资源数(从默认加载器得知)
 });
 
 let rectLight: THREE.RectAreaLight;
@@ -533,28 +533,31 @@ const init = async () => {
   const testMesh = boothModel.getObjectByName("Glass002") as THREE.Mesh;
 
   // debugger;
-  setTimeout(() => {
+  setTimeout(async () => {
     const imgUrlList = [
       getAssetsUrlRelative(
-        "../assets/images/lamborghini/black",
+        "../assets/images/lamborghini/black/",
         "Lamborghini-Centenario-02.jpg"
       ),
       getAssetsUrlRelative(
-        "../assets/images/lamborghini/black",
+        "../assets/images/lamborghini/black/",
         "Lamborghini-Centenario-01.jpg"
       ),
       getAssetsUrlRelative(
-        "../assets/images/lamborghini/black",
+        "../assets/images/lamborghini/black/",
         "Lamborghini-Centenario-03.jpg"
       ),
     ];
-    const imgList = new LoadViteImage(imgUrlList).imageList;
-    const threeGlTransitions = new ThreeGlTransitions(
-      testMesh,
-      [perlin, flyEye],
-      imgList
-    );
-    threeGlTransitions.main();
+    new LoadViteImage(imgUrlList)
+      .asyncLoadImage()
+      .then((imageList: HTMLImageElement[]) => {
+        const threeGlTransitions = new ThreeGlTransitions(
+          testMesh,
+          [perlin, flyEye],
+          imageList
+        );
+        threeGlTransitions.main();
+      });
   }, 5000);
 
   // 设置展台材质

@@ -5,15 +5,17 @@ const getLocalImgUrl = (name: string) => {
 import { RULES } from '@/utils/rules';
 
 export class LoadViteImage {
-  public imageUrlList: string[];
+  private imageUrlList: string[];
   public imageList: HTMLImageElement[] = [];
 
   constructor(imageUrlList: string[]) {
+    !imageUrlList.length && (() => {
+      throw new Error('至少需要一张图片地址');
+    });
     this.imageUrlList = imageUrlList;
-    this.asyncLoadImage();
   }
 
-  loadImgs(): Promise<HTMLImageElement[]> {
+  asyncLoadImage(): Promise<HTMLImageElement[]> {
     let proList: Promise<HTMLImageElement>[] = [];
     for (let i = 0; i < this.imageUrlList.length; i++) {
       let pro = new Promise<HTMLImageElement>((resolve, reject) => {
@@ -32,17 +34,10 @@ export class LoadViteImage {
     }
 
     return Promise.all(proList)
-      .then((rs) => {
-        console.log("loaded all images");
-        return Promise.resolve(rs);
+      .then((res: HTMLImageElement[]) => {
+        this.imageList = res;
+        console.log("loaded all images", res);
+        return Promise.resolve(res);
       })
-  }
-
-  asyncLoadImage = async () => {
-    try {
-      this.imageList = await this.loadImgs();
-    } catch (err) {
-      console.log('load image error:', err)
-    }
   }
 }
