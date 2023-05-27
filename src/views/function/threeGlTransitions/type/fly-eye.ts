@@ -52,18 +52,9 @@ export const flyEye = {
             gl_FragColor =  transition(vUV);
         }
     `,
-  assignmentList: [
-    {
-      key: 'size',
-      value: [0.04],
-    },
-    {
-      key: 'zoom',
-      value: [50.0],
-    },
-    {
-      key: 'colorSeparation',
-      value: [0.3],
-    },
-  ],
+  uniforms: {
+    size: { value: 0.04 },
+    zoom: { value: 50.0 },
+    colorSeparation: { value: 0.3 },
+  },
 };

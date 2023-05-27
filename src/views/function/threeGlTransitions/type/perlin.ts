@@ -20,9 +20,6 @@ export const perlin = {
     uniform float seed;
     uniform sampler2D u_Sampler;
     uniform sampler2D u_Sampler1;
-    uniform vec4 shadow_colour; 
-    uniform float shadow_height; 
-    uniform float bounces; 
     uniform float progress;
     
     // 传递给片段着色器的变量
@@ -84,16 +81,9 @@ export const perlin = {
           gl_FragColor = transition(vUV);
       }
     `,
-  assignmentList: [
-    {
-      key: 'scale',
-      value: [4.0],
-    }, {
-      key: 'smoothness',
-      value: [0.01],
-    }, {
-      key: 'seed',
-      value: [12.9898],
-    },
-  ],
+  uniforms: {
+    scale: { value: 10.0 },
+    smoothness: { value: 0.01 },
+    seed: { value: 40.9898 },
+  },
 };

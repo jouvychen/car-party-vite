@@ -1,18 +1,26 @@
 
 import * as THREE from 'three';
-import { Transition } from '@/utils/interface'
+import { Transition, ObjectKeys } from '@/utils/interface'
 import { isArrayOfStrings } from '@/utils/common';
-import { CreateBasicThree } from '../function/createBasicThree';
+import { CreateBasicThree } from '../../function/createBasicThree';
+
+interface ShaderMaterialParam {
+  vertexShader: string,
+  fragmentShader: string,
+  uniforms: ObjectKeys,
+}
 
 const textureLoader = new THREE.TextureLoader();
 // https://www.khronos.org/webgl/wiki/HandlingContextLost#:~:text=By%20default%20when%20a%20WebGL%20program%20loses%20the,canvas%20%3D%20document.getElementById%20%28%22myCanvas%22%29%3B%20canvas.addEventListener%20%28%22webglcontextlost%22%2C%20function%20
 
 // https://registry.khronos.org/webgl/specs/latest/1.0/#5.15.3
 
-export class WebglTransitions {
+export class ThreeGlTransitions {
+  private animationId = 0;
   private loadImageSelf = false;
-  public vsSource = '';
-  public fsSource = '';
+  private vsSource = '';
+  private fsSource = '';
+  private uniforms!: ObjectKeys;
   public textures: WebGLTexture[] = [];
   public playIndex = 0;
   public playPicIndex = 0; // 轮播次数
@@ -27,8 +35,9 @@ export class WebglTransitions {
   private shaderMaterial!: THREE.ShaderMaterial;
   private clock!: THREE.Clock;
   private progress = 0;
+  private shaderMaterialParam!: ShaderMaterialParam;
 
-  constructor(scene: THREE.Scene, camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer, mesh: THREE.Mesh, clock: THREE.Clock, transitionList: Transition[], playPicList: string[], carouselTime?: number) {
+  constructor(mesh: THREE.Mesh, transitionList: Transition[], playPicList: string[], carouselTime?: number) {
     this.checkInitResource(mesh, transitionList, playPicList);
 
     const basicThree = new CreateBasicThree();
@@ -66,14 +75,16 @@ export class WebglTransitions {
 
     const animate = () => {
 
-      requestAnimationFrame(animate);
+      this.animationId = requestAnimationFrame(animate);
       // 更新进度
-      this.progress += 0.02;
+      this.progress += 0.01;
 
       this.shaderMaterial.uniforms.progress.value = this.progress;
 
       // 切换到下一张图片(progress只能是1)
       if (this.progress >= 1) {
+
+        cancelAnimationFrame(this.animationId);
 
         this.progress = 0;
 
@@ -89,50 +100,17 @@ export class WebglTransitions {
           this.playIndex += 1;
         }
 
-        const transition = this.transitionList[this.playIndex];
-        this.vsSource = transition.vsSource;
-        this.fsSource = transition.fsSource;
-
-        if (this.playIndex % 2 === 0) {
-          this.shaderMaterial = new THREE.ShaderMaterial({
-            uniforms: {
-              u_Sampler: { value: null }, // 设置为纹理
-              u_Sampler1: { value: null }, // 设置为纹理
-              progress: { value: 0.0 },
-
-              scale: { value: 10.0 },
-              smoothness: { value: 0.01 },
-              seed: { value: 40.9898 },
-              shadow_colour: { value: new THREE.Vector4(0, 0, 0, 1) },
-              shadow_height: { value: 0.0 },
-              bounces: { value: 0.0 },
-
-            },
-            vertexShader: this.vsSource,
-            fragmentShader: this.fsSource,
-          });
-        } else {
-          this.shaderMaterial = new THREE.ShaderMaterial({
-            uniforms: {
-              u_Sampler: { value: null }, // 设置为纹理
-              u_Sampler1: { value: null }, // 设置为纹理
-              progress: { value: 0.0 },
-              size: { value: 0.04 },
-              zoom: { value: 50.0 },
-              colorSeparation: { value: 0.3 },
-            },
-            vertexShader: this.vsSource,
-            fragmentShader: this.fsSource,
-          });
-        }
+        this.initShaderProgram();
 
         // 更新材质的纹理和进度
         this.shaderMaterial.uniforms.u_Sampler.value = this.textures[this.playPicIndex];
         this.shaderMaterial.uniforms.u_Sampler1.value = this.textures[this.playPicIndex + 1 === this.playPicPreloadList.length ? 0 : this.playPicIndex + 1];
-
         this.mesh.material = this.shaderMaterial;
 
-        return 0;
+        // return 0;
+        setTimeout(() => {
+          animate();
+        }, this.carouselTime);
 
       }
 
@@ -145,9 +123,6 @@ export class WebglTransitions {
   }
 
   async main() {
-    const transition = this.transitionList[this.playIndex];
-    this.vsSource = transition.vsSource;
-    this.fsSource = transition.fsSource;
     this.initShaderProgram();
 
     // 只初始化获取一次图片资源
@@ -160,28 +135,25 @@ export class WebglTransitions {
     // 开始轮播
     this.startCarousel();
 
-
   }
 
   initShaderProgram() {
-    // 创建着色器材质
-    this.shaderMaterial = new THREE.ShaderMaterial({
+    const transition = this.transitionList[this.playIndex];
+    this.vsSource = transition.vsSource;
+    this.fsSource = transition.fsSource;
+    this.uniforms = transition.uniforms;
+    this.shaderMaterialParam = {
       uniforms: {
         u_Sampler: { value: null }, // 设置为纹理
         u_Sampler1: { value: null }, // 设置为纹理
         progress: { value: 0.0 },
-
-        scale: { value: 10.0 },
-        smoothness: { value: 0.01 },
-        seed: { value: 40.9898 },
-        shadow_colour: { value: new THREE.Vector4(0, 0, 0, 1) },
-        shadow_height: { value: 0.0 },
-        bounces: { value: 0.0 },
-
       },
       vertexShader: this.vsSource,
       fragmentShader: this.fsSource,
-    });
+    }
+    this.shaderMaterialParam.uniforms = Object.assign(this.shaderMaterialParam.uniforms, this.uniforms);
+    // 创建着色器材质
+    this.shaderMaterial = new THREE.ShaderMaterial(this.shaderMaterialParam);
   }
 
   asyncLoadImage() {

@@ -24,8 +24,9 @@ interface View {
 interface Transition {
   vsSource: string,
   fsSource: string,
-  assignmentList: any[],
+  uniforms: ObjectKeys,
   intervalTime?: number,
+  [key: string]: any; // 用户拓展更多类型
 }
 
 // index.ts中动态导入的过渡动画返回Promise所需类型

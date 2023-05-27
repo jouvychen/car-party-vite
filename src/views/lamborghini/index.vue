@@ -133,9 +133,9 @@ let flag: CreateFlag;
 import { CreatePromotionalFilm } from "../function/createPromotionalFilm";
 let promotionalFilm: CreatePromotionalFilm;
 
-import { WebglTransitions } from '../image/test';
-import { perlin } from './perlin';
-import { flyEye } from './fly-eye';
+import { ThreeGlTransitions } from '../function/threeGlTransitions/index';
+import { perlin } from '../function/threeGlTransitions/type/perlin';
+import { flyEye } from '../function/threeGlTransitions/type/fly-eye';
 
 // 常量导入
 import { revolverList } from "./constan";
@@ -539,7 +539,7 @@ const init = async () => {
     // 'test.png',
     // 'test.png',
   ]
-  const ppp = new WebglTransitions(scene, camera, renderer, testMesh, clock, [perlin, flyEye], imgList);
+  const ppp = new ThreeGlTransitions(testMesh, [perlin, flyEye], imgList);
 ppp.main();
   }, 5000)
 
