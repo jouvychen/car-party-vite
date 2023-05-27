@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { Transition } from '@/utils/interface'
 import { isArrayOfStrings } from '@/utils/common';
+import { CreateBasicThree } from '../function/createBasicThree';
 
 const textureLoader = new THREE.TextureLoader();
 // https://www.khronos.org/webgl/wiki/HandlingContextLost#:~:text=By%20default%20when%20a%20WebGL%20program%20loses%20the,canvas%20%3D%20document.getElementById%20%28%22myCanvas%22%29%3B%20canvas.addEventListener%20%28%22webglcontextlost%22%2C%20function%20
@@ -28,12 +29,15 @@ export class WebglTransitions {
   private progress = 0;
 
   constructor(scene: THREE.Scene, camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer, mesh: THREE.Mesh, clock: THREE.Clock, transitionList: Transition[], playPicList: string[], carouselTime?: number) {
-    this.checkInitResource(scene, camera, renderer, mesh, clock, transitionList, playPicList);
-    this.scene = scene;
-    this.camera = camera;
-    this.renderer = renderer;
+    this.checkInitResource(mesh, transitionList, playPicList);
+
+    const basicThree = new CreateBasicThree();
+    this.scene = basicThree.scene;
+    this.camera = basicThree.camera;
+    this.renderer = basicThree.renderer;
+
     this.mesh = this.mesh ?? mesh;
-    this.clock = this.clock ?? clock;
+    this.clock = new THREE.Clock();
     this.transitionList = transitionList;
 
     // 判断加载图片的方式
@@ -226,25 +230,7 @@ export class WebglTransitions {
   }
 
   // 初始化校验
-  checkInitResource(scene: THREE.Scene, camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer, mesh: THREE.Mesh, clock: THREE.Clock, transitionList: Transition[], playPicList: string[]) {
-    // scene
-    if (!scene || !(scene instanceof THREE.Scene)) {
-      throw new Error('初始化失败, 缺少scene');
-    }
-
-    // camera
-    if (!camera) {
-      throw new Error('初始化失败, 缺少camera');
-    }
-    if (!(camera instanceof THREE.PerspectiveCamera)) {
-      throw new Error('初始化失败, camera不是THREE.PerspectiveCamera类型');
-    }
-
-    // renderer
-    if (!renderer || !(renderer instanceof THREE.WebGLRenderer)) {
-      throw new Error('初始化失败, 缺少renderer');
-    }
-
+  checkInitResource(mesh: THREE.Mesh, transitionList: Transition[], playPicList: string[]) {
     // mesh
     if (!mesh) {
       const geo = new THREE.PlaneGeometry(16, 9);
@@ -253,14 +239,6 @@ export class WebglTransitions {
     }
     if (!(mesh instanceof THREE.Mesh)) {
       throw new Error('初始化失败, mesh不是网格THREE.Mesh类型');
-    }
-
-    // clock
-    if (!clock) {
-      this.clock = new THREE.Clock();
-    }
-    if (!(clock instanceof THREE.Clock)) {
-      throw new Error('初始化失败, clock不是网格THREE.Clock类型');
     }
 
     // transitionList
