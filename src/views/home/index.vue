@@ -37,7 +37,7 @@ const router = useRouter();
 
 const getImageUrl = (name) => {
   return new URL(
-    `../../assets/images/lambohini/bright/${name}`,
+    `../../assets/images/lamborghini/bright/${name}`,
     import.meta.url
   ).href;
 };

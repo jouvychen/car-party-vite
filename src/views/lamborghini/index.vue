@@ -133,9 +133,11 @@ let flag: CreateFlag;
 import { CreatePromotionalFilm } from "../function/createPromotionalFilm";
 let promotionalFilm: CreatePromotionalFilm;
 
-import { ThreeGlTransitions } from '../function/threeGlTransitions/index';
-import { perlin } from '../function/threeGlTransitions/type/perlin';
-import { flyEye } from '../function/threeGlTransitions/type/fly-eye';
+import { ThreeGlTransitions } from "../function/threeGlTransitions/index";
+import { perlin } from "../function/threeGlTransitions/type/perlin";
+import { flyEye } from "../function/threeGlTransitions/type/fly-eye";
+
+import { LoadViteImage } from "../function/loadViteImages";
 
 // 常量导入
 import { revolverList } from "./constan";
@@ -488,7 +490,7 @@ const init = async () => {
 
   // 默认加载
   THREE.DefaultLoadingManager.onProgress = async (url, loaded, total) => {
-    console.log('total', total);
+    console.log("total", total);
     // console.log('进度', Math.floor((loaded / loadManager.value.total) * 100));
     let loadingType = url.split(".");
     loadManager.value.name = loadingType[loadingType.length - 1];
@@ -525,23 +527,35 @@ const init = async () => {
 
   // 车
   carModel = gltf.scene;
-  
+
   // 展台
   boothModel = boothGltf.scene;
-  const testMesh = boothModel.getObjectByName('Glass002') as THREE.Mesh;
+  const testMesh = boothModel.getObjectByName("Glass002") as THREE.Mesh;
 
   // debugger;
-  setTimeout(()=>{
-    const imgList = [
-    'https://img-qn.51miz.com/preview/photo/00/01/55/49/P-1554956-E905CFB5.jpg',
-    'https://img-qn.51miz.com/preview/photo/00/01/57/32/P-1573277-268E2C0C.jpg',
-    'https://img-qn.51miz.com/preview/photo/00/01/60/10/P-1601019-51A36283.jpg',
-    // 'test.png',
-    // 'test.png',
-  ]
-  const ppp = new ThreeGlTransitions(testMesh, [perlin, flyEye], imgList);
-ppp.main();
-  }, 5000)
+  setTimeout(() => {
+    const imgUrlList = [
+      getAssetsUrlRelative(
+        "../assets/images/lamborghini/black",
+        "Lamborghini-Centenario-02.jpg"
+      ),
+      getAssetsUrlRelative(
+        "../assets/images/lamborghini/black",
+        "Lamborghini-Centenario-01.jpg"
+      ),
+      getAssetsUrlRelative(
+        "../assets/images/lamborghini/black",
+        "Lamborghini-Centenario-03.jpg"
+      ),
+    ];
+    const imgList = new LoadViteImage(imgUrlList).imageList;
+    const threeGlTransitions = new ThreeGlTransitions(
+      testMesh,
+      [perlin, flyEye],
+      imgList
+    );
+    threeGlTransitions.main();
+  }, 5000);
 
   // 设置展台材质
   // const glass = boothModel.getObjectByName("Glass") as THREE.Mesh;

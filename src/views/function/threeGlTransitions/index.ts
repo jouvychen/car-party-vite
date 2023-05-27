@@ -26,7 +26,7 @@ export class ThreeGlTransitions {
   public playPicIndex = 0; // 轮播次数
   public transitionList: Transition[];
   public carouselTime: number; // 轮播间隔时间, 单位ms
-  public playPicList: string[] = []; // 轮播图片
+  public playPicList: string[] | HTMLImageElement[] = []; // 轮播图片
   public playPicPreloadList: HTMLImageElement[] = []; // 轮播图片预加载存储列表
   private scene!: THREE.Scene;
   private camera!: THREE.PerspectiveCamera;
@@ -37,7 +37,7 @@ export class ThreeGlTransitions {
   private progress = 0;
   private shaderMaterialParam!: ShaderMaterialParam;
 
-  constructor(mesh: THREE.Mesh, transitionList: Transition[], playPicList: string[], carouselTime?: number) {
+  constructor(mesh: THREE.Mesh, transitionList: Transition[], playPicList: string[] | HTMLImageElement[], carouselTime?: number) {
     this.checkInitResource(mesh, transitionList, playPicList);
 
     const basicThree = new CreateBasicThree();
@@ -202,7 +202,7 @@ export class ThreeGlTransitions {
   }
 
   // 初始化校验
-  checkInitResource(mesh: THREE.Mesh, transitionList: Transition[], playPicList: string[]) {
+  checkInitResource(mesh: THREE.Mesh, transitionList: Transition[], playPicList: string[] | HTMLImageElement[]) {
     // mesh
     if (!mesh) {
       const geo = new THREE.PlaneGeometry(16, 9);
