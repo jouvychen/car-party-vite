@@ -9,8 +9,8 @@ export class CreatePromotionalFilm {
   private videoSource!: HTMLVideoElement;
   private videoStatus = 'empty'; // empty, loading, loaded, playing, played
   private videoMaterial!: THREE.MeshBasicMaterial;
-  private coverMaterial!: THREE.MeshPhongMaterial;
-  private coverLoadingMaterial!: THREE.MeshPhongMaterial;
+  private coverMaterial!: THREE.MeshBasicMaterial;
+  private coverLoadingMaterial!: THREE.MeshBasicMaterial;
   private textureLoader: THREE.TextureLoader;
 
   constructor(modal: THREE.Object3D, meshName: string) {
@@ -35,7 +35,7 @@ export class CreatePromotionalFilm {
     });
     coverTexture.center.set(0.5, 0.5);
     coverTexture.repeat.set(0.8, -0.9);
-    this.coverMaterial = new THREE.MeshPhongMaterial({
+    this.coverMaterial = new THREE.MeshBasicMaterial({
       map: coverTexture,
     });
   }
@@ -45,7 +45,7 @@ export class CreatePromotionalFilm {
     const coverLoadingTexture = this.textureLoader.load(getAssetsUrlRelative('../assets/images/home/', 'bg_member.jpg'));
     coverLoadingTexture.center.set(0.5, 0.5);
     coverLoadingTexture.repeat.set(0.8, -0.9);
-    this.coverLoadingMaterial = new THREE.MeshPhongMaterial({
+    this.coverLoadingMaterial = new THREE.MeshBasicMaterial({
       map: coverLoadingTexture,
     });
   }
