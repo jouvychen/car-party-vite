@@ -133,10 +133,7 @@ let flag: CreateFlag;
 import { CreatePromotionalFilm } from "../function/createPromotionalFilm";
 let promotionalFilm: CreatePromotionalFilm;
 
-import { ThreeGlTransitions } from "../function/threeGlTransitions/index";
-import { morph, flyEye, crossWarp, ripple } from "../function/threeGlTransitions/type/index";
-
-import { LoadViteImage } from "../function/loadViteImages";
+import {createTransitions} from '../function/createTransitions';
 
 // 常量导入
 import { revolverList } from "./constan";
@@ -162,12 +159,6 @@ const boothStore = useBoothModalStore();
 const carStore = useCarModalStore();
 const threejsModule = useThreejsModuleStore();
 
-// THREE.ColorManagement.enabled = true;
-
-// 数据类型导入
-import { Position, ObjectKeys } from "@/utils/interface";
-// import { message } from "ant-design-vue";
-
 let camera: THREE.PerspectiveCamera;
 let scene: THREE.Scene;
 let renderer: THREE.WebGLRenderer;
@@ -184,159 +175,6 @@ let carModel: THREE.Object3D | null = null;
 const wheels: THREE.Object3D[] = [];
 
 const entranceAnimations = new EntranceAnimations();
-
-let environment: any;
-let collider: any;
-let visualizer: any;
-let clock: any;
-let player: any;
-let playerIsOnGround = false;
-let fwdPressed = false;
-let bkdPressed = false;
-let lftPressed = false;
-let rgtPressed = false;
-let playerVelocity = new THREE.Vector3();
-let upVector = new THREE.Vector3(0, 1, 0);
-let tempVector = new THREE.Vector3();
-let tempVector2 = new THREE.Vector3();
-let tempBox = new THREE.Box3();
-let tempMat = new THREE.Matrix4();
-let tempSegment = new THREE.Line3(
-  new THREE.Vector3(0, 0, 0),
-  new THREE.Vector3(0, 0, 0)
-);
-const params = {
-  firstPerson: false,
-
-  displayCollider: false,
-  displayBVH: false,
-  visualizeDepth: 10,
-  gravity: -30,
-  playerSpeed: 10,
-  physicsSteps: 5,
-
-  reset: reset,
-};
-
-function reset() {
-  playerVelocity.set(0, 0, 0);
-  player.position.set(4, 10, 0);
-  camera.position.sub(controls.target);
-  controls.target.copy(player.position);
-  camera.position.add(player.position);
-  controls.update();
-}
-
-function updatePlayer(delta: number) {
-  if (playerIsOnGround) {
-    playerVelocity.y = delta * params.gravity;
-  } else {
-    playerVelocity.y += delta * params.gravity;
-  }
-
-  player.position.addScaledVector(playerVelocity, delta);
-
-  // 移动玩家
-  const angle = controls.getAzimuthalAngle();
-  if (fwdPressed) {
-    tempVector.set(0, 0, -1).applyAxisAngle(upVector, angle);
-    player.position.addScaledVector(tempVector, params.playerSpeed * delta);
-  }
-
-  if (bkdPressed) {
-    tempVector.set(0, 0, 1).applyAxisAngle(upVector, angle);
-    player.position.addScaledVector(tempVector, params.playerSpeed * delta);
-  }
-
-  if (lftPressed) {
-    tempVector.set(-1, 0, 0).applyAxisAngle(upVector, angle);
-    player.position.addScaledVector(tempVector, params.playerSpeed * delta);
-  }
-
-  if (rgtPressed) {
-    tempVector.set(1, 0, 0).applyAxisAngle(upVector, angle);
-    player.position.addScaledVector(tempVector, params.playerSpeed * delta);
-  }
-
-  player.updateMatrixWorld();
-
-  // 根据碰撞调整球员位置
-  const capsuleInfo = player.capsuleInfo;
-  tempBox.makeEmpty();
-  tempMat.copy(collider.matrixWorld).invert();
-  tempSegment.copy(capsuleInfo.segment);
-
-  // 获得胶囊在碰撞器的局部空间中的位置
-  tempSegment.start.applyMatrix4(player.matrixWorld).applyMatrix4(tempMat);
-  tempSegment.end.applyMatrix4(player.matrixWorld).applyMatrix4(tempMat);
-
-  // 获取胶囊的轴对齐边界框
-  tempBox.expandByPoint(tempSegment.start);
-  tempBox.expandByPoint(tempSegment.end);
-
-  tempBox.min.addScalar(-capsuleInfo.radius);
-  tempBox.max.addScalar(capsuleInfo.radius);
-
-  collider.geometry.boundsTree.shapecast({
-    intersectsBounds: (box: any) => box.intersectsBox(tempBox),
-
-    intersectsTriangle: (tri: any) => {
-      // 检查三角形是否与胶囊相交，如果相交则调整胶囊位置。
-      const triPoint = tempVector;
-      const capsulePoint = tempVector2;
-
-      const distance = tri.closestPointToSegment(
-        tempSegment,
-        triPoint,
-        capsulePoint
-      );
-      if (distance < capsuleInfo.radius) {
-        const depth = capsuleInfo.radius - distance;
-        const direction = capsulePoint.sub(triPoint).normalize();
-
-        tempSegment.start.addScaledVector(direction, depth);
-        tempSegment.end.addScaledVector(direction, depth);
-      }
-    },
-  });
-
-  // 在检查三角形碰撞并移动后，获得胶囊碰撞器在世界空间中的调整位置。假设capsule . info .segment.start是玩家模型的原点。
-  const newPosition = tempVector;
-  newPosition.copy(tempSegment.start).applyMatrix4(collider.matrixWorld);
-
-  // 检查碰撞器移动了多少
-  const deltaVector = tempVector2;
-  deltaVector.subVectors(newPosition, player.position);
-
-  // 如果玩家主要是垂直调整，我们就会认为它是在地面上
-  playerIsOnGround = deltaVector.y > Math.abs(delta * playerVelocity.y * 0.25);
-
-  const offset = Math.max(0.0, deltaVector.length() - 1e-5);
-  deltaVector.normalize().multiplyScalar(offset);
-
-  // 调整玩家模型
-  player.position.add(deltaVector);
-
-  if (!playerIsOnGround) {
-    deltaVector.normalize();
-    playerVelocity.addScaledVector(
-      deltaVector,
-      -deltaVector.dot(playerVelocity)
-    );
-  } else {
-    playerVelocity.set(0, 0, 0);
-  }
-
-  // 调整摄像机
-  camera.position.sub(controls.target);
-  controls.target.copy(player.position);
-  camera.position.add(player.position);
-
-  // 如果玩家跌得太低，将他们的位置重置到起点
-  if (player.position.y < -25) {
-    reset();
-  }
-}
 
 /**
  * Threejs的文字svg动画
@@ -408,47 +246,6 @@ const init = async () => {
   infoContainer?.appendChild(stats.dom);
 
   window.addEventListener("resize", onWindowResize);
-
-  window.addEventListener("keydown", function (e) {
-    switch (e.code) {
-      case "KeyW":
-        fwdPressed = true;
-        break;
-      case "KeyS":
-        bkdPressed = true;
-        break;
-      case "KeyD":
-        rgtPressed = true;
-        break;
-      case "KeyA":
-        lftPressed = true;
-        break;
-      case "Space":
-        if (playerIsOnGround) {
-          playerVelocity.y = 10.0;
-          playerIsOnGround = false;
-        }
-
-        break;
-    }
-  });
-
-  window.addEventListener("keyup", function (e) {
-    switch (e.code) {
-      case "KeyW":
-        fwdPressed = false;
-        break;
-      case "KeyS":
-        bkdPressed = false;
-        break;
-      case "KeyD":
-        rgtPressed = false;
-        break;
-      case "KeyA":
-        lftPressed = false;
-        break;
-    }
-  });
 
   clock = new THREE.Clock();
 
@@ -532,35 +329,8 @@ const init = async () => {
 
   // 展台
   boothModel = boothGltf.scene;
-  const testMesh = boothModel.getObjectByName("Glass002") as THREE.Mesh;
-
-  // debugger;
-  setTimeout(async () => {
-    const imgUrlList = [
-      getAssetsUrlRelative(
-        "../assets/images/lamborghini/black/",
-        "Lamborghini-Centenario-02.jpg"
-      ),
-      getAssetsUrlRelative(
-        "../assets/images/lamborghini/black/",
-        "Lamborghini-Centenario-01.jpg"
-      ),
-      getAssetsUrlRelative(
-        "../assets/images/lamborghini/black/",
-        "Lamborghini-Centenario-03.jpg"
-      ),
-    ];
-    new LoadViteImage(imgUrlList)
-      .asyncLoadImage()
-      .then((imageList: HTMLImageElement[]) => {
-        const threeGlTransitions = new ThreeGlTransitions(
-          testMesh,
-          [morph, flyEye, crossWarp, ripple],
-          imageList
-        );
-        threeGlTransitions.main();
-      });
-  }, 5000);
+  const transitionMesh = boothModel.getObjectByName("Glass002") as THREE.Mesh;
+  createTransitions(transitionMesh);
 
   // 设置展台材质
   // const glass = boothModel.getObjectByName("Glass") as THREE.Mesh;
