@@ -1,5 +1,9 @@
 <template>
   <div class="point point-0">
+    <svgButton></svgButton>
+  </div>
+  
+  <!-- <div class="point point-0">
     <div class="label label-0">1</div>
     <div class="text">
       灯塔：矗立在海岸的岩石之上，白色的塔身以及红色的塔屋，在湛蓝色的天空和深蓝色大海的映衬下，显得如此醒目和美丽。
@@ -16,9 +20,10 @@
     <div class="text">
       沙滩：宇宙展开的一小角。不想说来这里是暗自疗伤，那过于矫情，只想对每一粒沙子，每一朵浪花问声你们好吗
     </div>
-  </div>
+  </div> -->
 </template>
 <script setup lang="ts">
+import svgButton from './svg-button.vue';
 </script>
 
 <style scoped lang="less">
@@ -27,6 +32,10 @@
   top: 50%;
   left: 50%;
   z-index: 10;
+
+  // 适配svg按钮
+  width: 50px;
+  overflow: hidden;
 
   .label {
     position: absolute;
