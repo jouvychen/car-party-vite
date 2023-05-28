@@ -110,18 +110,6 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper.js";
 import { Reflector } from "three/examples/jsm/objects/Reflector.js";
 import { createGUI, createLightGUI } from "./gui";
-import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
-import {
-  MeshBVH,
-  MeshBVHVisualizer,
-  StaticGeometryGenerator,
-} from "three-mesh-bvh";
-
-import {
-  Lensflare,
-  LensflareElement,
-} from "three/examples/jsm/objects/Lensflare.js";
 
 // 工具类导入
 import { debounce, uuid, getAssetsUrlRelative } from "@/utils/common";
@@ -165,10 +153,7 @@ let renderer: THREE.WebGLRenderer;
 let stats: Stats;
 let hdrTexture: THREE.Texture;
 
-let grid: THREE.GridHelper;
 let controls: OrbitControls;
-
-let videoSource: HTMLVideoElement;
 
 let boothModel: THREE.Object3D | null = null; // 展台
 let carModel: THREE.Object3D | null = null;
@@ -246,8 +231,6 @@ const init = async () => {
   infoContainer?.appendChild(stats.dom);
 
   window.addEventListener("resize", onWindowResize);
-
-  clock = new THREE.Clock();
 
   camera = new THREE.PerspectiveCamera(
     40,
