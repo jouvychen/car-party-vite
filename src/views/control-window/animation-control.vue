@@ -183,6 +183,7 @@ const onTweenOpenDoor = () => {
     tweenState.value.openWheelSeedingBroke = true;
     tweenState.value.openWheelSeeding = false;
   }
+  const carGlass = carModel.value?.getObjectByName('挡风玻璃') as THREE.Mesh;
   let leftDoorMesh = carModel.value?.getObjectByName("左门");
   const leftDoorDegParams = {
     degX: tweenState.value.openDoor ? Math.PI / 3 : 0,
@@ -232,7 +233,11 @@ const onTweenOpenDoor = () => {
   });
   rightDoorDeg.onComplete(() => {
     tweenState.value.openDoor = !tweenState.value.openDoor;
+    // 解决双面渲染时通过挡风玻璃看向2边车门玻璃出现不透明黑块(但在升起车门动画后要设置成双面渲染)
+    !tweenState.value.openDoor && carGlass.material instanceof THREE.Material && (carGlass.material.side = THREE.FrontSide);
   });
+
+  !tweenState.value.openDoor && carGlass.material instanceof THREE.Material && (carGlass.material.side = THREE.DoubleSide);
 
   leftDoorDeg.start();
   rightDoorDeg.start();

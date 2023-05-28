@@ -526,6 +526,9 @@ const init = async () => {
 
   // 车
   carModel = gltf.scene;
+  // 解决双面渲染时通过挡风玻璃看向2边车门玻璃出现不透明黑块(但在升起车门动画后要设置成双面渲染)
+  const carGlass = carModel.getObjectByName('挡风玻璃') as THREE.Mesh;
+  carGlass.material instanceof THREE.Material && (carGlass.material.side = THREE.FrontSide);
 
   // 展台
   boothModel = boothGltf.scene;
