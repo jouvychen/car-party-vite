@@ -460,8 +460,7 @@ const render = () => {
   stats.update();
   flag.flagUpdate();
 
-  // const time = -performance.now() / 1000;
-  // carStore.wheelStart && startWheel(time);
+  carStore.wheelStart && startWheel(-performance.now() / 1000);
 
   !r.value && renderer.render(scene, camera);
 };
