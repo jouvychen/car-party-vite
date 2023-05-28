@@ -30,7 +30,7 @@ export class CreatePromotionalFilm {
 
   // 创建封面默认贴图
   creatCoverTexture() {
-    const coverTexture = this.textureLoader.load(getAssetsUrlRelative('../assets/images/poster/', 'Lamborghini-Centenario-poster.jpg'), () => {
+    const coverTexture = this.textureLoader.load(getAssetsUrlRelative('../assets/images/poster/', '视频封面.png'), () => {
       this.setTexture();
     });
     coverTexture.center.set(0.5, 0.5);

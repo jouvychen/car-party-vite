@@ -92,6 +92,8 @@
 
     <div class="threejs-container">
       <div id="container"></div>
+
+      <htmlNode></htmlNode>
     </div>
   </div>
 </template>
@@ -135,6 +137,9 @@ import colorControl from "../control-window/color-control.vue";
 
 import materialControl from "../control-window/material-control.vue";
 
+import htmlNode from "../html-node/index.vue";
+import { CreateHtmlNodes } from "../html-node/createHtmlNodes";
+let htmlNodes: CreateHtmlNodes;
 /**
  * 状态仓库
  */
@@ -353,6 +358,9 @@ const init = async () => {
   boothGroup?.add(carModel);
   scene.add(boothModel);
 
+  // 创建html信息节点
+  htmlNodes = new CreateHtmlNodes(scene, camera, boothModel, ['.point-0'], ['视频面版']);
+
   // 创建视频
   promotionalFilm = new CreatePromotionalFilm(boothModel, "屏幕");
 
@@ -459,6 +467,7 @@ const render = () => {
   TWEEN.update();
   stats.update();
   flag.flagUpdate();
+  htmlNodes?.update();
 
   carStore.wheelStart && startWheel(-performance.now() / 1000);
 
