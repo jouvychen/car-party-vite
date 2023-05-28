@@ -1,10 +1,7 @@
 export const flyEye = {
   vsSource: `
-        varying vec3 vPosition;
         varying vec2 vUV;
         void main() {
-            // 顶点着色器计算后的Position
-            vPosition = position;
             // 到时候通过它把uv数据传递给片元
             vUV = uv;
             gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
@@ -23,9 +20,6 @@ export const flyEye = {
         uniform sampler2D u_Sampler;
         uniform sampler2D u_Sampler1;
         varying vec2 vUV;
-        uniform vec4 shadow_colour; 
-        uniform float shadow_height; 
-        uniform float bounces; 
         uniform float progress;
 
         vec4 getToColor(vec2  uv){

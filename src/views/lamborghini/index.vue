@@ -134,8 +134,7 @@ import { CreatePromotionalFilm } from "../function/createPromotionalFilm";
 let promotionalFilm: CreatePromotionalFilm;
 
 import { ThreeGlTransitions } from "../function/threeGlTransitions/index";
-import { perlin } from "../function/threeGlTransitions/type/perlin";
-import { flyEye } from "../function/threeGlTransitions/type/fly-eye";
+import { morph, flyEye, crossWarp, ripple } from "../function/threeGlTransitions/type/index";
 
 import { LoadViteImage } from "../function/loadViteImages";
 
@@ -349,7 +348,7 @@ const loadManager = ref({
   schedule: 0,
   success: false,
   showMask: true,
-  total: 23, // 总共加载的资源数(从默认加载器得知)
+  total: 26, // 总共加载的资源数(从默认加载器得知)
 });
 
 let rectLight: THREE.RectAreaLight;
@@ -553,7 +552,7 @@ const init = async () => {
       .then((imageList: HTMLImageElement[]) => {
         const threeGlTransitions = new ThreeGlTransitions(
           testMesh,
-          [perlin, flyEye],
+          [morph, flyEye, crossWarp, ripple],
           imageList
         );
         threeGlTransitions.main();
