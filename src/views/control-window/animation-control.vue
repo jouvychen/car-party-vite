@@ -114,12 +114,12 @@ let hdrTexture: THREE.Texture;
  * 状态仓库
  */
 import {
-  useBoothModalStore,
-  useCarModalStore,
+  useBoothModelStore,
+  useCarModelStore,
   useThreejsModuleStore,
 } from "@/store";
-const boothStore = useBoothModalStore();
-const carStore = useCarModalStore();
+const boothStore = useBoothModelStore();
+const carStore = useCarModelStore();
 const threejsModule = useThreejsModuleStore();
 
 const currentAnimationName = ref("");
@@ -155,7 +155,7 @@ let boothPosition: ObjectKeys = {
  */
 // let carModel: THREE.Object3D;
 
-const carModel = computed(() => carStore.carModal);
+const carModel = computed(() => carStore.carModel);
 const source = computed(() => carStore.source);
 const wheelStart = computed(() => carStore.wheelStart);
 // 车辆动画状态管理

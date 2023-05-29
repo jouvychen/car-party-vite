@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 import * as THREE from 'three';
-const useCarModalStore = defineStore('carModal', {
+const useCarModelStore = defineStore('carModel', {
     state: () => {
         return {
-            carModal: {} as THREE.Object3D,
+            carModel: {} as THREE.Object3D,
             wheelStart: false, // 车轮动画,
             source: {
                 texture: {
@@ -16,4 +16,4 @@ const useCarModalStore = defineStore('carModal', {
     },
 })
 
-export default useCarModalStore
+export default useCarModelStore

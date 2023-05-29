@@ -93,7 +93,7 @@
     <div class="threejs-container">
       <div id="container"></div>
 
-      <htmlNode></htmlNode>
+      <HtmlNode></HtmlNode>
     </div>
   </div>
 </template>
@@ -137,28 +137,31 @@ import colorControl from "../control-window/color-control.vue";
 
 import materialControl from "../control-window/material-control.vue";
 
-import htmlNode from "../html-node/index.vue";
+import HtmlNode from "../html-node/index.vue";
 import { CreateHtmlNodes } from "../html-node/createHtmlNodes";
+
+import { MainThreeSetup } from './main';
+let mainThree: MainThreeSetup;
 let htmlNodes: CreateHtmlNodes;
 /**
  * 状态仓库
  */
 import {
-  useBoothModalStore,
-  useCarModalStore,
+  useBoothModelStore,
+  useCarModelStore,
   useThreejsModuleStore,
 } from "@/store";
-const boothStore = useBoothModalStore();
-const carStore = useCarModalStore();
+const boothStore = useBoothModelStore();
+const carStore = useCarModelStore();
 const threejsModule = useThreejsModuleStore();
 
-let camera: THREE.PerspectiveCamera;
-let scene: THREE.Scene;
-let renderer: THREE.WebGLRenderer;
+// let camera: THREE.PerspectiveCamera;
+// let scene: THREE.Scene;
+// let renderer: THREE.WebGLRenderer;
 let stats: Stats;
 let hdrTexture: THREE.Texture;
 
-let controls: OrbitControls;
+// let controls: OrbitControls;
 
 let boothModel: THREE.Object3D | null = null; // 展台
 let carModel: THREE.Object3D | null = null;
@@ -203,13 +206,13 @@ const onPlay = () => {
   loadManager.value.showMask = false;
   loadManager.value.success = true;
   entranceAnimations.animateCamera(
-    camera,
-    controls,
+    mainThree.camera,
+    mainThree.controls,
     { x: 4.25, y: 1.4, z: 4.5 },
     { x: 0, y: 0.5, z: 0 },
     2400,
     () => {
-      camera.position.set(4.25, 1.4, 4.5);
+      mainThree.camera.position.set(4.25, 1.4, 4.5);
       // 播放视频
       setTimeout(() => {
         // promotionalFilm.onPlay();
@@ -219,105 +222,116 @@ const onPlay = () => {
 };
 
 const init = async () => {
-  const container = document.getElementById("container");
-
-  renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setAnimationLoop(render);
-  renderer.outputEncoding = THREE.sRGBEncoding;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.85; // 可以改变曝光度从而改变hdr贴图亮度，需要重新渲染
-  container?.appendChild(renderer.domElement);
-
   stats = Stats();
   stats.dom.setAttribute("id", "stats");
   const infoContainer = document.getElementById("stats-container");
   infoContainer?.appendChild(stats.dom);
 
-  window.addEventListener("resize", onWindowResize);
+  const container = document.getElementById("container");
 
-  camera = new THREE.PerspectiveCamera(
-    40,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    100
-  );
-  threejsModule.camera = camera;
-  // camera.position.set(4.25, 1.4, 4.5);
-  camera.position.set(-40, 20, 40);
+  mainThree = new MainThreeSetup('container');
+  window.addEventListener('loadEvent', (loadEvent) => {
+    // debugger
+    // loadManager.value = Object.assign(loadManager.value, loadEvent.detail.progress.schedule);
+    loadManager.value = Object.assign(loadManager.value, loadEvent.detail.progress);
+});
+  mainThree.setAnimationLoop(render);
+  await mainThree.loadResource();
+  
 
-  container && (controls = new OrbitControls(camera, container));
-  controls.enableDamping = true;
-  // controls.maxDistance = 10; // 设置相机距离原点的最远距离
-  // controls.maxPolarAngle = 1.55;
-  // controls.minDistance = 1; // 设置相机距离原点的最远距离
-  controls.target.set(0, 0.5, 0);
-  controls.update();
-  threejsModule.controls = controls;
+  // renderer = new THREE.WebGLRenderer({ antialias: true });
+  // renderer.setPixelRatio(window.devicePixelRatio);
+  // renderer.setSize(window.innerWidth, window.innerHeight);
+  // renderer.setAnimationLoop(render);
+  // renderer.outputEncoding = THREE.sRGBEncoding;
+  // renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  // renderer.toneMappingExposure = 0.85; // 可以改变曝光度从而改变hdr贴图亮度，需要重新渲染
+  // container?.appendChild(renderer.domElement);
 
-  scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0x333333, 15, 20);
-  scene.background = new THREE.Color(0x333333);
-  threejsModule.scene = scene;
 
-  flag = new CreateFlag(scene, camera, renderer);
+
+  // window.addEventListener("resize", onWindowResize);
+
+  // camera = new THREE.PerspectiveCamera(
+  //   40,
+  //   window.innerWidth / window.innerHeight,
+  //   0.1,
+  //   100
+  // );
+  threejsModule.camera = mainThree.camera;
+  // camera.position.set(-40, 20, 40);
+
+  // container && (controls = new OrbitControls(camera, container));
+  // controls.enableDamping = true;
+  // // controls.maxDistance = 10; // 设置相机距离原点的最远距离
+  // // controls.maxPolarAngle = 1.55;
+  // // controls.minDistance = 1; // 设置相机距离原点的最远距离
+  // controls.target.set(0, 0.5, 0);
+  // controls.update();
+  threejsModule.controls = mainThree.controls;
+
+  // scene = new THREE.Scene();
+  // scene.fog = new THREE.Fog(0x333333, 15, 20);
+  // scene.background = new THREE.Color(0x333333);
+  threejsModule.scene = mainThree.scene;
+
+  flag = new CreateFlag(mainThree.scene, mainThree.camera, mainThree.renderer);
   flag.initFlag();
 
-  const textureLoader = new THREE.TextureLoader();
-  const rgbeLoader = new RGBELoader().setPath("/textures/equirectangular/");
-  const gltfLoader = new GLTFLoader().setPath("/models/");
-  const dracoLoader = new DRACOLoader().setDecoderPath("/draco/");
-  dracoLoader.setDecoderConfig({ type: "js" }); //使用兼容性强的draco_decoder.js解码器
-  dracoLoader.preload();
-  gltfLoader.setDRACOLoader(dracoLoader);
+  // const textureLoader = new THREE.TextureLoader();
+  // const rgbeLoader = new RGBELoader().setPath("/textures/equirectangular/");
+  // const gltfLoader = new GLTFLoader().setPath("/models/");
+  // const dracoLoader = new DRACOLoader().setDecoderPath("/draco/");
+  // dracoLoader.setDecoderConfig({ type: "js" }); //使用兼容性强的draco_decoder.js解码器
+  // dracoLoader.preload();
+  // gltfLoader.setDRACOLoader(dracoLoader);
 
   // 默认加载
-  THREE.DefaultLoadingManager.onProgress = async (url, loaded, total) => {
-    console.log("total", total);
-    // console.log('进度', Math.floor((loaded / loadManager.value.total) * 100));
-    let loadingType = url.split(".");
-    loadManager.value.name = loadingType[loadingType.length - 1];
-    if (Math.floor((loaded / loadManager.value.total) * 100) === 100) {
-      loadManager.value.schedule = 100;
-    } else {
-      // 这里不用回调里的total是因为模型压缩成bin后再解压后资源数量会变化
-      loadManager.value.schedule = Math.floor(
-        (loaded / loadManager.value.total) * 100
-      );
-    }
-  };
+  // THREE.DefaultLoadingManager.onProgress = async (url, loaded, total) => {
+  //   console.log("total", total);
+  //   // console.log('进度', Math.floor((loaded / loadManager.value.total) * 100));
+  //   let loadingType = url.split(".");
+  //   loadManager.value.name = loadingType[loadingType.length - 1];
+  //   if (Math.floor((loaded / loadManager.value.total) * 100) === 100) {
+  //     loadManager.value.schedule = 100;
+  //   } else {
+  //     // 这里不用回调里的total是因为模型压缩成bin后再解压后资源数量会变化
+  //     loadManager.value.schedule = Math.floor(
+  //       (loaded / loadManager.value.total) * 100
+  //     );
+  //   }
+  // };
 
-  const [texture, boothGltf, gltf, textureFlare0, textureFlare3] =
-    await Promise.all([
-      rgbeLoader.loadAsync("venice_sunset_1k.hdr"),
-      gltfLoader.loadAsync("车展台压缩.glb"),
-      gltfLoader.loadAsync("兰博基尼碳纤维大牛压缩.glb"),
-      textureLoader.load("/textures/lensflare/lensflare0.png"),
-      textureLoader.load("/textures/lensflare/lensflare3.png"),
-    ]);
+  // const [texture, boothGltf, gltf, textureFlare0, textureFlare3] =
+  //   await Promise.all([
+  //     rgbeLoader.loadAsync("venice_sunset_1k.hdr"),
+  //     gltfLoader.loadAsync("车展台压缩.glb"),
+  //     gltfLoader.loadAsync("兰博基尼碳纤维大牛压缩.glb"),
+  //     textureLoader.load("/textures/lensflare/lensflare0.png"),
+  //     textureLoader.load("/textures/lensflare/lensflare3.png"),
+  //   ]);
 
-  // 反射镜像
-  const hdrEquirect = texture;
-  hdrEquirect.mapping = THREE.EquirectangularReflectionMapping;
+  // // 反射镜像
+  // const hdrEquirect = texture;
+  // hdrEquirect.mapping = THREE.EquirectangularReflectionMapping;
 
-  carStore.source.texture.textureFlare0 = textureFlare0;
-  carStore.source.texture.textureFlare3 = textureFlare3;
-  carStore.carModal = gltf.scene;
+  carStore.source.texture.textureFlare0 = mainThree.textureFlare0;
+  carStore.source.texture.textureFlare3 = mainThree.textureFlare3;
+  carStore.carModel = mainThree.carModel;
 
-  hdrTexture = texture;
-  scene.environment = texture;
-  scene.environment.mapping = THREE.EquirectangularReflectionMapping;
+  hdrTexture = mainThree.hdrEnvironmentTexture;
+  // scene.environment = texture;
+  // scene.environment.mapping = THREE.EquirectangularReflectionMapping;
 
-  // 车
-  carModel = gltf.scene;
-  // 解决双面渲染时通过挡风玻璃看向2边车门玻璃出现不透明黑块(但在升起车门动画后要设置成双面渲染)
-  const carGlass = carModel.getObjectByName('挡风玻璃') as THREE.Mesh;
-  carGlass.material instanceof THREE.Material && (carGlass.material.side = THREE.FrontSide);
+  // // 车
+  carModel = mainThree.carModel;
+  // // 解决双面渲染时通过挡风玻璃看向2边车门玻璃出现不透明黑块(但在升起车门动画后要设置成双面渲染)
+  // const carGlass = carModel.getObjectByName('挡风玻璃') as THREE.Mesh;
+  // carGlass.material instanceof THREE.Material && (carGlass.material.side = THREE.FrontSide);
 
-  // 展台
-  boothModel = boothGltf.scene;
-  const transitionMesh = boothModel.getObjectByName("Glass002") as THREE.Mesh;
+  // // 展台
+  boothModel = mainThree.boothModel;
+  const transitionMesh = mainThree.boothModel.getObjectByName("Glass002") as THREE.Mesh;
   createTransitions(transitionMesh);
 
   // 设置展台材质
@@ -353,21 +367,21 @@ const init = async () => {
   // });
   // glass.material = sphereMaterial;
 
-  boothModel.scale.set(1.2, 1.2, 1.2);
-  const boothGroup = boothModel.getObjectByName("车承台父节点");
-  boothGroup?.add(carModel);
-  scene.add(boothModel);
+  // boothModel.scale.set(1.2, 1.2, 1.2);
+  // const boothGroup = boothModel.getObjectByName("车承台父节点");
+  // boothGroup?.add(carModel);
+  // scene.add(boothModel);
 
   // 创建html信息节点
-  htmlNodes = new CreateHtmlNodes(scene, camera, boothModel, ['.point-0'], ['视频面版']);
+  htmlNodes = new CreateHtmlNodes(mainThree.scene, mainThree.camera, mainThree.boothModel, ['.point-0'], ['视频面版']);
 
   // 创建视频
-  promotionalFilm = new CreatePromotionalFilm(boothModel, "屏幕");
+  promotionalFilm = new CreatePromotionalFilm(mainThree.boothModel, "屏幕");
 
   /**
    * 创建镜子
    */
-  const mirrorMesh = boothModel.getObjectByName("超长镜面") as THREE.Mesh;
+  const mirrorMesh = mainThree.boothModel.getObjectByName("超长镜面") as THREE.Mesh;
   mirrorMesh.visible = false;
   const groundMirror = new Reflector(mirrorMesh.geometry.scale(1.2, 2.8, 1.2), {
     clipBias: 0.0003,
@@ -383,16 +397,16 @@ const init = async () => {
   groundMirror.position.x = mirrorPosition.x;
   groundMirror.position.y = mirrorPosition.y + 0.4;
   groundMirror.position.z = mirrorPosition.z;
-  scene.add(groundMirror);
+  // mainThree.scene.add(groundMirror);
 
   // 创建灯光
   createLight();
 
   wheels.push(
-    carModel.getObjectByName("左前轮") as THREE.Object3D,
-    carModel.getObjectByName("左后轮") as THREE.Object3D,
-    carModel.getObjectByName("右前轮") as THREE.Object3D,
-    carModel.getObjectByName("右后轮") as THREE.Object3D
+    mainThree.carModel.getObjectByName("左前轮") as THREE.Object3D,
+    mainThree.carModel.getObjectByName("左后轮") as THREE.Object3D,
+    mainThree.carModel.getObjectByName("右前轮") as THREE.Object3D,
+    mainThree.carModel.getObjectByName("右后轮") as THREE.Object3D
   );
 };
 
@@ -402,8 +416,8 @@ const init = async () => {
 const createLight = () => {
   // WellLeft.001
   // Top.001
-  const Top = scene.getObjectByName("Top001");
-  const WellLeft = scene.getObjectByName("WellLeft001");
+  const Top = mainThree.scene.getObjectByName("Top001");
+  const WellLeft = mainThree.scene.getObjectByName("WellLeft001");
   const width = 12;
   const height = 12;
   const intensity = 10;
@@ -419,7 +433,7 @@ const createLight = () => {
   // rectLight.rotateX(Math.PI * 0.5);
   rectLight.lookAt(0, 0, 0);
   rectLight2.lookAt(0, 0, 0);
-  scene.add(rectLight);
+  mainThree.scene.add(rectLight);
   // WellLeft.add(rectLight2);
 
   const rectLightHelper = new RectAreaLightHelper(rectLight);
@@ -450,9 +464,9 @@ const onChangeColor = (material: THREE.Material, array: string[]) => {
   console.log(array);
   console.log(material);
   array.forEach((o) => {
-    const m = (carModel?.getObjectByName(o) as THREE.Mesh)?.material;
+    const m = (mainThree.carModel?.getObjectByName(o) as THREE.Mesh)?.material;
     if (m instanceof THREE.Material) {
-      (carModel?.getObjectByName(o) as THREE.Mesh).material = material;
+      (mainThree.carModel?.getObjectByName(o) as THREE.Mesh).material = material;
     }
   });
 };
@@ -463,15 +477,17 @@ const onChangeMaterial = () => {
 };
 const r = ref(false);
 const render = () => {
-  controls.update();
-  TWEEN.update();
-  stats.update();
-  flag.flagUpdate();
+  // loadManager.value.schedule = mainThree.loadManager.schedule;
+
+  mainThree.controls.update();
+  TWEEN?.update();
+  stats?.update();
+  flag?.flagUpdate();
   htmlNodes?.update();
 
   carStore.wheelStart && startWheel(-performance.now() / 1000);
 
-  !r.value && renderer.render(scene, camera);
+  !r.value && mainThree.renderer.render(mainThree.scene, mainThree.camera);
 };
 
 // setTimeout(()=>{
@@ -488,29 +504,29 @@ const startWheel = (time: number) => {
 /**
  * 包围盒全自动计算：模型整体居中
  */
-const calcBoundingBox = () => {
-  if (carModel) {
-    let box3 = new THREE.Box3();
-    // 模型model是加载一个三维模型返回的对象，包含多个网格模型
-    box3.expandByObject(carModel);
-    // 计算一个层级模型对应包围盒的几何体中心在世界坐标中的位置
-    let center = new THREE.Vector3();
-    box3.getCenter(center);
-    // 重新设置模型的位置，使之居中。
-    carModel.position.x = carModel.position.x - center.x;
-    carModel.position.z = carModel.position.z - center.z;
-  }
-};
+// const calcBoundingBox = () => {
+//   if (carModel) {
+//     let box3 = new THREE.Box3();
+//     // 模型model是加载一个三维模型返回的对象，包含多个网格模型
+//     box3.expandByObject(carModel);
+//     // 计算一个层级模型对应包围盒的几何体中心在世界坐标中的位置
+//     let center = new THREE.Vector3();
+//     box3.getCenter(center);
+//     // 重新设置模型的位置，使之居中。
+//     carModel.position.x = carModel.position.x - center.x;
+//     carModel.position.z = carModel.position.z - center.z;
+//   }
+// };
 
 // 窗口大小变化
-const onWindowResize = () => {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  camera.aspect = width / height;
-  calcBoundingBox();
-  camera.updateProjectionMatrix();
-  renderer.setSize(width, height);
-};
+// const onWindowResize = () => {
+//   const width = window.innerWidth;
+//   const height = window.innerHeight;
+//   camera.aspect = width / height;
+//   calcBoundingBox();
+//   camera.updateProjectionMatrix();
+//   renderer.setSize(width, height);
+// };
 
 const onSvgComplete = () => {
   svgCompleted.value = true;

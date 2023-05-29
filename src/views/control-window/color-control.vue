@@ -31,7 +31,7 @@
 </template>
 <script setup lang="ts">
 import * as THREE from "three";
-import { useBoothModalStore } from "@/store";
+import { useBoothModelStore } from "@/store";
 import floatWindow from "../float-window/index.vue";
 const props = defineProps({
   floatWindow: {
@@ -175,7 +175,7 @@ const materials = {
   glassMaterial: glassMaterial,
 };
 
-const boothStore = useBoothModalStore();
+const boothStore = useBoothModelStore();
 const boothReady = computed(() => boothStore.boothReady);
 const floatWindow1 = props.floatWindow;
 const emits = defineEmits(["onChangeColor"]);
