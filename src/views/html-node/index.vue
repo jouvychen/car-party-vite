@@ -34,8 +34,7 @@ import svgButton from './svg-button.vue';
   z-index: 10;
 
   // 适配svg按钮
-  width: 50px;
-  overflow: hidden;
+  width: 40px;
 
   .label {
     position: absolute;
