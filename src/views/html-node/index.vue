@@ -1,47 +1,29 @@
 <template>
-  <div class="point point-0">
+  <div class="hot-point hot-point__0">
     <svgButton></svgButton>
   </div>
-  
-  <!-- <div class="point point-0">
-    <div class="label label-0">1</div>
-    <div class="text">
-      灯塔：矗立在海岸的岩石之上，白色的塔身以及红色的塔屋，在湛蓝色的天空和深蓝色大海的映衬下，显得如此醒目和美丽。
-    </div>
-  </div>
-  <div class="point point-1">
-    <div class="label label-1">2</div>
-    <div class="text">
-      小船：梦中又见那宁静的大海，我前进了，驶向远方，我知道我是船，只属于远方。这一天，我用奋斗作为白帆，要和明天一起飘扬，呼喊。
-    </div>
-  </div>
-  <div class="point point-2">
-    <div class="label label-2">3</div>
-    <div class="text">
-      沙滩：宇宙展开的一小角。不想说来这里是暗自疗伤，那过于矫情，只想对每一粒沙子，每一朵浪花问声你们好吗
-    </div>
-  </div> -->
 </template>
 <script setup lang="ts">
 import svgButton from './svg-button.vue';
 </script>
 
 <style scoped lang="less">
-.point {
+.hot-point {
   position: fixed;
   top: 50%;
   left: 50%;
   z-index: 10;
-
-  // 适配svg按钮
+  cursor: pointer;
   width: 40px;
 
-  .html-btn {
-    transform: scale(0, 0);
-    transition: transform 0.3s;
+  // button样式
+  .html-hp-btn {
+    opacity: 0;
   }
-  &.visible .html-btn {
-    transform: scale(1, 1);
+  &.visible .html-hp-btn {
+    opacity: 1;
+    transition: opacity 200ms ease-out;
   }
+
 }
 </style>

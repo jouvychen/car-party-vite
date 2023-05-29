@@ -19,6 +19,7 @@ export class MainThreeSetup {
   camera!: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
   controls!: OrbitControls;
+  controlChange!: boolean;
   loadManager!: LoadManager;
   hdrEnvironmentTexture!: THREE.Texture; // 环境hdr
   textureFlare0!: THREE.Texture; // 车灯光斑
@@ -81,6 +82,7 @@ export class MainThreeSetup {
   };
 
   initControl() {
+    this.controlChange = false;
     this.container && (this.controls = new OrbitControls(this.camera, this.container));
     this.controls.enableDamping = true;
     // this.controls.maxDistance = 10; // 设置相机距离原点的最远距离
@@ -88,6 +90,12 @@ export class MainThreeSetup {
     // this.controls.minDistance = 1; // 设置相机距离原点的最远距离
     this.controls.target.set(0, 0.5, 0);
     this.controls.update();
+    // this.controls.addEventListener('change', () => {
+    //   this.controlChange = true;
+    // });
+    // this.controls.addEventListener('end', () => {
+    //   this.controlChange = false;
+    // });
   }
   onWindowResize() {
     const width = window.innerWidth;

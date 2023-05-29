@@ -1,7 +1,7 @@
 <template>
   <button
     type="button"
-    class="html-btn Cta__wrapper styles__font-size-cta styles__align-center styles__justify-center Cta__isHotPoint hp-visible"
+    class="html-hp-btn Cta__wrapper styles__font-size-cta styles__align-center styles__justify-center Cta__isHotPoint hp-visible"
   >
     <div class="Cta__hexagon-wrapper">
       <svg
@@ -188,6 +188,10 @@
 </script>
 
 <style scoped lang="less">
+// 使用后代选择器关闭全部的鼠标事件，配合鼠标单击事件时判断是不是点中热点
+.html-hp-btn * {
+  pointer-events: none;
+}
 .Cta__wrapper {
   position: relative;
 }
@@ -286,10 +290,6 @@
 
 body.webgl-app-started:not(.orbit-drag):not(.layer-open) .hp-visible {
   transition-delay: 400ms;
-}
-
-body:not(.webgl-app-started) .hp-visible {
-  transition-delay: 1600ms;
 }
 
 .Cta__hexagon-wrapper {

@@ -26,7 +26,7 @@ export class CreateHtmlNodes {
   public divClassList: string[]; // 定义的div容器
   public objectNameList: string[]; // 3d对象名称, 包括object3d和mesh
   public pointsList!: PointItem[]; // 定位到页面上的html节点信息
-  // public objectList!: ObjectPositionItem[];
+  public mousedown = false;
 
   constructor(scene: THREE.Scene, camera: THREE.PerspectiveCamera, modal: THREE.Object3D, divClassList: string[], objectNameList: string[]) {
     this.raycaster = new THREE.Raycaster();
@@ -37,6 +37,32 @@ export class CreateHtmlNodes {
     this.objectNameList = objectNameList;
     this.getWorldPosition();
 
+    // 监听鼠标左键按下事件
+    window.addEventListener('mousedown', (event: MouseEvent) => {
+      if (event.button === 0) {
+        const target = event.target as HTMLElement; // 将 event.target 转换为 HTMLElement 类型
+        const classListArray = Array.from(target.classList); // 将 classList 转换为数组
+        const hasClass = classListArray.includes('html-hp-btn'); // 检查类名是否存在
+        if (!hasClass) {
+          // 只有点击热点按钮才算鼠标按下
+          this.mousedown = true;
+          for (let i = 0, l = this.pointsList.length; i < l; i++) {
+            this.pointsList[i].element?.classList.remove('visible');
+          }
+        }
+      }
+    });
+
+    // 监听鼠标左键松开事件
+    window.addEventListener('mouseup', (event) => {
+      if (event.button === 0) {
+        this.mousedown = false;
+        // for (let i = 0, l = this.pointsList.length; i < l; i++) {
+        //   this.pointsList[i].element?.classList.add('visible');
+        // }
+      }
+    });
+
   }
 
   getWorldPosition(precision = 2) {
@@ -45,22 +71,6 @@ export class CreateHtmlNodes {
     for (let i = 0, l = this.objectNameList.length; i < l; i++) {
       const object = this.modal.getObjectByName(this.objectNameList[i]);
       let worldPosition = new THREE.Vector3();
-      // let worldPositionObj: ObjectPositionItem = {
-      //   name: '',
-      //   position: '',
-      //   x: 0,
-      //   y: 0,
-      //   z: 0,
-      // };
-      // worldPositionObj = Object.assign(worldPositionObj, {
-      //   name: object?.name,
-      //   position: JSON.stringify(object?.getWorldPosition(worldPosition)),
-      //   x: Number(object?.getWorldPosition(worldPosition).x.toFixed(precision)),
-      //   y: Number(object?.getWorldPosition(worldPosition).y.toFixed(precision)),
-      //   z: Number(object?.getWorldPosition(worldPosition).z.toFixed(precision)),
-      // });
-      // console.log(`${object?.name}的世界坐标`, worldPositionObj);
-      // this.objectList.push(worldPositionObj);
 
       const pointNode = {
         position: object?.getWorldPosition(worldPosition) || new THREE.Vector3(0, 0, 0),
@@ -72,6 +82,9 @@ export class CreateHtmlNodes {
   }
 
   update() {
+    // if (this.mousedown) {
+    //   return 0;
+    // }
     for (let i = 0, l = this.pointsList.length; i < l; i++) {
       // 获取2D屏幕位置
       const screenPosition = this.pointsList[i].position.clone();
@@ -79,7 +92,7 @@ export class CreateHtmlNodes {
 
       this.raycaster.setFromCamera(screenPosition, this.camera);
       const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-      if (intersects.length === 0) {
+      if (!this.mousedown && intersects.length === 0) {
         // 未找到相交点，显示
         this.pointsList[i].element?.classList.add('visible');
       } else {
@@ -88,7 +101,7 @@ export class CreateHtmlNodes {
         const intersectionDistance = intersects[0].distance;
         const pointDistance = this.pointsList[i].position.distanceTo(this.camera.position);
         // 相交点距离比点距离近，隐藏；相交点距离比点距离远，显示
-        intersectionDistance < pointDistance
+        (this.mousedown || intersectionDistance < pointDistance)
           ? this.pointsList[i].element?.classList.remove('visible')
           : this.pointsList[i].element?.classList.add('visible');
       }

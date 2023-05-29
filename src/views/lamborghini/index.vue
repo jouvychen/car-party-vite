@@ -373,7 +373,7 @@ const init = async () => {
   // scene.add(boothModel);
 
   // 创建html信息节点
-  htmlNodes = new CreateHtmlNodes(mainThree.scene, mainThree.camera, mainThree.boothModel, ['.point-0'], ['视频面版']);
+  htmlNodes = new CreateHtmlNodes(mainThree.scene, mainThree.camera, mainThree.boothModel, ['.hot-point__0'], ['视频面版']);
 
   // 创建视频
   promotionalFilm = new CreatePromotionalFilm(mainThree.boothModel, "屏幕");
@@ -477,7 +477,6 @@ const onChangeMaterial = () => {
 };
 const r = ref(false);
 const render = () => {
-  // loadManager.value.schedule = mainThree.loadManager.schedule;
 
   mainThree.controls.update();
   TWEEN?.update();
