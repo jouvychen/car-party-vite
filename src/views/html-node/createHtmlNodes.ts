@@ -72,29 +72,30 @@ export class CreateHtmlNodes {
   }
 
   update() {
-    for (const point of this.pointsList) {
+    for (let i = 0, l = this.pointsList.length; i < l; i++) {
       // 获取2D屏幕位置
-      const screenPosition = point.position.clone();
+      const screenPosition = this.pointsList[i].position.clone();
       screenPosition.project(this.camera); // 世界坐标转标准设备坐标
 
       this.raycaster.setFromCamera(screenPosition, this.camera);
       const intersects = this.raycaster.intersectObjects(this.scene.children, true);
       if (intersects.length === 0) {
         // 未找到相交点，显示
-        point.element?.classList.add('visible');
+        this.pointsList[i].element?.classList.add('visible');
       } else {
         // 找到相交点
         // 获取相交点的距离和点的距离
         const intersectionDistance = intersects[0].distance;
-        const pointDistance = point.position.distanceTo(this.camera.position);
+        const pointDistance = this.pointsList[i].position.distanceTo(this.camera.position);
         // 相交点距离比点距离近，隐藏；相交点距离比点距离远，显示
         intersectionDistance < pointDistance
-          ? point.element?.classList.remove('visible')
-          : point.element?.classList.add('visible');
+          ? this.pointsList[i].element?.classList.remove('visible')
+          : this.pointsList[i].element?.classList.add('visible');
       }
       const translateX = screenPosition.x * sizes.width * 0.5;
       const translateY = -screenPosition.y * sizes.height * 0.5;
-      point.element && (point.element.style.transform = `translateX(${translateX}px) translateY(${translateY}px)`);
+      this.pointsList[i].element && (this.pointsList[i].element.style.transform = `translateX(${translateX - 20}px) translateY(${translateY - 22}px)`); // 减去按钮宽和高一半
+
     }
   }
 

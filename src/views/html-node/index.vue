@@ -36,49 +36,11 @@ import svgButton from './svg-button.vue';
   // 适配svg按钮
   width: 40px;
 
-  .label {
-    position: absolute;
-    top: -16px;
-    left: -16px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #00000077;
-    border: 1px solid #ffffff77;
-    color: #ffffff;
-    font-family: Helvetica, Arial, sans-serif;
-    text-align: center;
-    line-height: 32px;
-    font-weight: 100;
-    font-size: 14px;
-    cursor: help;
+  .html-btn {
     transform: scale(0, 0);
     transition: transform 0.3s;
   }
-  .text {
-    position: absolute;
-    top: 30px;
-    left: -120px;
-    width: 200px;
-    padding: 20px;
-    border-radius: 4px;
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid #ffffff77;
-    color: #ffffff;
-    line-height: 1.3em;
-    font-family: Helvetica, Arial, sans-serif;
-    font-weight: 100;
-    font-size: 14px;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    text-align: justify;
-    text-align-last: left;
-  }
-  &:hover .text {
-    opacity: 1;
-  }
-  &.visible .label {
+  &.visible .html-btn {
     transform: scale(1, 1);
   }
 }

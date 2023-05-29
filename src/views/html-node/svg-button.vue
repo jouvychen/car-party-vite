@@ -1,7 +1,7 @@
 <template>
   <button
     type="button"
-    class="Cta__wrapper styles__font-size-cta styles__align-center styles__justify-center Cta__isHotPoint hp-visible"
+    class="html-btn Cta__wrapper styles__font-size-cta styles__align-center styles__justify-center Cta__isHotPoint hp-visible"
   >
     <div class="Cta__hexagon-wrapper">
       <svg
