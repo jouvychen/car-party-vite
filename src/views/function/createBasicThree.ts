@@ -21,7 +21,7 @@ export class CreateBasicThree {
     } else {
       this.renderer.domElement.style.position = 'absolute';
       this.renderer.domElement.style.zIndex =  '-999';
-      document.body.appendChild(this.renderer.domElement);
+      // document.body.appendChild(this.renderer.domElement);
     }
 
     this.camera = new THREE.PerspectiveCamera(

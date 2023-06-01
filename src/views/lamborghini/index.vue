@@ -125,6 +125,8 @@ let promotionalFilm: CreatePromotionalFilm;
 
 import {createTransitions} from '../function/createTransitions';
 
+import { PostProcessing } from '../function/PostProcessing.js';
+
 // 常量导入
 import { revolverList } from "./constan";
 
@@ -333,6 +335,8 @@ const init = async () => {
   boothModel = mainThree.boothModel;
   const transitionMesh = mainThree.boothModel.getObjectByName("Glass002") as THREE.Mesh;
   createTransitions(transitionMesh);
+
+  new PostProcessing(mainThree.boothModel);
 
   // 设置展台材质
   // const glass = boothModel.getObjectByName("Glass") as THREE.Mesh;
