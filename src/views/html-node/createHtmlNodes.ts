@@ -98,7 +98,7 @@ export class CreateHtmlNodes {
       } else {
         // 找到相交点
         // 获取相交点的距离和点的距离
-        const intersectionDistance = intersects[0].distance;
+        const intersectionDistance = (intersects instanceof Array && intersects.length > 0 ? intersects[0].distance : 0);
         const pointDistance = this.pointsList[i].position.distanceTo(this.camera.position);
         // 相交点距离比点距离近，隐藏；相交点距离比点距离远，显示
         (this.mousedown || intersectionDistance < pointDistance)

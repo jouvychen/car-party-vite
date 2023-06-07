@@ -5,6 +5,17 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"; // gltf�
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
+import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js'
+import { vertexShader } from '../shaders/bloomShaders/vertex'
+import { fragmentShader } from '../shaders/bloomShaders/fragment'
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
+import { ObjectKeys } from '@/utils/interface';
+
+import { TWEEN } from "three/examples/jsm/libs/tween.module.min"; // 补间动画
 interface LoadManager {
   name: string,
   schedule: number,
@@ -12,6 +23,22 @@ interface LoadManager {
   showMask: boolean,
   total: number, // 总共加载的资源数(从默认加载器得知)
 }
+
+const params = {
+  exposure: 1,
+  bloomStrength: 1.3,
+  bloomThreshold: 0,
+  bloomRadius: 1,
+  scene: 'Scene with Glow',
+};
+const ENTIRE_SCENE = 0;
+const BLOOM_SCENE = 1;
+// 设置图层属性.当mesh的图层mask和摄像机的mask一样才会被渲染出来
+const bloomLayer = new THREE.Layers();
+bloomLayer.set(BLOOM_SCENE);
+const darkMaterial = new THREE.MeshBasicMaterial({ color: 'black' });
+let materials: ObjectKeys = {};
+
 
 export class MainThreeSetup {
   container: HTMLDivElement | Document["body"] | undefined;
@@ -28,7 +55,8 @@ export class MainThreeSetup {
   boothModel!: THREE.Object3D;
 
   loadEvent: CustomEvent; // 加载进度
-
+  finalComposer!: EffectComposer;
+  bloomComposer!: EffectComposer;
 
   constructor(domId?: string) {
     // 自定义事件
@@ -44,11 +72,14 @@ export class MainThreeSetup {
     }
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer.autoClear = false;
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.outputEncoding = THREE.sRGBEncoding;
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 0.85; // 可以改变曝光度从而改变hdr贴图亮度，需要重新渲染
+
+    // this.renderer.setAnimationLoop(()=>this.setAnimationLoop);
+    // this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    // this.renderer.toneMappingExposure = 0.85; // 可以改变曝光度从而改变hdr贴图亮度，需要重新渲染
 
     if (domId) {
       this.container = document.getElementById(domId) as HTMLDivElement;
@@ -69,12 +100,15 @@ export class MainThreeSetup {
     this.camera.position.set(-40, 20, 40);
 
     this.scene = new THREE.Scene();
-    this.scene.fog = new THREE.Fog(0x333333, 15, 20);
-    this.scene.background = new THREE.Color(0x333333);
+    // 场景有雾气和背景色不为黑色影响辉光效果
+    // this.scene.fog = new THREE.Fog(0x333333, 15, 20);
+    // this.scene.background = new THREE.Color(0x333333);
 
     this.initControl();
 
     this.loadProgress();
+
+    this.animate();
     // this.loadResource();
 
     window.addEventListener("resize", () => this.onWindowResize());
@@ -135,8 +169,8 @@ export class MainThreeSetup {
     // carStore.carModel = gltf.scene;
     this.hdrEnvironmentTexture = texture;
     // hdrTexture = texture;
-    this.scene.environment = texture;
-    this.scene.environment.mapping = THREE.EquirectangularReflectionMapping;
+    // this.scene.environment = texture;
+    // this.scene.environment.mapping = THREE.EquirectangularReflectionMapping;
 
     // 车
     this.carModel = gltf.scene;
@@ -151,8 +185,87 @@ export class MainThreeSetup {
     boothGroup?.add(this.carModel);
     this.scene.add(this.boothModel);
 
+    // 后期处理渲染器通道
+    const renderScene = new RenderPass(this.scene, this.camera);
+
+    // 抗锯齿
+    let fxaaPass = new ShaderPass(FXAAShader);
+    // const copyPass = new ShaderPass(CopyShader);
+
+    // 第一次使用辉光渲染
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+    bloomPass.threshold = params.bloomThreshold;
+    bloomPass.strength = params.bloomStrength;
+    bloomPass.radius = params.bloomRadius;
+
+    // 效果创造器(混合渲染器通道、辉光通道)
+    this.bloomComposer = new EffectComposer(this.renderer);
+    this.bloomComposer.renderToScreen = false; // true将处理的结果保存到帧缓冲区，false直接显示在canvas画布上面
+    this.bloomComposer.addPass(renderScene);
+    this.bloomComposer.addPass(bloomPass);
+
+    const pixelRatio = this.renderer.getPixelRatio(); // 获取设备像素比，高清屏不会太模糊
+    fxaaPass.material.uniforms['resolution'].value.x = 1 / (window.innerWidth * pixelRatio);
+    fxaaPass.material.uniforms['resolution'].value.y = 1 / (window.innerHeight * pixelRatio);
+    fxaaPass.renderToScreen = false;
+
+    // 着色器通道
+    const finalPass = new ShaderPass(
+      new THREE.ShaderMaterial({
+        uniforms: {
+          baseTexture: { value: null },
+          bloomTexture: { value: this.bloomComposer.renderTarget2.texture },
+        },
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
+        defines: {},
+        precision: 'lowp',
+      }),
+      'baseTexture',
+    );
+    finalPass.needsSwap = true;
+
+    let renderTarget = new THREE.WebGLRenderTarget
+      (
+        window.innerWidth,
+        window.innerHeight,
+        {
+          minFilter: THREE.LinearFilter,
+          magFilter: THREE.LinearFilter,
+          format: THREE.RGBAFormat,
+          encoding: THREE.sRGBEncoding
+        }
+      )
+
+    // this.finalComposer = new EffectComposer(this.renderer, renderTarget);
+    this.finalComposer = new EffectComposer(this.renderer);
+    this.finalComposer.addPass(renderScene);
+    this.finalComposer.addPass(fxaaPass);
+    // smaaPass = new SMAAPass();
+    // this.finalComposer.addPass(smaaPass);
+    this.finalComposer.addPass(finalPass);
+
+    this.boothModel.traverse((child: THREE.Object3D) => {
+      if (['WellLeft001', 'Top001'].includes(child.name)) {
+        child.layers.enable(BLOOM_SCENE);
+      }
+    });
+
     this.calcBoundingBox();
   }
+  darkenNonBloomed(obj: THREE.Object3D) {
+    if (obj instanceof THREE.Mesh && bloomLayer.test(obj.layers) === false) {
+      materials[obj.uuid] = obj.material;
+      obj.material = darkMaterial;
+    }
+  };
+
+  restoreMaterial(obj: THREE.Object3D) {
+    if (obj instanceof THREE.Mesh && materials[obj.uuid]) {
+      obj.material = materials[obj.uuid];
+      delete materials[obj.uuid];
+    }
+  };
   // 进度管理
   loadProgress() {
     THREE.DefaultLoadingManager.onProgress = async (url, loaded, total) => {
@@ -188,6 +301,25 @@ export class MainThreeSetup {
   setAnimationLoop(renderFunction: XRFrameRequestCallback) {
     this.renderer.setAnimationLoop(renderFunction);
   };
+  animate() {
+    this.controls.update();
+    TWEEN?.update();
+    // stats?.update();
+    // 递归是因为选择性辉光
+    this.boothModel?.traverse((o) => this.darkenNonBloomed(o));
+    this.bloomComposer?.render();
+    this.boothModel?.traverse((o) => this.restoreMaterial(o));
+    // this.renderer?.render(this.scene, this.camera);
+    this.finalComposer?.render();
+
+
+
+    requestAnimationFrame(this.animate.bind(this));
+  };
+  renderFunction() {
+    this.renderer?.render(this.scene, this.camera);
+    this.finalComposer?.render();
+  }
   // 事件触发
   updateProgress() {
     // 更新自定义事件的 detail 属性值
@@ -195,5 +327,8 @@ export class MainThreeSetup {
 
     // 触发自定义事件
     window.dispatchEvent(this.loadEvent);
+  }
+  test222() {
+    this.finalComposer?.render();
   }
 }

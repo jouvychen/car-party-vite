@@ -6,25 +6,25 @@
 
 
 import * as THREE from 'three'
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'  
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js'
-import vertexShader from '../shaders/bloomShaders/vertex.glsl'
-import fragmentShader from '../shaders/bloomShaders/fragment.glsl'
+import { vertexShader } from '../shaders/bloomShaders/vertex'
+import { fragmentShader } from '../shaders/bloomShaders/fragment'
 import Experience from './Experience.js'
 import { CreateBasicThree } from './CreateBasicThree'
 import { ObjectKeys } from '@/utils/interface'
 
 export class PostProcessing {
-    BLOOM_SCENE = 1;
+    BLOOM_SCENE = 2;
 
     darkMaterial!: THREE.MeshBasicMaterial;
     materials!: ObjectKeys;
-    bloomLayer!:THREE.Layers;
+    bloomLayer!: THREE.Layers;
     bloomParams!: ObjectKeys;
-    three!:CreateBasicThree;
+    three!: CreateBasicThree;
     ramenShop!: THREE.Object3D;
 
     renderTarget!: THREE.WebGLRenderTarget;
@@ -42,56 +42,41 @@ export class PostProcessing {
         this.setBloomObjects()
         this.setRenderTarget()
         this.setPasses()
-        this.setUpBloom()
+        this.renderBloom()
     }
 
-    setBloomConfig()
-    {
-        this.BLOOM_SCENE = 1
+    setBloomConfig() {
+        this.BLOOM_SCENE = 2
         this.bloomLayer = new THREE.Layers()
-        this.bloomLayer.set( this.BLOOM_SCENE )
+        this.bloomLayer.set(this.BLOOM_SCENE)
 
         this.bloomParams = {}
         this.bloomParams.bloomStrength = 1.3
         this.bloomParams.bloomThreshold = 0
         this.bloomParams.bloomRadius = 1
 
-        this.darkMaterial = new THREE.MeshBasicMaterial( { color: "black" } )
+        this.darkMaterial = new THREE.MeshBasicMaterial({ color: "black" })
         this.materials = {}
     }
 
-    setBloomObjects()
-    {
-        const mesh = this.ramenShop.getObjectByName('LightPlane') as THREE.Mesh
+    setBloomObjects() {
+        const mesh = this.ramenShop.getObjectByName('WellLeft001') as THREE.Mesh;
+        // debugger
         mesh.layers.enable(this.BLOOM_SCENE)
-        // this.ramenShop.chinese.layers.enable(this.BLOOM_SCENE)
-        // this.ramenShop.neonBlue.layers.enable(this.BLOOM_SCENE)
-        // this.ramenShop.neonPink.layers.enable(this.BLOOM_SCENE)
-        // this.ramenShop.neonYellow.layers.enable(this.BLOOM_SCENE)
-        // this.ramenShop.neonGreen.layers.enable(this.BLOOM_SCENE)
-        // this.ramenShop.whiteButton.layers.enable(this.BLOOM_SCENE)
-        // this.ramenShop.redLED.layers.enable(this.BLOOM_SCENE)
-        // this.ramenShop.greenLED.layers.enable(this.BLOOM_SCENE)
-        // this.ramenShop.portalLight.layers.enable(this.BLOOM_SCENE)
-        // this.ramenShop.storageLight.layers.enable(this.BLOOM_SCENE)
-        // this.ramenShop.poleLight.layers.enable(this.BLOOM_SCENE)
-        // this.ramenShop.arcadeRim.layers.enable(this.BLOOM_SCENE)
-        // this.ramenShop.hologramBase.layers.enable(this.BLOOM_SCENE)
     }
 
-    setRenderTarget()
-    {
+    setRenderTarget() {
         this.renderTarget = new THREE.WebGLRenderTarget
-        (
-            800,
-            600,
-            {
-                minFilter: THREE.LinearFilter,
-                magFilter: THREE.LinearFilter,
-                format: THREE.RGBAFormat,
-                encoding: THREE.sRGBEncoding
-            }
-        )
+            (
+                800,
+                600,
+                {
+                    minFilter: THREE.LinearFilter,
+                    magFilter: THREE.LinearFilter,
+                    format: THREE.RGBAFormat,
+                    encoding: THREE.sRGBEncoding
+                }
+            )
 
         // Currently not working on metal (ios)
 
@@ -106,46 +91,45 @@ export class PostProcessing {
         // }
     }
 
-    setPasses()
-    {
-        this.renderPass = new RenderPass(this.three.scene, this.three.camera.instance)
-        
-        this.bloomPass = new UnrealBloomPass( new THREE.Vector2( 1920, 1080 ), 1.5, 0.4, 0.85 )
+    setPasses() {
+        this.renderPass = new RenderPass(this.three.scene, this.three.camera)
+
+        this.bloomPass = new UnrealBloomPass(new THREE.Vector2(1920, 1080), 1.5, 0.4, 0.85)
         this.bloomPass.threshold = this.bloomParams.bloomThreshold
         this.bloomPass.strength = this.bloomParams.bloomStrength
         this.bloomPass.radius = this.bloomParams.bloomRadius
 
-        this.bloomComposer = new EffectComposer(this.three.renderer.instance)
+        this.bloomComposer = new EffectComposer(this.three.renderer, this.renderTarget)
         this.bloomComposer.renderToScreen = false
         this.bloomComposer.addPass(this.renderPass)
         this.bloomComposer.addPass(this.bloomPass)
 
 
         this.finalPass = new ShaderPass
-        (
-            new THREE.ShaderMaterial
-            ( {
-                uniforms: 
-                {
-                    baseTexture: { value: null},
-                    bloomTexture: { value: this.bloomComposer.renderTarget2.texture }
-                },
-                vertexShader: vertexShader,
-                fragmentShader: fragmentShader,
-                defines: {},
-                precision: 'lowp'
-            } ), 
-            "baseTexture"
-        )
+            (
+                new THREE.ShaderMaterial
+                    ({
+                        uniforms:
+                        {
+                            baseTexture: { value: null },
+                            bloomTexture: { value: this.bloomComposer.renderTarget2.texture }
+                        },
+                        vertexShader: vertexShader,
+                        fragmentShader: fragmentShader,
+                        defines: {},
+                        precision: 'lowp'
+                    }),
+                "baseTexture"
+            )
 
         this.finalPass.needsSwap = true
-        this.finalComposer = new EffectComposer( this.three.renderer.instance, this.renderTarget)
+        this.finalComposer = new EffectComposer(this.three.renderer, this.renderTarget)
 
         this.finalComposer.setSize(1920, 1080)
         this.finalComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-        this.finalComposer.addPass( this.renderPass )
-        this.finalComposer.addPass( this.finalPass )
+        this.finalComposer.addPass(this.renderPass)
+        this.finalComposer.addPass(this.finalPass)
 
         // SMAA pass if WebGL2 is not available
 
@@ -156,53 +140,43 @@ export class PostProcessing {
         //     console.log('Using SMAA')
         // }
 
-        this.smaaPass = new SMAAPass()
+        this.smaaPass = new SMAAPass(1920, 1080)
         this.finalComposer.addPass(this.smaaPass)
-        
-        this.enableUpdate()
+
+        this.update()
 
     }
 
-    setUpBloom()
-    {
-        this.renderBloom = function renderBloom()
-        {
-            this.three.scene.traverse(this.darkenNonBloomed)
-            this.bloomComposer.render()
-            this.three.scene.traverse(this.restoreMaterial)
-        }
+    renderBloom() {
+        this.three.scene.traverse((obj: THREE.Object3D) => this.darkenNonBloomed(obj))
+        this.bloomComposer.render()
+        this.three.scene.traverse((obj: THREE.Object3D) => this.restoreMaterial(obj))
     }
 
-    darkenNonBloomed( obj: THREE.Mesh ) 
-    {
-        if ( obj.isMesh && this.bloomLayer.test( obj.layers ) === false ) {
-            this.materials[ obj.uuid ] = obj.material;
+    darkenNonBloomed(obj: THREE.Object3D) {
+        if (obj instanceof THREE.Mesh && this.bloomLayer.test(obj.layers) === false) {
+            this.materials[obj.uuid] = obj.material;
             obj.material = this.darkMaterial;
-        } 
-    }
-
-    restoreMaterial( obj: THREE.Mesh ) 
-    {
-        if ( this.materials[ obj.uuid ] ) {
-            obj.material = this.materials[ obj.uuid ];
-            delete this.materials[ obj.uuid ];
         }
     }
 
-    enableUpdate()
-    {
-        this.update = function update() {
-            {this.renderBloom()}
-            {this.finalComposer.render()}
+    restoreMaterial(obj: THREE.Object3D) {
+        if (obj instanceof THREE.Mesh && this.materials[obj.uuid]) {
+            obj.material = this.materials[obj.uuid];
+            delete this.materials[obj.uuid];
         }
     }
-    
-    resize()
-    {
-        if(this.bloomComposer) {this.bloomComposer.setSize(1920, 1080)}
-        if(this.bloomComposer) {this.bloomComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))}
-        if(this.finalComposer) {this.finalComposer.setSize(1920, 1080)}
-        if(this.finalComposer) {this.finalComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))}
+
+    update() {
+        this.renderBloom()
+        this.finalComposer.render()
+    }
+
+    resize() {
+        if (this.bloomComposer) { this.bloomComposer.setSize(1920, 1080) }
+        if (this.bloomComposer) { this.bloomComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2)) }
+        if (this.finalComposer) { this.finalComposer.setSize(1920, 1080) }
+        if (this.finalComposer) { this.finalComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2)) }
 
     }
 }
