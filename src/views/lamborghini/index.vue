@@ -126,6 +126,7 @@ let promotionalFilm: CreatePromotionalFilm;
 import {createTransitions} from '../function/createTransitions';
 
 import { PostProcessing } from '../function/PostProcessing.js';
+let postProcessing: PostProcessing;
 
 // 常量导入
 import { revolverList } from "./constan";
@@ -237,7 +238,7 @@ const init = async () => {
     // loadManager.value = Object.assign(loadManager.value, loadEvent.detail.progress.schedule);
     loadManager.value = Object.assign(loadManager.value, loadEvent.detail.progress);
 });
-  mainThree.setAnimationLoop(render);
+  // mainThree.setAnimationLoop(render);
   await mainThree.loadResource();
   
 
@@ -336,7 +337,7 @@ const init = async () => {
   const transitionMesh = mainThree.boothModel.getObjectByName("Glass002") as THREE.Mesh;
   createTransitions(transitionMesh);
 
-  new PostProcessing(mainThree.boothModel);
+  postProcessing = new PostProcessing(mainThree.boothModel);
 
   // 设置展台材质
   // const glass = boothModel.getObjectByName("Glass") as THREE.Mesh;
@@ -424,7 +425,7 @@ const createLight = () => {
   const WellLeft = mainThree.scene.getObjectByName("WellLeft001");
   const width = 12;
   const height = 12;
-  const intensity = 10;
+  const intensity = 0;
   rectLight = new THREE.RectAreaLight(0xffffff, intensity, width, height);
   const rectLight2 = new THREE.RectAreaLight(
     0xff00ff,
@@ -482,15 +483,18 @@ const onChangeMaterial = () => {
 const r = ref(false);
 const render = () => {
 
-  mainThree.controls.update();
-  TWEEN?.update();
+  // mainThree.controls.update();
+  // TWEEN?.update();
   stats?.update();
   flag?.flagUpdate();
   htmlNodes?.update();
+  // postProcessing?.update();
+  
 
   carStore.wheelStart && startWheel(-performance.now() / 1000);
 
-  !r.value && mainThree.renderer.render(mainThree.scene, mainThree.camera);
+  // mainThree?.test222();
+  // !r.value && mainThree.renderer.render(mainThree.scene, mainThree.camera);
 };
 
 // setTimeout(()=>{
