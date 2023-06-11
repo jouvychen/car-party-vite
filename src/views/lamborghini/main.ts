@@ -169,14 +169,23 @@ export class MainThreeSetup {
     // carStore.carModel = gltf.scene;
     this.hdrEnvironmentTexture = texture;
     // hdrTexture = texture;
-    // this.scene.environment = texture;
-    // this.scene.environment.mapping = THREE.EquirectangularReflectionMapping;
+    this.scene.environment = texture;
+    this.scene.environment.mapping = THREE.EquirectangularReflectionMapping;
 
     // 车
     this.carModel = gltf.scene;
     // 解决双面渲染时通过挡风玻璃看向2边车门玻璃出现不透明黑块(但在升起车门动画后要设置成双面渲染)
     const carGlass = this.carModel.getObjectByName('挡风玻璃') as THREE.Mesh;
     carGlass.material instanceof THREE.Material && (carGlass.material.side = THREE.FrontSide);
+
+    const testMesh = boothGltf.scene.getObjectByName('顶部灯路') as THREE.Mesh;
+    
+    // const darkMaterial2 = new THREE.MeshLambertMaterial({ color: 'blue' });
+    testMesh.material.fog = false;
+    testMesh.material.roughness = 1;
+    // debugger
+    
+
 
     // 展台
     this.boothModel = boothGltf.scene;

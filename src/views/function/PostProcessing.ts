@@ -11,6 +11,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js'
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import { vertexShader } from '../shaders/bloomShaders/vertex'
 import { fragmentShader } from '../shaders/bloomShaders/fragment'
 import Experience from './Experience.js'
@@ -29,6 +30,7 @@ export class PostProcessing {
 
     renderTarget!: THREE.WebGLRenderTarget;
     renderPass!: RenderPass;
+    fxaaPass!: ShaderPass;
     bloomPass!: UnrealBloomPass;
     bloomComposer!: EffectComposer;
     finalPass!: ShaderPass;
@@ -40,7 +42,7 @@ export class PostProcessing {
         this.ramenShop = modal
         this.setBloomConfig()
         this.setBloomObjects()
-        this.setRenderTarget()
+        // this.setRenderTarget()
         this.setPasses()
         this.renderBloom()
     }
@@ -51,9 +53,9 @@ export class PostProcessing {
         this.bloomLayer.set(this.BLOOM_SCENE)
 
         this.bloomParams = {}
-        this.bloomParams.bloomStrength = 1.3
+        this.bloomParams.bloomStrength = 1
         this.bloomParams.bloomThreshold = 0
-        this.bloomParams.bloomRadius = 1
+        this.bloomParams.bloomRadius = 0.2
 
         this.darkMaterial = new THREE.MeshBasicMaterial({ color: "black" })
         this.materials = {}
@@ -68,8 +70,8 @@ export class PostProcessing {
     setRenderTarget() {
         this.renderTarget = new THREE.WebGLRenderTarget
             (
-                800,
-                600,
+                window.innerWidth,
+                window.innerHeight,
                 {
                     minFilter: THREE.LinearFilter,
                     magFilter: THREE.LinearFilter,
@@ -94,7 +96,9 @@ export class PostProcessing {
     setPasses() {
         this.renderPass = new RenderPass(this.three.scene, this.three.camera)
 
-        this.bloomPass = new UnrealBloomPass(new THREE.Vector2(1920, 1080), 1.5, 0.4, 0.85)
+
+        this.fxaaPass = new ShaderPass(FXAAShader);
+        this.bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85)
         this.bloomPass.threshold = this.bloomParams.bloomThreshold
         this.bloomPass.strength = this.bloomParams.bloomStrength
         this.bloomPass.radius = this.bloomParams.bloomRadius
@@ -103,6 +107,11 @@ export class PostProcessing {
         this.bloomComposer.renderToScreen = false
         this.bloomComposer.addPass(this.renderPass)
         this.bloomComposer.addPass(this.bloomPass)
+
+        const pixelRatio = this.three.renderer.getPixelRatio(); // 获取设备像素比，高清屏不会太模糊
+        this.fxaaPass.material.uniforms['resolution'].value.x = 1 / (window.innerWidth * pixelRatio);
+        this.fxaaPass.material.uniforms['resolution'].value.y = 1 / (window.innerHeight * pixelRatio);
+        this.fxaaPass.renderToScreen = false;
 
 
         this.finalPass = new ShaderPass
@@ -125,10 +134,11 @@ export class PostProcessing {
         this.finalPass.needsSwap = true
         this.finalComposer = new EffectComposer(this.three.renderer, this.renderTarget)
 
-        this.finalComposer.setSize(1920, 1080)
+        this.finalComposer.setSize(window.innerWidth, window.innerHeight)
         this.finalComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
         this.finalComposer.addPass(this.renderPass)
+        this.finalComposer.addPass(this.fxaaPass)
         this.finalComposer.addPass(this.finalPass)
 
         // SMAA pass if WebGL2 is not available
@@ -140,8 +150,8 @@ export class PostProcessing {
         //     console.log('Using SMAA')
         // }
 
-        this.smaaPass = new SMAAPass(1920, 1080)
-        this.finalComposer.addPass(this.smaaPass)
+        // this.smaaPass = new SMAAPass(window.innerWidth, window.innerHeight)
+        // this.finalComposer.addPass(this.smaaPass)
 
         this.update()
 
@@ -173,9 +183,10 @@ export class PostProcessing {
     }
 
     resize() {
-        if (this.bloomComposer) { this.bloomComposer.setSize(1920, 1080) }
+        debugger
+        if (this.bloomComposer) { this.bloomComposer.setSize(window.innerWidth, window.innerHeight) }
         if (this.bloomComposer) { this.bloomComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2)) }
-        if (this.finalComposer) { this.finalComposer.setSize(1920, 1080) }
+        if (this.finalComposer) { this.finalComposer.setSize(window.innerWidth, window.innerHeight) }
         if (this.finalComposer) { this.finalComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2)) }
 
     }

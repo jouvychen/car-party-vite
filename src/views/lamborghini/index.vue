@@ -425,7 +425,7 @@ const createLight = () => {
   const WellLeft = mainThree.scene.getObjectByName("WellLeft001");
   const width = 12;
   const height = 12;
-  const intensity = 0;
+  const intensity = 1.5;
   rectLight = new THREE.RectAreaLight(0xffffff, intensity, width, height);
   const rectLight2 = new THREE.RectAreaLight(
     0xff00ff,
