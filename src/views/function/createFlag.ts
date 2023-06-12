@@ -26,11 +26,11 @@ export class CreateFlag {
     this.camera = camera;
     this.renderer = renderer;
 
-    const light = new THREE.DirectionalLight("#FFFFFF");
-    light.position.set(10, 50, 100);
-    this.scene.add(light);
+    // const light = new THREE.DirectionalLight("#FFFFFF");
+    // light.position.set(10, 50, 100);
+    // this.scene.add(light);
 
-    const ambientLight = new THREE.AmbientLight("#999999");
+    const ambientLight = new THREE.AmbientLight("#999999", 0.2);
     this.scene.add(ambientLight);
 
   }

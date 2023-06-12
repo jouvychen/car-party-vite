@@ -111,7 +111,7 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper.js";
 import { Reflector } from "three/examples/jsm/objects/Reflector.js";
-import { createGUI, createLightGUI } from "./gui";
+import { createGUI, createLightGUI, createBloomGUI } from "./gui";
 
 // 工具类导入
 import { debounce, uuid, getAssetsUrlRelative } from "@/utils/common";
@@ -433,6 +433,7 @@ const createLight = () => {
     width,
     height
   );
+  rectLight.name = '测试灯具';
   rectLight.position.set(0, 4, 0);
   rectLight2.position.set(1, 0.3, 0);
   // rectLight.rotateX(Math.PI * 0.5);
@@ -442,6 +443,7 @@ const createLight = () => {
   // WellLeft.add(rectLight2);
 
   const rectLightHelper = new RectAreaLightHelper(rectLight);
+  rectLightHelper.name = '测试灯具2'
   const rectLightHelper2 = new RectAreaLightHelper(rectLight2);
   rectLight.add(rectLightHelper);
   // rectLight2.add(rectLightHelper2);
@@ -454,11 +456,13 @@ const createLight = () => {
  * GUI控制面板
  */
 const createGUIFun = () => {
-  const infoContainer = document.getElementById(
-    "gui-container"
-  ) as HTMLDivElement;
-  createGUI({ container: infoContainer });
+  // const infoContainer = document.getElementById(
+  //   "gui-container"
+  // ) as HTMLDivElement;
+  // createGUI({ container: infoContainer });
   createLightGUI({ rectLight: rectLight });
+  debugger
+  createBloomGUI({bloomPass: mainThree.bloomPass});
 };
 
 /**

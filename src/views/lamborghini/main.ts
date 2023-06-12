@@ -15,7 +15,13 @@ import { fragmentShader } from '../shaders/bloomShaders/fragment'
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import { ObjectKeys } from '@/utils/interface';
 
+import { createGUI, createMainStageGUI } from "./gui";
+
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min"; // 补间动画
+let scback = {
+  bloomOn: new THREE.Color(0x000000),
+  bloomOff: new THREE.Color(0x333333) // or define something else, a cubetexture, for example.
+}
 interface LoadManager {
   name: string,
   schedule: number,
@@ -38,6 +44,7 @@ const bloomLayer = new THREE.Layers();
 bloomLayer.set(BLOOM_SCENE);
 const darkMaterial = new THREE.MeshBasicMaterial({ color: 'black' });
 let materials: ObjectKeys = {};
+let darkMaterials: ObjectKeys = {};
 
 
 export class MainThreeSetup {
@@ -55,6 +62,7 @@ export class MainThreeSetup {
   boothModel!: THREE.Object3D;
 
   loadEvent: CustomEvent; // 加载进度
+  bloomPass!: UnrealBloomPass;
   finalComposer!: EffectComposer;
   bloomComposer!: EffectComposer;
 
@@ -79,7 +87,7 @@ export class MainThreeSetup {
 
     // this.renderer.setAnimationLoop(()=>this.setAnimationLoop);
     // this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    // this.renderer.toneMappingExposure = 0.85; // 可以改变曝光度从而改变hdr贴图亮度，需要重新渲染
+    // this.renderer.toneMappingExposure = 0.25; // 可以改变曝光度从而改变hdr贴图亮度，需要重新渲染
 
     if (domId) {
       this.container = document.getElementById(domId) as HTMLDivElement;
@@ -182,7 +190,13 @@ export class MainThreeSetup {
     
     // const darkMaterial2 = new THREE.MeshLambertMaterial({ color: 'blue' });
     testMesh.material.fog = false;
-    testMesh.material.roughness = 1;
+    testMesh.material.roughness = 0.1;
+    testMesh.receiveShadow = false;
+    const infoContainer = document.getElementById(
+      "gui-container"
+    ) as HTMLDivElement;
+    createGUI({ container: infoContainer });
+    createMainStageGUI({material: testMesh.material});
     // debugger
     
 
@@ -202,16 +216,20 @@ export class MainThreeSetup {
     // const copyPass = new ShaderPass(CopyShader);
 
     // 第一次使用辉光渲染
-    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-    bloomPass.threshold = params.bloomThreshold;
-    bloomPass.strength = params.bloomStrength;
-    bloomPass.radius = params.bloomRadius;
+    this.bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+    this.bloomPass.threshold = params.bloomThreshold;
+    this.bloomPass.strength = params.bloomStrength;
+    this.bloomPass.radius = params.bloomRadius;
+    this.bloomPass.needsSwap = true;
+    
+
+    
 
     // 效果创造器(混合渲染器通道、辉光通道)
     this.bloomComposer = new EffectComposer(this.renderer);
     this.bloomComposer.renderToScreen = false; // true将处理的结果保存到帧缓冲区，false直接显示在canvas画布上面
     this.bloomComposer.addPass(renderScene);
-    this.bloomComposer.addPass(bloomPass);
+    this.bloomComposer.addPass(this.bloomPass);
 
     const pixelRatio = this.renderer.getPixelRatio(); // 获取设备像素比，高清屏不会太模糊
     fxaaPass.material.uniforms['resolution'].value.x = 1 / (window.innerWidth * pixelRatio);
@@ -266,6 +284,18 @@ export class MainThreeSetup {
     if (obj instanceof THREE.Mesh && bloomLayer.test(obj.layers) === false) {
       materials[obj.uuid] = obj.material;
       obj.material = darkMaterial;
+
+    //   materials[obj.uuid] = obj.material;
+    //   if (!darkMaterials[obj.material.type]) {const material = obj.material.clone();
+    //     material.color = new THREE.Color(0x000000);
+    //     darkMaterials[obj.material.type] = material;
+    //   }
+    //   obj.material = darkMaterials[obj.material.type];
+      
+    // }
+    // if (obj.name === '测试灯具2') {
+    //   debugger
+    // }
     }
   };
 
@@ -311,15 +341,19 @@ export class MainThreeSetup {
     this.renderer.setAnimationLoop(renderFunction);
   };
   animate() {
+    // this.scene.background = scback.bloomOn; // must be pure black
     this.controls.update();
     TWEEN?.update();
     // stats?.update();
+
     // 递归是因为选择性辉光
     this.boothModel?.traverse((o) => this.darkenNonBloomed(o));
     this.bloomComposer?.render();
     this.boothModel?.traverse((o) => this.restoreMaterial(o));
-    // this.renderer?.render(this.scene, this.camera);
     this.finalComposer?.render();
+
+    // this.renderer?.render(this.scene, this.camera);
+    // this.scene.background = scback.bloomOff; // must be pure black
 
 
 

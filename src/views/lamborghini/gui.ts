@@ -1,4 +1,5 @@
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min'; // GUI调试工具
+import { ObjectKey } from './interface';
 
 /**
  * 无法继承GUI类，因为在super()时自动生成一个实例，使用appendChild时控件内容又变空，所以抽取成方法，不封装成类
@@ -27,7 +28,49 @@ const createLightGUI = (testParams: any) => {
 
   gui.open();
 };
-export { createGUI, createLightGUI };
+
+// 辉光
+const createBloomGUI = (bloomParams: any) => {
+  const params = {
+    threshold: bloomParams.bloomPass.threshold,
+    strength: bloomParams.bloomPass.strength,
+    radius: bloomParams.bloomPass.radius,
+  };
+
+  gui.add(params, 'threshold', 0, 5).onChange(function (val:any) {
+
+    bloomParams.bloomPass.threshold = val;
+
+  });
+  gui.add(params, 'strength', 0, 5).onChange(function (val:any) {
+
+    bloomParams.bloomPass.strength = val;
+
+  });
+  gui.add(params, 'radius', 0, 5).onChange(function (val:any) {
+
+    bloomParams.bloomPass.radius = val;
+
+  });
+
+  gui.open();
+};
+
+// 辉光
+const createMainStageGUI = (stageMaterialParams: ObjectKey) => {
+  const params = {
+    roughness: stageMaterialParams.material.roughness,
+  };
+
+  gui.add(params, 'roughness', 0, 1).onChange(function (val:number) {
+
+    stageMaterialParams.material.roughness = val;
+
+  });
+
+  gui.open();
+};
+export { createGUI, createLightGUI, createBloomGUI, createMainStageGUI };
 // export class CreateGUI extends GUI {
 //   public gui: GUI;
 //   // public constructor({parent: null, autoPlace: a, container: e, width: s, title: t}) {
