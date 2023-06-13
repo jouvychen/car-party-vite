@@ -118,6 +118,7 @@ import {
   useCarModelStore,
   useThreejsModuleStore,
 } from "@/store";
+import { Light, LinearEncoding, sRGBEncoding } from "three";
 const boothStore = useBoothModelStore();
 const carStore = useCarModelStore();
 const threejsModule = useThreejsModuleStore();
@@ -432,13 +433,17 @@ const addLight = (
   textureFlare0: THREE.Texture,
   textureFlare3: THREE.Texture
 ) => {
-  const light = new THREE.PointLight(0xffffff, 1.5, 2000);
+  const light = new THREE.PointLight(0xffffff, 1.5, 10);
   light.name = `镜头光晕-${mesh.name}`;
   light.color.setHSL(h, s, l);
   light.position.set(x, y, z);
   mesh.attach(light); // 以childNode方式追加
 
+  textureFlare0.encoding = sRGBEncoding;
+  textureFlare3.encoding = sRGBEncoding;
+
   const lensflare = new Lensflare();
+  lensflare.name = `镜头光晕Mesh-${mesh.name}`;
   lensflare.addElement(
     new LensflareElement(textureFlare0, 500, 0, light.color)
   );
@@ -447,6 +452,9 @@ const addLight = (
   lensflare.addElement(new LensflareElement(textureFlare3, 120, 0.9));
   lensflare.addElement(new LensflareElement(textureFlare3, 70, 1));
   light.add(lensflare);
+  // const mesh1 = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), new THREE.MeshStandardMaterial({map: textureFlare0, transparent: true}))
+  // mesh1.name = `镜头光晕Mesh-${mesh.name}`;
+  // mesh.attach(mesh1);
 };
 const onTweenOpenLight = () => {
   const lMesh = carModel.value?.getObjectByName("左车灯光晕点") as THREE.Mesh;
@@ -474,6 +482,7 @@ const onTweenOpenLight = () => {
     const wrPosition = new THREE.Vector3();
     rMesh?.getWorldPosition(wrPosition);
 
+    // 开灯操作
     // 当前正处于开灯动画位置(openLight)，则不需要镜头缓动动画
     if (currentAnimationName.value === "openLight") {
       scene.value.environment = null;

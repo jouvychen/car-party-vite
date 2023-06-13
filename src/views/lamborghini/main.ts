@@ -83,6 +83,9 @@ export class MainThreeSetup {
     this.renderer.autoClear = false;
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+    // this.renderer.shadowMap.enabled = true;
+    // this.renderer.shadowMap.needsUpdate = true;
+    // this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
     this.renderer.outputEncoding = THREE.sRGBEncoding;
 
     // this.renderer.setAnimationLoop(()=>this.setAnimationLoop);
