@@ -164,7 +164,7 @@ export class MainThreeSetup {
         rgbeLoader.loadAsync("venice_sunset_1k.hdr"),
         gltfLoader.loadAsync("车展台压缩.glb"),
         gltfLoader.loadAsync("兰博基尼碳纤维大牛压缩.glb"),
-        textureLoader.load("lensflare0.png"),
+        textureLoader.load("yJqeRxDXpr.png"),
         textureLoader.load("lensflare3.png"),
       ]);
 
@@ -226,7 +226,16 @@ export class MainThreeSetup {
     this.bloomPass.needsSwap = true;
     
 
-    
+    const parameters = {
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+      format: THREE.RGBAFormat,
+      // type: THREE.FloatType,
+      encoding: THREE.sRGBEncoding
+    };
+
+    const renderTarget = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, parameters );
+
 
     // 效果创造器(混合渲染器通道、辉光通道)
     this.bloomComposer = new EffectComposer(this.renderer);
@@ -255,20 +264,22 @@ export class MainThreeSetup {
     );
     finalPass.needsSwap = true;
 
-    let renderTarget = new THREE.WebGLRenderTarget
-      (
-        window.innerWidth,
-        window.innerHeight,
-        {
-          minFilter: THREE.LinearFilter,
-          magFilter: THREE.LinearFilter,
-          format: THREE.RGBAFormat,
-          encoding: THREE.sRGBEncoding
-        }
-      )
+    
 
-    // this.finalComposer = new EffectComposer(this.renderer, renderTarget);
-    this.finalComposer = new EffectComposer(this.renderer);
+    // let renderTarget = new THREE.WebGLRenderTarget
+    //   (
+    //     window.innerWidth,
+    //     window.innerHeight,
+    //     {
+    //       minFilter: THREE.LinearFilter,
+    //       magFilter: THREE.LinearFilter,
+    //       format: THREE.RGBAFormat,
+    //       encoding: THREE.sRGBEncoding
+    //     }
+    //   )
+
+    this.finalComposer = new EffectComposer(this.renderer, renderTarget);
+    // this.finalComposer = new EffectComposer(this.renderer);
     this.finalComposer.addPass(renderScene);
     this.finalComposer.addPass(fxaaPass);
     // smaaPass = new SMAAPass();
@@ -285,6 +296,11 @@ export class MainThreeSetup {
   }
   darkenNonBloomed(obj: THREE.Object3D) {
     if (obj instanceof THREE.Mesh && bloomLayer.test(obj.layers) === false) {
+
+      // if (obj.name.includes('镜头光晕')) {
+      //   debugger
+      //   obj.material = new THREE.MeshStandardMaterial({transparent: true});
+      // }
       materials[obj.uuid] = obj.material;
       obj.material = darkMaterial;
 
@@ -305,6 +321,11 @@ export class MainThreeSetup {
   restoreMaterial(obj: THREE.Object3D) {
     if (obj instanceof THREE.Mesh && materials[obj.uuid]) {
       obj.material = materials[obj.uuid];
+      // 镜头光晕Mesh-右车灯光晕点
+      // if (obj.name.includes('光晕')) {
+      //   debugger
+      //   obj.material = new THREE.MeshStandardMaterial({color: '#ff0000', opacity: 0, transparent: true, depthTest: false, depthWrite: false});
+      // }
       delete materials[obj.uuid];
     }
   };

@@ -46,10 +46,14 @@
 import * as THREE from "three";
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min"; // 补间动画
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"; // 控制器
+// import {
+//   Lensflare,
+//   LensflareElement,
+// } from "three/examples/jsm/objects/Lensflare.js";
 import {
   Lensflare,
   LensflareElement,
-} from "three/examples/jsm/objects/Lensflare.js";
+} from "./test111.js";
 
 /**
  * Antd依赖
@@ -423,7 +427,7 @@ const onTweenWheelSeedingFun = () => {
 
 // 开关车前灯
 const addLight = (
-  mesh: THREE.Mesh,
+  mesh: THREE.Object3D,
   h: number,
   s: number,
   l: number,
@@ -437,28 +441,34 @@ const addLight = (
   light.name = `镜头光晕-${mesh.name}`;
   light.color.setHSL(h, s, l);
   light.position.set(x, y, z);
+  // light.renderOrder = light.renderOrder + 3;
   mesh.attach(light); // 以childNode方式追加
 
-  textureFlare0.encoding = sRGBEncoding;
-  textureFlare3.encoding = sRGBEncoding;
+  // 不用srgb编码，后处理时光晕透明材质有问题
+  // textureFlare0.encoding = sRGBEncoding;
+  // textureFlare3.encoding = sRGBEncoding;
 
   const lensflare = new Lensflare();
   lensflare.name = `镜头光晕Mesh-${mesh.name}`;
+  lensflare.material = new THREE.MeshStandardMaterial({color: '#ff0000', opacity: 0, transparent: true, depthTest: false, depthWrite: false, side: THREE.DoubleSide});
+  // lensflare.visible = false;
+
   lensflare.addElement(
-    new LensflareElement(textureFlare0, 500, 0, light.color)
+    new LensflareElement(textureFlare0, 1000, 0, light.color)
   );
   lensflare.addElement(new LensflareElement(textureFlare3, 60, 0.6));
   lensflare.addElement(new LensflareElement(textureFlare3, 70, 0.7));
   lensflare.addElement(new LensflareElement(textureFlare3, 120, 0.9));
   lensflare.addElement(new LensflareElement(textureFlare3, 70, 1));
   light.add(lensflare);
-  // const mesh1 = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), new THREE.MeshStandardMaterial({map: textureFlare0, transparent: true}))
+  // debugger
+  // const mesh1 = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), new THREE.MeshStandardMaterial({map: textureFlare0, transparent: true, opacity: 0.2}))
   // mesh1.name = `镜头光晕Mesh-${mesh.name}`;
   // mesh.attach(mesh1);
 };
 const onTweenOpenLight = () => {
-  const lMesh = carModel.value?.getObjectByName("左车灯光晕点") as THREE.Mesh;
-  const rMesh = carModel.value?.getObjectByName("右车灯光晕点") as THREE.Mesh;
+  const lMesh = carModel.value?.getObjectByName("左车灯光晕点") as THREE.Object3D;
+  const rMesh = carModel.value?.getObjectByName("右车灯光晕点") as THREE.Object3D;
 
   // 已经开灯, 则移除场景中的光晕节点
   if (tweenState.value.openLight) {
