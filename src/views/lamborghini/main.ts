@@ -18,6 +18,7 @@ import { ObjectKeys } from '@/utils/interface';
 import { createGUI, createMainStageGUI } from "./gui";
 
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min"; // 补间动画
+// 手动控制背景色
 let scback = {
   bloomOn: new THREE.Color(0x000000),
   bloomOff: new THREE.Color(0x333333) // or define something else, a cubetexture, for example.
