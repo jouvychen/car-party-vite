@@ -24,7 +24,7 @@
         <a-button :disabled="!boothReady" @click="onResetCamera"
           >视角复位</a-button
         >
-        <a-button :disabled="!boothReady" @click="onTweenOpenLight">{{
+        <a-button @click="onTweenOpenLight">{{
           tweenState.openLight ? "关灯" : "开灯"
         }}</a-button>
         <a-button
@@ -445,8 +445,8 @@ const addLight = (
   mesh.attach(light); // 以childNode方式追加
 
   // 不用srgb编码，后处理时光晕透明材质有问题
-  // textureFlare0.encoding = sRGBEncoding;
-  // textureFlare3.encoding = sRGBEncoding;
+  textureFlare0.encoding = sRGBEncoding;
+  textureFlare3.encoding = sRGBEncoding;
 
   const lensflare = new Lensflare();
   lensflare.name = `镜头光晕Mesh-${mesh.name}`;
@@ -479,6 +479,11 @@ const onTweenOpenLight = () => {
       scene.value.getObjectByName(`镜头光晕-${rMesh.name}`) as THREE.Object3D
     );
     scene.value.environment = hdrTexture;
+    carStore.carModel.traverse((child: THREE.Object3D) => {
+      if (['Object_87', 'Object_97', 'Object_98', 'Object_99'].includes(child.name)) {
+        child.layers.mask = 1;
+      }
+    });
   } else {
     if (tweenState.value.openWheelSeeding) {
       entranceAnimations.stop(); // 停止轮播可能未完成的动画
@@ -518,6 +523,12 @@ const onTweenOpenLight = () => {
         source.value.texture.textureFlare0,
         source.value.texture.textureFlare3
       );
+
+      carStore.carModel.traverse((child: THREE.Object3D) => {
+        if (['Object_87', 'Object_97', 'Object_98', 'Object_99'].includes(child.name)) {
+          child.layers.enable(1);
+        }
+      });
     } else {
       let watchPoint: Position | undefined;
       watchPoint = carModel.value?.getObjectByName("车前中观测点")?.position;
@@ -556,9 +567,21 @@ const onTweenOpenLight = () => {
           );
           scene.value.environment = null;
           currentAnimationName.value = "openLight";
+
+          carStore.carModel.traverse((child: THREE.Object3D) => {
+            if (['Object_87', 'Object_97', 'Object_98', 'Object_99'].includes(child.name)) {
+              child.layers.enable(1);
+            }
+          });
         }
       );
     }
+    // carStore.carModel.traverse((child: THREE.Object3D) => {
+    //   if (['镜头光晕Mesh-左车灯光晕点', '镜头光晕Mesh-右车灯光晕点'].includes(child.name)) {
+    //     child.layers.enable(1);
+    //   }
+    // });
+    
   }
 
   tweenState.value.openLight = !tweenState.value.openLight;

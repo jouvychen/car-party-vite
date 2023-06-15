@@ -108,7 +108,8 @@ export class MainThreeSetup {
       0.1,
       100
     );
-    this.camera.position.set(-40, 20, 40);
+    // this.camera.position.set(-40, 20, 40);
+    this.camera.position.set(4.25, 1.4, 4.5);
 
     this.scene = new THREE.Scene();
     // 场景有雾气和背景色不为黑色影响辉光效果
@@ -164,7 +165,8 @@ export class MainThreeSetup {
         rgbeLoader.loadAsync("venice_sunset_1k.hdr"),
         gltfLoader.loadAsync("车展台压缩.glb"),
         gltfLoader.loadAsync("兰博基尼碳纤维大牛压缩.glb"),
-        textureLoader.load("yJqeRxDXpr.png"),
+        // textureLoader.load("yJqeRxDXpr.png"),
+        textureLoader.load("lensflare0.png"),
         textureLoader.load("lensflare3.png"),
       ]);
 
@@ -190,7 +192,7 @@ export class MainThreeSetup {
     carGlass.material instanceof THREE.Material && (carGlass.material.side = THREE.FrontSide);
 
     const testMesh = boothGltf.scene.getObjectByName('顶部灯路') as THREE.Mesh;
-    
+
     // const darkMaterial2 = new THREE.MeshLambertMaterial({ color: 'blue' });
     testMesh.material.fog = false;
     testMesh.material.roughness = 0.1;
@@ -199,16 +201,16 @@ export class MainThreeSetup {
       "gui-container"
     ) as HTMLDivElement;
     createGUI({ container: infoContainer });
-    createMainStageGUI({material: testMesh.material});
+    createMainStageGUI({ material: testMesh.material });
     // debugger
-    
+
 
 
     // 展台
     this.boothModel = boothGltf.scene;
     this.boothModel.scale.set(1.2, 1.2, 1.2);
     const boothGroup = this.boothModel.getObjectByName("车承台父节点");
-    boothGroup?.add(this.carModel);
+    this.scene.add(this.carModel);
     this.scene.add(this.boothModel);
 
     // 后期处理渲染器通道
@@ -224,17 +226,17 @@ export class MainThreeSetup {
     this.bloomPass.strength = params.bloomStrength;
     this.bloomPass.radius = params.bloomRadius;
     this.bloomPass.needsSwap = true;
-    
+
 
     const parameters = {
       minFilter: THREE.LinearFilter,
       magFilter: THREE.LinearFilter,
       format: THREE.RGBAFormat,
-      // type: THREE.FloatType,
+      // type: THREE.HalfFloatType,
       encoding: THREE.sRGBEncoding
     };
 
-    const renderTarget = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, parameters );
+    const renderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, parameters);
 
 
     // 效果创造器(混合渲染器通道、辉光通道)
@@ -264,7 +266,7 @@ export class MainThreeSetup {
     );
     finalPass.needsSwap = true;
 
-    
+
 
     // let renderTarget = new THREE.WebGLRenderTarget
     //   (
@@ -292,6 +294,12 @@ export class MainThreeSetup {
       }
     });
 
+    // this.carModel.traverse((child: THREE.Object3D) => {
+    //   if (['Object_87', 'Object_97', 'Object_98', 'Object_99'].includes(child.name)) {
+    //     child.layers.enable(BLOOM_SCENE);
+    //   }
+    // });
+
     this.calcBoundingBox();
   }
   darkenNonBloomed(obj: THREE.Object3D) {
@@ -301,20 +309,23 @@ export class MainThreeSetup {
       //   debugger
       //   obj.material = new THREE.MeshStandardMaterial({transparent: true});
       // }
-      materials[obj.uuid] = obj.material;
-      obj.material = darkMaterial;
+      // if (!obj.name.includes('光晕')) {
+        materials[obj.uuid] = obj.material;
+        obj.material = darkMaterial;
+      // }
 
-    //   materials[obj.uuid] = obj.material;
-    //   if (!darkMaterials[obj.material.type]) {const material = obj.material.clone();
-    //     material.color = new THREE.Color(0x000000);
-    //     darkMaterials[obj.material.type] = material;
-    //   }
-    //   obj.material = darkMaterials[obj.material.type];
-      
-    // }
-    // if (obj.name === '测试灯具2') {
-    //   debugger
-    // }
+
+      //   materials[obj.uuid] = obj.material;
+      //   if (!darkMaterials[obj.material.type]) {const material = obj.material.clone();
+      //     material.color = new THREE.Color(0x000000);
+      //     darkMaterials[obj.material.type] = material;
+      //   }
+      //   obj.material = darkMaterials[obj.material.type];
+
+      // }
+      // if (obj.name === '测试灯具2') {
+      //   debugger
+      // }
     }
   };
 
@@ -371,8 +382,10 @@ export class MainThreeSetup {
     // stats?.update();
 
     // 递归是因为选择性辉光
+    // this.carModel?.traverse((o) => this.darkenNonBloomed(o));
     this.boothModel?.traverse((o) => this.darkenNonBloomed(o));
     this.bloomComposer?.render();
+    // this.carModel?.traverse((o) => this.restoreMaterial(o));
     this.boothModel?.traverse((o) => this.restoreMaterial(o));
     this.finalComposer?.render();
 

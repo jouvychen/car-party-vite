@@ -208,20 +208,20 @@ uuid();
 const onPlay = () => {
   loadManager.value.showMask = false;
   loadManager.value.success = true;
-  entranceAnimations.animateCamera(
-    mainThree.camera,
-    mainThree.controls,
-    { x: 4.25, y: 1.4, z: 4.5 },
-    { x: 0, y: 0.5, z: 0 },
-    2400,
-    () => {
-      mainThree.camera.position.set(4.25, 1.4, 4.5);
-      // 播放视频
-      setTimeout(() => {
-        // promotionalFilm.onPlay();
-      }, 3000);
-    }
-  );
+  // entranceAnimations.animateCamera(
+  //   mainThree.camera,
+  //   mainThree.controls,
+  //   { x: 4.25, y: 1.4, z: 4.5 },
+  //   { x: 0, y: 0.5, z: 0 },
+  //   2400,
+  //   () => {
+  //     mainThree.camera.position.set(4.25, 1.4, 4.5);
+  //     // 播放视频
+  //     setTimeout(() => {
+  //       // promotionalFilm.onPlay();
+  //     }, 3000);
+  //   }
+  // );
 };
 
 const init = async () => {
@@ -461,7 +461,6 @@ const createGUIFun = () => {
   // ) as HTMLDivElement;
   // createGUI({ container: infoContainer });
   createLightGUI({ rectLight: rectLight });
-  debugger
   createBloomGUI({bloomPass: mainThree.bloomPass});
 };
 

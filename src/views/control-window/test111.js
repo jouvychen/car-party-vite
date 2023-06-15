@@ -70,7 +70,7 @@ class Lensflare extends Mesh {
 					gl_FragColor = vec4( 1.0, 0.0, 1.0, 1.0 );
 
 				}`,
-			depthTest: false,
+			depthTest: true,
 			depthWrite: false,
 			transparent: false
 		} );
