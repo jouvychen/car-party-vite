@@ -32,8 +32,8 @@ interface LoadManager {
 
 const params = {
   exposure: 1,
-  bloomStrength: 1.3,
-  bloomThreshold: 0,
+  bloomStrength: 1.2,
+  bloomThreshold: 1.0,
   bloomRadius: 1,
   scene: 'Scene with Glow',
 };
@@ -165,8 +165,8 @@ export class MainThreeSetup {
         rgbeLoader.loadAsync("venice_sunset_1k.hdr"),
         gltfLoader.loadAsync("车展台压缩.glb"),
         gltfLoader.loadAsync("兰博基尼碳纤维大牛压缩.glb"),
-        // textureLoader.load("yJqeRxDXpr.png"),
-        textureLoader.load("lensflare0.png"),
+        textureLoader.load("yJqeRxDXpr.png"),
+        // textureLoader.load("lensflare0.png"),
         textureLoader.load("lensflare3.png"),
       ]);
 
