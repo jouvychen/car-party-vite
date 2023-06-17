@@ -454,7 +454,7 @@ const addLight = (
   // lensflare.visible = false;
 
   lensflare.addElement(
-    new LensflareElement(textureFlare0, 1000, 0, light.color)
+    new LensflareElement(textureFlare0, 500, 0, light.color)
   );
   lensflare.addElement(new LensflareElement(textureFlare3, 60, 0.6));
   lensflare.addElement(new LensflareElement(textureFlare3, 70, 0.7));

@@ -33,7 +33,7 @@ interface LoadManager {
 const params = {
   exposure: 1,
   bloomStrength: 1.2,
-  bloomThreshold: 1.0,
+  bloomThreshold: 0.75,
   bloomRadius: 1,
   scene: 'Scene with Glow',
 };
@@ -76,7 +76,7 @@ export class MainThreeSetup {
       schedule: 0,
       success: false,
       showMask: true,
-      total: 26, // 总共加载的资源数(从默认加载器得知)
+      total: 29, // 总共加载的资源数(从默认加载器得知)
     }
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });

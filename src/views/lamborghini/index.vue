@@ -143,6 +143,9 @@ import materialControl from "../control-window/material-control.vue";
 import HtmlNode from "../html-node/index.vue";
 import { CreateHtmlNodes } from "../html-node/createHtmlNodes";
 
+// 聚光灯
+import { initSpotLight } from '../spotlight/spot-light-volume';
+
 import { MainThreeSetup } from './main';
 let mainThree: MainThreeSetup;
 let htmlNodes: CreateHtmlNodes;
@@ -182,7 +185,7 @@ const loadManager = ref({
   schedule: 0,
   success: false,
   showMask: true,
-  total: 26, // 总共加载的资源数(从默认加载器得知)
+  total: 29, // 总共加载的资源数(从默认加载器得知)
 });
 
 let rectLight: THREE.RectAreaLight;
@@ -277,6 +280,8 @@ const init = async () => {
   // scene.fog = new THREE.Fog(0x333333, 15, 20);
   // scene.background = new THREE.Color(0x333333);
   threejsModule.scene = mainThree.scene;
+
+  initSpotLight(mainThree.scene, mainThree.camera, mainThree.renderer);
 
   flag = new CreateFlag(mainThree.scene, mainThree.camera, mainThree.renderer);
   flag.initFlag();
