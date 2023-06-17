@@ -76,7 +76,7 @@ export class MainThreeSetup {
       schedule: 0,
       success: false,
       showMask: true,
-      total: 29, // 总共加载的资源数(从默认加载器得知)
+      total: 32, // 总共加载的资源数(从默认加载器得知)
     }
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });

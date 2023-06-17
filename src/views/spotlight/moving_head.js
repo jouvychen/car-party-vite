@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 window.THREE = THREE;
+import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min'; // GUI调试工具
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min"; // 补间动画
 import ModelInstancer from './model_instancer';
@@ -422,21 +423,7 @@ class MovingHead {
 
   /**
    * Creates an instance of MovingHead.
-   * @param {string} [data={
-   *     minAngle: 0.0,
-   *     maxAngle: 10.0,
-   *     minTilt: 0.0,
-   *     maxTilt: 0.0,
-   *     minPan: 0.0,
-   *     maxPan: 0.0,
-   *     color: 'white',
-   *     colorTemp: DEFAULT_COLOR_TEMP,
-   *     intensity: 0.0,
-   *     pan: 0.0,
-   *     tilt: 0.0,
-   *     goboWheel: [],
-   *     colorWheel: []
-   *   }]
+   * @param {string}
    * @memberof MovingHead
    */
   constructor(data = {
@@ -798,8 +785,8 @@ class MovingHead {
     this._dummy.position.set(
       positionVector.x,
       positionVector.y,
-      // positionVector.z
-      Math.max(positionVector.z, 0.51)
+      positionVector.z
+      // Math.max(positionVector.z, 0.51)
     );
     this._matrixNeedsUpdate = true;
   }
@@ -980,6 +967,88 @@ class MovingHead {
     this.updateDirectionVector();
   }
 
+  // debugger
+  debug() {
+    let gui = new GUI({container: document.body});
+    const params = {
+      positionX: {
+        key: 'positionX',
+        value: this._position.x,
+        min: 0,
+        max: 10,
+        source: 'position',
+        vector: 'x'
+      },
+      positionY: {
+        key: 'positionY',
+        value: this._position.y,
+        min: 0,
+        max: 20,
+        source: 'position',
+        vector: 'y'
+      },
+      positionZ: {
+        key: 'positionZ',
+        value: this._position.z,
+        min: 0,
+        max: 10,
+        source: 'position',
+        vector: 'z'
+      },
+      rotaitionX: {
+        key: 'rotaitionX',
+        value: this._rotation.x,
+        min: 0,
+        max: 10,
+        source: 'rotation',
+        vector: 'x'
+      },
+      rotaitionY: {
+        key: 'rotaitionY',
+        value: this._rotation.y,
+        min: 0,
+        max: 10,
+        source: 'rotation',
+        vector: 'y'
+      },
+      rotaitionZ: {
+        key: 'rotaitionZ',
+        value: this._rotation.z,
+        min: 0,
+        max: 10,
+        source: 'rotation',
+        vector: 'z'
+      },
+    };
+
+    for (const [key, item] of Object.entries(params)) {
+      const param = {
+        [item.key]: item.value,
+      }
+      gui.add(param, item.key, item.min, item.max).onChange((val) => {
+  
+        this._dummy[item.source][item.vector] = val;
+    
+      });
+    }
+
+    // const param = 
+
+    // params.forEach((o)=>{
+    //   gui.add(params, 'positionX', 0, 10).onChange((val) => {
+  
+    //     this._dummy.position.x = val;
+    
+    //   });
+    // })
+  
+    // gui.add(params, 'positionX', 0, 10).onChange((val) => {
+  
+    //   this._dummy.position.x = val;
+  
+    // });
+  }
+
   static degToRad(degAngle) {
     return degAngle * (Math.PI / 180);
   }
@@ -1036,7 +1105,7 @@ class MovingHead {
   // 聚光灯主体
   static prepareBeamInstance() {
 
-    let beamGeometry = new THREE.CylinderBufferGeometry(
+    let beamGeometry = new THREE.CylinderGeometry(
       BEAM_TOP_RADIUS,
       BEAM_TOP_RADIUS,
       BEAM_LENGTH,
@@ -1130,7 +1199,7 @@ class MovingHead {
 
   static prepareCapInstance() {
     var targetGeo = new THREE.InstancedBufferGeometry();
-    let capGeometry = new THREE.CircleBufferGeometry(0.09, 40);
+    let capGeometry = new THREE.CircleGeometry(0.09, 40);
     let capMaterial = new THREE.MeshBasicMaterial({
       side: THREE.DoubleSide,
       color: 'blue'
@@ -1150,7 +1219,7 @@ class MovingHead {
 
   static prepareBoxHelperInstance() {
 
-    let boxHelperGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
+    let boxHelperGeometry = new THREE.BoxGeometry(1, 1, 1);
     let boxHelperMaterial = new THREE.MeshBasicMaterial({
       side: THREE.DoubleSide,
       wireframe: true,
