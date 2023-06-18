@@ -19,4 +19,13 @@ const getWorldPositionByName = (name: string): THREE.Vector3 => {
   return worldPosition;
 }
 
-export { getWorldPositionByName }
+/**
+ * 判断材质是否有颜色属性
+ * @param material 
+ * @returns 
+ */
+const isMaterialWithColor = (material: any): material is THREE.Material & { color: THREE.Color } => {
+  return 'color' in material && material.color instanceof THREE.Color;
+}
+
+export { getWorldPositionByName, isMaterialWithColor }

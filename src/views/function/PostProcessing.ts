@@ -3,7 +3,11 @@
 
 
 //https://github.com/vanruesc/postprocessing
-
+interface BloomParams {
+    strength: number;
+    threshold: number;
+    radius: number;
+}
 
 import * as THREE from 'three'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
@@ -18,14 +22,24 @@ import Experience from './Experience.js'
 import { CreateBasicThree } from './CreateBasicThree'
 import { ObjectKeys } from '@/utils/interface'
 
+import {
+    useStoreApp,
+  } from "@/store";
+const appStore = useStoreApp();
+
 export class PostProcessing {
-    BLOOM_SCENE = 2;
+    BLOOM_SCENE = 1;
 
     darkMaterial!: THREE.MeshBasicMaterial;
     materials!: ObjectKeys;
     bloomLayer!: THREE.Layers;
-    bloomParams!: ObjectKeys;
+    bloomParams!: BloomParams;
     three!: CreateBasicThree;
+
+    scene!: THREE.Scene;
+    camera!: THREE.PerspectiveCamera;
+    renderer!: THREE.WebGLRenderer;
+
     ramenShop!: THREE.Object3D;
 
     renderTarget!: THREE.WebGLRenderTarget;
@@ -36,26 +50,34 @@ export class PostProcessing {
     finalPass!: ShaderPass;
     finalComposer!: EffectComposer;
     smaaPass!: SMAAPass;
-    constructor(modal: THREE.Object3D) {
+
+    constructor(modal: THREE.Object3D, scene: THREE.Scene, camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) {
+        this.scene = scene;
+        this.camera = camera;
+        this.renderer = renderer;
+
+
+
         this.three = new CreateBasicThree();
 
         this.ramenShop = modal
         this.setBloomConfig()
         this.setBloomObjects()
-        // this.setRenderTarget()
+        this.setRenderTarget()
         this.setPasses()
         this.renderBloom()
     }
 
     setBloomConfig() {
-        this.BLOOM_SCENE = 2
-        this.bloomLayer = new THREE.Layers()
-        this.bloomLayer.set(this.BLOOM_SCENE)
+        // 设置图层属性.当mesh的图层mask和摄像机的mask一样才会被渲染出来
+        this.bloomLayer = new THREE.Layers();
+        this.bloomLayer.set(this.BLOOM_SCENE);
 
-        this.bloomParams = {}
-        this.bloomParams.bloomStrength = 1
-        this.bloomParams.bloomThreshold = 0
-        this.bloomParams.bloomRadius = 0.2
+        this.bloomParams = Object.create({
+            strength: 1.2,
+            threshold: 0.75,
+            radius: 1,
+        });
 
         this.darkMaterial = new THREE.MeshBasicMaterial({ color: "black" })
         this.materials = {}
@@ -76,6 +98,7 @@ export class PostProcessing {
                     minFilter: THREE.LinearFilter,
                     magFilter: THREE.LinearFilter,
                     format: THREE.RGBAFormat,
+                    // type: THREE.HalfFloatType,
                     encoding: THREE.sRGBEncoding
                 }
             )
@@ -94,26 +117,38 @@ export class PostProcessing {
     }
 
     setPasses() {
-        this.renderPass = new RenderPass(this.three.scene, this.three.camera)
+        this.renderPass = new RenderPass(this.scene, this.camera)
 
-
+        // 抗锯齿
         this.fxaaPass = new ShaderPass(FXAAShader);
-        this.bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85)
-        this.bloomPass.threshold = this.bloomParams.bloomThreshold
-        this.bloomPass.strength = this.bloomParams.bloomStrength
-        this.bloomPass.radius = this.bloomParams.bloomRadius
+        //  this.smaaPass = new SMAAPass(window.innerWidth, window.innerHeight)
+        
 
-        this.bloomComposer = new EffectComposer(this.three.renderer, this.renderTarget)
-        this.bloomComposer.renderToScreen = false
+        // 第一次使用辉光渲染
+        
+        this.bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        for (const [key, value] of Object.entries(this.bloomParams)) {
+            this.bloomPass[key as keyof BloomParams] = value;
+        }
+        // this.bloomPass.threshold = this.bloomParams.threshold;
+        // this.bloomPass.strength = this.bloomParams.strength;
+        // this.bloomPass.radius = this.bloomParams.radius;
+        this.bloomPass.needsSwap = true;
+
+        // 渲染目标
+
+        // 效果创造器(混合渲染器通道、辉光通道)
+        this.bloomComposer = new EffectComposer(this.renderer)
+        this.bloomComposer.renderToScreen = false;  // true将处理的结果保存到帧缓冲区，false直接显示在canvas画布上面
         this.bloomComposer.addPass(this.renderPass)
         this.bloomComposer.addPass(this.bloomPass)
 
-        const pixelRatio = this.three.renderer.getPixelRatio(); // 获取设备像素比，高清屏不会太模糊
+        const pixelRatio = this.renderer.getPixelRatio(); // 获取设备像素比，高清屏不会太模糊
         this.fxaaPass.material.uniforms['resolution'].value.x = 1 / (window.innerWidth * pixelRatio);
         this.fxaaPass.material.uniforms['resolution'].value.y = 1 / (window.innerHeight * pixelRatio);
         this.fxaaPass.renderToScreen = false;
 
-
+        // 着色器通道
         this.finalPass = new ShaderPass
             (
                 new THREE.ShaderMaterial
@@ -132,13 +167,14 @@ export class PostProcessing {
             )
 
         this.finalPass.needsSwap = true
-        this.finalComposer = new EffectComposer(this.three.renderer, this.renderTarget)
 
+        this.finalComposer = new EffectComposer(this.renderer, this.renderTarget)
         this.finalComposer.setSize(window.innerWidth, window.innerHeight)
         this.finalComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
         this.finalComposer.addPass(this.renderPass)
         this.finalComposer.addPass(this.fxaaPass)
+        // this.finalComposer.addPass(this.smaaPass)
         this.finalComposer.addPass(this.finalPass)
 
         // SMAA pass if WebGL2 is not available
@@ -158,9 +194,9 @@ export class PostProcessing {
     }
 
     renderBloom() {
-        this.three.scene.traverse((obj: THREE.Object3D) => this.darkenNonBloomed(obj))
+        this.ramenShop.traverse((obj: THREE.Object3D) => this.darkenNonBloomed(obj))
         this.bloomComposer.render()
-        this.three.scene.traverse((obj: THREE.Object3D) => this.restoreMaterial(obj))
+        this.ramenShop.traverse((obj: THREE.Object3D) => this.restoreMaterial(obj))
     }
 
     darkenNonBloomed(obj: THREE.Object3D) {
@@ -178,8 +214,9 @@ export class PostProcessing {
     }
 
     update() {
+        // appStore.mode === 'night' && 
         this.renderBloom()
-        this.finalComposer.render()
+        this.finalComposer.render() // 关闭renderBloom, 只保留finalComposer可以制作一个单独的图层
     }
 
     resize() {

@@ -34,6 +34,12 @@
     <revolver :revolver-list="revolverList"></revolver>
 
     <template v-for="o in revolverList" :key="o.uuid">
+      <!-- 中心控制面板 -->
+      <center-control
+        v-if="o.name === '中心控制'"
+        :float-window="o"
+      >
+      </center-control>
       <!-- 颜色控制面板 -->
       <color-control
         v-if="o.name === '颜色'"
@@ -123,9 +129,9 @@ let flag: CreateFlag;
 import { CreatePromotionalFilm } from "../function/createPromotionalFilm";
 let promotionalFilm: CreatePromotionalFilm;
 
-import {createTransitions} from '../function/createTransitions';
+import { createTransitions } from "../function/createTransitions";
 
-import { PostProcessing } from '../function/PostProcessing.js';
+import { PostProcessing } from "../function/PostProcessing.js";
 let postProcessing: PostProcessing;
 
 // 常量导入
@@ -136,6 +142,8 @@ import floatWindow from "../float-window/index.vue";
 import revolver from "../revolver/index.vue";
 import threeJsFontSvg from "../svg-animation/three-js-font-svg.vue";
 import animationControl from "../control-window/animation-control.vue";
+
+import centerControl from "../control-window/center-control.vue";
 import colorControl from "../control-window/color-control.vue";
 
 import materialControl from "../control-window/material-control.vue";
@@ -144,19 +152,21 @@ import HtmlNode from "../html-node/index.vue";
 import { CreateHtmlNodes } from "../html-node/createHtmlNodes";
 
 // 聚光灯
-import { initSpotLight } from '../spotlight/spot-light-volume';
+import { initSpotLight, updateSpotLight } from "../spotlight/spot-light-volume";
 
-import { MainThreeSetup } from './main';
+import { MainThreeSetup } from "./main";
 let mainThree: MainThreeSetup;
 let htmlNodes: CreateHtmlNodes;
 /**
  * 状态仓库
  */
 import {
+  useStoreApp,
   useBoothModelStore,
   useCarModelStore,
   useThreejsModuleStore,
 } from "@/store";
+const appStore = useStoreApp();
 const boothStore = useBoothModelStore();
 const carStore = useCarModelStore();
 const threejsModule = useThreejsModuleStore();
@@ -235,15 +245,17 @@ const init = async () => {
 
   const container = document.getElementById("container");
 
-  mainThree = new MainThreeSetup('container');
-  window.addEventListener('loadEvent', (loadEvent) => {
+  mainThree = new MainThreeSetup("container");
+  window.addEventListener("loadEvent", (loadEvent) => {
     // debugger
     // loadManager.value = Object.assign(loadManager.value, loadEvent.detail.progress.schedule);
-    loadManager.value = Object.assign(loadManager.value, loadEvent.detail.progress);
-});
-  // mainThree.setAnimationLoop(render);
+    loadManager.value = Object.assign(
+      loadManager.value,
+      loadEvent.detail.progress
+    );
+  });
   await mainThree.loadResource();
-  
+  mainThree.setAnimationLoop(render);
 
   // renderer = new THREE.WebGLRenderer({ antialias: true });
   // renderer.setPixelRatio(window.devicePixelRatio);
@@ -253,8 +265,6 @@ const init = async () => {
   // renderer.toneMapping = THREE.ACESFilmicToneMapping;
   // renderer.toneMappingExposure = 0.85; // 可以改变曝光度从而改变hdr贴图亮度，需要重新渲染
   // container?.appendChild(renderer.domElement);
-
-
 
   // window.addEventListener("resize", onWindowResize);
 
@@ -339,10 +349,17 @@ const init = async () => {
 
   // // 展台
   boothModel = mainThree.boothModel;
-  const transitionMesh = mainThree.boothModel.getObjectByName("Glass002") as THREE.Mesh;
+  const transitionMesh = mainThree.boothModel.getObjectByName(
+    "Glass002"
+  ) as THREE.Mesh;
   createTransitions(transitionMesh);
 
-  postProcessing = new PostProcessing(mainThree.boothModel);
+  postProcessing = new PostProcessing(
+    mainThree.boothModel,
+    mainThree.scene,
+    mainThree.camera,
+    mainThree.renderer
+  );
 
   // 设置展台材质
   // const glass = boothModel.getObjectByName("Glass") as THREE.Mesh;
@@ -383,7 +400,13 @@ const init = async () => {
   // scene.add(boothModel);
 
   // 创建html信息节点
-  htmlNodes = new CreateHtmlNodes(mainThree.scene, mainThree.camera, mainThree.boothModel, ['.hot-point__0'], ['视频面版']);
+  htmlNodes = new CreateHtmlNodes(
+    mainThree.scene,
+    mainThree.camera,
+    mainThree.boothModel,
+    [".hot-point__0"],
+    ["视频面版"]
+  );
 
   // 创建视频
   promotionalFilm = new CreatePromotionalFilm(mainThree.boothModel, "屏幕");
@@ -391,7 +414,9 @@ const init = async () => {
   /**
    * 创建镜子
    */
-  const mirrorMesh = mainThree.boothModel.getObjectByName("超长镜面") as THREE.Mesh;
+  const mirrorMesh = mainThree.boothModel.getObjectByName(
+    "超长镜面"
+  ) as THREE.Mesh;
   mirrorMesh.visible = false;
   const groundMirror = new Reflector(mirrorMesh.geometry.scale(1.2, 2.8, 1.2), {
     clipBias: 0.0003,
@@ -438,7 +463,7 @@ const createLight = () => {
     width,
     height
   );
-  rectLight.name = '测试灯具';
+  rectLight.name = "测试灯具";
   rectLight.position.set(0, 4, 0);
   rectLight2.position.set(1, 0.3, 0);
   // rectLight.rotateX(Math.PI * 0.5);
@@ -448,7 +473,7 @@ const createLight = () => {
   // WellLeft.add(rectLight2);
 
   const rectLightHelper = new RectAreaLightHelper(rectLight);
-  rectLightHelper.name = '测试灯具2'
+  rectLightHelper.name = "测试灯具2";
   const rectLightHelper2 = new RectAreaLightHelper(rectLight2);
   rectLight.add(rectLightHelper);
   // rectLight2.add(rectLightHelper2);
@@ -466,7 +491,7 @@ const createGUIFun = () => {
   // ) as HTMLDivElement;
   // createGUI({ container: infoContainer });
   createLightGUI({ rectLight: rectLight });
-  createBloomGUI({bloomPass: mainThree.bloomPass});
+  createBloomGUI({ bloomPass: postProcessing.bloomPass });
 };
 
 /**
@@ -479,7 +504,8 @@ const onChangeColor = (material: THREE.Material, array: string[]) => {
   array.forEach((o) => {
     const m = (mainThree.carModel?.getObjectByName(o) as THREE.Mesh)?.material;
     if (m instanceof THREE.Material) {
-      (mainThree.carModel?.getObjectByName(o) as THREE.Mesh).material = material;
+      (mainThree.carModel?.getObjectByName(o) as THREE.Mesh).material =
+        material;
     }
   });
 };
@@ -490,19 +516,20 @@ const onChangeMaterial = () => {
 };
 const r = ref(false);
 const render = () => {
-
-  // mainThree.controls.update();
-  // TWEEN?.update();
-  stats?.update();
+  mainThree.controls.update();
+  TWEEN?.update();
+  appStore.debug && stats?.update();
   flag?.flagUpdate();
   htmlNodes?.update();
-  // postProcessing?.update();
-  
+
+  appStore.mode === "night" && updateSpotLight();
 
   carStore.wheelStart && startWheel(-performance.now() / 1000);
 
   // mainThree?.test222();
-  // !r.value && mainThree.renderer.render(mainThree.scene, mainThree.camera);
+  appStore.mode === "night" && postProcessing?.update();
+  appStore.mode === "day" &&
+    mainThree.renderer.render(mainThree.scene, mainThree.camera);
 };
 
 // setTimeout(()=>{

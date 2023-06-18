@@ -46,7 +46,6 @@ let dragMinWidth = 250;
 let dragMinHeight = 124;
 const rightSafeMargin = 5;
 
-// 代码整理：懒人之家 lanrenzhijia.com
 /*-------------------------- +
   获取id, class, tagName
  +-------------------------- */
@@ -390,7 +389,7 @@ const onMinimize = () => {
   -webkit-transition: all 1.2s ease-in-out; /* Safari和Chrome */
   -o-transition: all 1.2s ease-in-out; /* Opera */
 }
-/* 代码整理：懒人之家 lanrenzhijia.com */
+
 body,
 div,
 h2 {

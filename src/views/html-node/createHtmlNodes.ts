@@ -2,13 +2,6 @@
 /**
  * 根据世界坐标绑定Html节点
  */
-interface ObjectPositionItem {
-  name: string,
-  position: string,
-  x: Number,
-  y: Number,
-  z: Number,
-}
 interface PointItem {
   position: THREE.Vector3,
   element: HTMLDivElement,
@@ -17,8 +10,10 @@ const sizes = {
   width: window.innerWidth,
   height: window.innerHeight,
 };
+
 import * as THREE from 'three';
 export class CreateHtmlNodes {
+  public frustumBox!: THREE.Box3;
   public raycaster: THREE.Raycaster;
   public modal: THREE.Object3D;
   public scene: THREE.Scene;
@@ -36,6 +31,7 @@ export class CreateHtmlNodes {
     this.divClassList = divClassList;
     this.objectNameList = objectNameList;
     this.getWorldPosition();
+    this.createFrustumBox();
 
     // 监听鼠标左键按下事件
     window.addEventListener('mousedown', (event: MouseEvent) => {
@@ -57,9 +53,6 @@ export class CreateHtmlNodes {
     window.addEventListener('mouseup', (event) => {
       if (event.button === 0) {
         this.mousedown = false;
-        // for (let i = 0, l = this.pointsList.length; i < l; i++) {
-        //   this.pointsList[i].element?.classList.add('visible');
-        // }
       }
     });
 
@@ -81,35 +74,55 @@ export class CreateHtmlNodes {
     }
   }
 
+  createFrustumBox() {
+    // 检查投影后的坐标是否在视野范围内
+    // const pointInFrustum = (
+    //   screenPosition.x >= -1 && screenPosition.x <= 1 &&
+    //   screenPosition.y >= -1 && screenPosition.y <= 1 &&
+    //   screenPosition.z >= -1 && screenPosition.z <= 1
+    // );
+    // 优化版本↓
+    // 创建边界框，范围为 [-1, 1] 的立方体
+    this.frustumBox = new THREE.Box3(
+      new THREE.Vector3(-1, -1, -1),
+      new THREE.Vector3(1, 1, 1)
+    );
+  }
+
   update() {
-    // if (this.mousedown) {
-    //   return 0;
-    // }
-    for (let i = 0, l = this.pointsList.length; i < l; i++) {
-      // 获取2D屏幕位置
-      const screenPosition = this.pointsList[i].position.clone();
-      screenPosition.project(this.camera); // 世界坐标转标准设备坐标
-
-      this.raycaster.setFromCamera(screenPosition, this.camera);
-      const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-      if (!this.mousedown && intersects.length === 0) {
-        // 未找到相交点，显示
-        this.pointsList[i].element?.classList.add('visible');
-      } else {
-        // 找到相交点
-        // 获取相交点的距离和点的距离
-        const intersectionDistance = (intersects instanceof Array && intersects.length > 0 ? intersects[0].distance : 0);
-        const pointDistance = this.pointsList[i].position.distanceTo(this.camera.position);
-        // 相交点距离比点距离近，隐藏；相交点距离比点距离远，显示
-        (this.mousedown || intersectionDistance < pointDistance)
-          ? this.pointsList[i].element?.classList.remove('visible')
-          : this.pointsList[i].element?.classList.add('visible');
+ 
+      for (let i = 0, l = this.pointsList.length; i < l; i++) {
+        const point = this.pointsList[i];
+        // 世界坐标转标准设备坐标(将点从世界坐标系投影到屏幕空间)
+        const screenPosition = point.position.clone().project(this.camera);
+  
+        this.raycaster.setFromCamera(screenPosition, this.camera);
+        const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+  
+        // 检查投影后的坐标是否在视野范围内
+        if (this.frustumBox.containsPoint(screenPosition)) {
+          if (!this.mousedown && intersects.length === 0) {
+            // 未找到相交点，显示
+            point.element?.classList.add('visible');
+          } else {
+            // 找到相交点，获取相交点的距离和点的距离
+            const intersectionDistance = (intersects instanceof Array && intersects.length > 0 ? intersects[0].distance : 0);
+            const pointDistance = point.position.distanceTo(this.camera.position);
+            // 相交点距离比点距离近，隐藏(与其他物体相交)；相交点距离比点距离远，显示(该点在更靠近摄像机的位置)
+            (this.mousedown || intersectionDistance < pointDistance)
+              ? point.element?.classList.remove('visible')
+              : point.element?.classList.add('visible');
+          }
+        } else {
+          point.element?.classList.remove('visible')
+        }
+  
+        const translateX = screenPosition.x * sizes.width * 0.5;
+        const translateY = -screenPosition.y * sizes.height * 0.5;
+        point.element && (point.element.style.transform = `translateX(${translateX - 20}px) translateY(${translateY - 22}px)`); // 减去按钮宽和高一半
+  
       }
-      const translateX = screenPosition.x * sizes.width * 0.5;
-      const translateY = -screenPosition.y * sizes.height * 0.5;
-      this.pointsList[i].element && (this.pointsList[i].element.style.transform = `translateX(${translateX - 20}px) translateY(${translateY - 22}px)`); // 减去按钮宽和高一半
-
-    }
+    
   }
 
 }

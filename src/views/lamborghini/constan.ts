@@ -2,6 +2,18 @@ import type { Revolver } from "../revolver/typeStatement";
 // 左轮数据
 const revolverList: Revolver[] = [
     {
+        index: 0,
+        name: "中心控制",
+        uuid: "",
+        state: false,
+        unfoldClass: {
+            width: "500px",
+            height: "300px",
+            top: "10%",
+            right: "70%",
+        },
+    },
+    {
         index: 1,
         name: "动画",
         uuid: "",

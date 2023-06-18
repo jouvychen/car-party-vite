@@ -4,7 +4,7 @@ import { MovingHead } from './moving_head.js';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'; // 控制器
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min"; // 补间动画
-import { getWorldPositionByName } from '../function/utils';
+import { getWorldPositionByName } from '@/utils/threejsUtils';
 
 const threeDom: Ref<HTMLElement | null> = ref(null);
 let scene: THREE.Scene;
@@ -20,7 +20,7 @@ let movingHead2: MovingHead;
 let movingHead3: MovingHead;
 let movingHead4: MovingHead;
 
-export const initSpotLight = async (scene: THREE.Scene, camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) => {
+const initSpotLight = async (scene: THREE.Scene, camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) => {
 
   // controls = new OrbitControls(camera, renderer.domElement);
 
@@ -175,7 +175,7 @@ export const initSpotLight = async (scene: THREE.Scene, camera: THREE.Perspectiv
 
   // movingHead.highlighted = true; // 定位高亮
 
-  render();
+  // render();
 };
 const clock = new THREE.Clock();
 const render = () => {
@@ -186,4 +186,11 @@ const render = () => {
   MovingHead.update(clock.getDelta());
   requestAnimationFrame(render);
 };
+const updateSpotLight = () => {
+  MovingHead.update(clock.getDelta());
+  // movingHead2?.update(clock.getDelta());
+  // movingHead3?.update(clock.getDelta());
+  // movingHead4?.update(clock.getDelta());
+};
+export { initSpotLight, updateSpotLight}
 

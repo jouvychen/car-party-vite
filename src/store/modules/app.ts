@@ -11,6 +11,8 @@ export const useStoreApp = defineStore('main', {
     return {
       loading: false, // 加载状态
       localInfo: lsLocaleSetting,
+      mode: 'day', // 主场景模式{ day: '白天', night: '黑夜'}
+      debug: true, // 调试模式
     };
   },
   getters: {

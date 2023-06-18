@@ -4,6 +4,9 @@ import path from 'path'
 // 自动引入插件
 import AutoImport from 'unplugin-auto-import/vite'
 
+// setup语法糖拓展
+import vueSetupExtend from 'vite-plugin-vue-setup-extend'
+
 // 自动导入组件
 import Components from 'unplugin-vue-components/vite';
 // ant按需加载
@@ -32,6 +35,7 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
     },
     plugins: [
       vue(),
+      vueSetupExtend(),
       AutoImport({
         // 遇到Vue和useRoute之类的就不用手动导入了
         imports: ['vue', 'vue-router'],
