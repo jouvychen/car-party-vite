@@ -44,7 +44,6 @@
       <color-control
         v-if="o.name === '颜色'"
         :float-window="o"
-        @on-change-color="onChangeColor"
       ></color-control>
 
       <!-- 材质面板 -->
@@ -497,19 +496,6 @@ const createGUIFun = () => {
 /**
  * 子组件回调方法
  */
-// 颜色控制组件回调
-const onChangeColor = (material: THREE.Material, array: string[]) => {
-  console.log(array);
-  console.log(material);
-  array.forEach((o) => {
-    const m = (mainThree.carModel?.getObjectByName(o) as THREE.Mesh)?.material;
-    if (m instanceof THREE.Material) {
-      (mainThree.carModel?.getObjectByName(o) as THREE.Mesh).material =
-        material;
-    }
-  });
-};
-
 // 材质控制组件回调
 const onChangeMaterial = () => {
   // console.log('打印', xxx);

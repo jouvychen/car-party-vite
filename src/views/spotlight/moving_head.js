@@ -1097,9 +1097,6 @@ class MovingHead {
     scene.add(yokeMesh);
     scene.add(headMesh);
 
-    const axes = new THREE.AxesHelper(50);
-    scene.add(axes);
-
   }
 
   // 聚光灯主体

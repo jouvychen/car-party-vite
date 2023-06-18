@@ -179,7 +179,8 @@ export class MainThreeSetup {
     this.boothModel = boothGltf.scene;
     this.boothModel.scale.set(1.2, 1.2, 1.2);
     const boothGroup = this.boothModel.getObjectByName("车承台父节点");
-    this.scene.add(this.carModel);
+    // this.scene.add(this.carModel);
+    boothGroup?.add(this.carModel);
     this.scene.add(this.boothModel);
 
     // 后期处理渲染器通道
