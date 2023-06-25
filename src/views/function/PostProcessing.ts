@@ -31,6 +31,7 @@ export class PostProcessing {
     BLOOM_SCENE = 1;
 
     darkMaterial!: THREE.MeshBasicMaterial;
+    darkMaterialTrans!: THREE.MeshBasicMaterial;
     materials!: ObjectKeys;
     bloomLayer!: THREE.Layers;
     bloomParams!: BloomParams;
@@ -80,6 +81,7 @@ export class PostProcessing {
         });
 
         this.darkMaterial = new THREE.MeshBasicMaterial({ color: "black" })
+        this.darkMaterialTrans = new THREE.MeshBasicMaterial({ color: "black", opacity: 0, transparent: true })
         this.materials = {}
     }
 
@@ -201,8 +203,13 @@ export class PostProcessing {
 
     darkenNonBloomed(obj: THREE.Object3D) {
         if (obj instanceof THREE.Mesh && this.bloomLayer.test(obj.layers) === false) {
-            this.materials[obj.uuid] = obj.material;
-            obj.material = this.darkMaterial;
+            if (['镜头光晕Mesh-左车灯光晕点', '镜头光晕Mesh-右车灯光晕点'].includes(obj.name)) {
+                this.materials[obj.uuid] = obj.material;
+                obj.material = this.darkMaterialTrans;
+              } else {
+                this.materials[obj.uuid] = obj.material;
+                obj.material = this.darkMaterial;
+              }
         }
     }
 
