@@ -576,6 +576,7 @@ const onTweenOpenLight = () => {
         }
       );
     }
+    // 光晕节点是否需要后处理
     // carStore.carModel.traverse((child: THREE.Object3D) => {
     //   if (['镜头光晕Mesh-左车灯光晕点', '镜头光晕Mesh-右车灯光晕点'].includes(child.name)) {
     //     child.layers.enable(1);
