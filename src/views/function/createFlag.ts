@@ -42,7 +42,7 @@ export class CreateFlag {
     const flagTexture = loader.load(getAssetsUrlRelative('../assets/images/poster/', 'Lamborghini-Centenario-poster.jpg'));
     flagTexture.magFilter = THREE.LinearFilter;
     flagTexture.minFilter = THREE.LinearFilter;
-    const flagMaterial = new THREE.MeshPhongMaterial({
+    const flagMaterial = new THREE.MeshBasicMaterial({
       map: flagTexture,
     });
     this.flag = new THREE.Mesh(flagGeometry, flagMaterial);

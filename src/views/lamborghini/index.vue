@@ -456,26 +456,13 @@ const createLight = () => {
   const height = 12;
   const intensity = 1.5;
   rectLight = new THREE.RectAreaLight(0xffffff, intensity, width, height);
-  const rectLight2 = new THREE.RectAreaLight(
-    0xff00ff,
-    intensity,
-    width,
-    height
-  );
-  rectLight.name = "测试灯具";
   rectLight.position.set(0, 4, 0);
-  rectLight2.position.set(1, 0.3, 0);
-  // rectLight.rotateX(Math.PI * 0.5);
   rectLight.lookAt(0, 0, 0);
-  rectLight2.lookAt(0, 0, 0);
   mainThree.scene.add(rectLight);
-  // WellLeft.add(rectLight2);
 
-  const rectLightHelper = new RectAreaLightHelper(rectLight);
-  rectLightHelper.name = "测试灯具2";
-  const rectLightHelper2 = new RectAreaLightHelper(rectLight2);
-  rectLight.add(rectLightHelper);
-  // rectLight2.add(rectLightHelper2);
+  // const rectLightHelper = new RectAreaLightHelper(rectLight);
+  // rectLightHelper.name = "测试灯具2";
+  // rectLight.add(rectLightHelper);
 
   // 创建完灯光后再创建GUI控制面板，因为依赖灯光实例
   createGUIFun();

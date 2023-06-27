@@ -196,9 +196,9 @@ export class PostProcessing {
     }
 
     renderBloom() {
-        this.ramenShop.traverse((obj: THREE.Object3D) => this.darkenNonBloomed(obj))
+        this.scene.traverse((obj: THREE.Object3D) => this.darkenNonBloomed(obj))
         this.bloomComposer.render()
-        this.ramenShop.traverse((obj: THREE.Object3D) => this.restoreMaterial(obj))
+        this.scene.traverse((obj: THREE.Object3D) => this.restoreMaterial(obj))
     }
 
     darkenNonBloomed(obj: THREE.Object3D) {
