@@ -58,6 +58,7 @@ export class CreateHtmlNodes {
 
   }
 
+  // 建模时需要注意将Mesh的原点设置为"质心(表面)", 否则可能会被其他Mesh遮盖导致不能展示html-node
   getWorldPosition(precision = 2) {
     this.pointsList = [];
 
@@ -70,7 +71,6 @@ export class CreateHtmlNodes {
         element: document.querySelector(this.divClassList[i]) as HTMLDivElement,
       }
       this.pointsList.push(pointNode);
-
     }
   }
 

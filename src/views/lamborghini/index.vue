@@ -403,8 +403,8 @@ const init = async () => {
     mainThree.scene,
     mainThree.camera,
     mainThree.boothModel,
-    [".hot-point__0"],
-    ["视频面版"]
+    [".hot-point__1", ".hot-point__0"],
+    ["屏幕", "视频面版"]
   );
 
   // 创建视频
