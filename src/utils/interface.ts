@@ -34,4 +34,12 @@ interface TransitionObj {
   [key: string]: Transition;
 }
 
-export type { Position, ObjectKeys, State, View, Transition, TransitionObj }
+// 热点组件html-node类型接口
+interface HotPoint {
+  show: boolean;
+  type: string;
+  name: string;
+  [key: string]: any; // 用户拓展更多类型
+}
+
+export type { Position, ObjectKeys, State, View, Transition, TransitionObj, HotPoint }

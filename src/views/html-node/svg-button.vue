@@ -1,17 +1,17 @@
 <template>
-  <button v-show="model.show" type="button"
+  <button :id="hpId" v-show="model.show" type="button"
     class="html-hp-btn Hp__wrapper font-10-700 align-center justify-center isHotPoint hp-visible">
     <div class="Hp__hexagon-wrapper">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 40" class="outline">
         <defs>
-          <clipPath id="cp-162">
+          <clipPath :id="uid">
             <rect data-name="mask" width="36" height="40"></rect>
           </clipPath>
         </defs>
         <g transform="translate(2, 2)">
           <path d="M0,8,16,0,32,8V28L16,36,0,28Z" vector-effect="non-scaling-stroke" opacity="0.25" stroke-width="2"
             stroke="#fff" fill="none"></path>
-          <g clip-path="url(#cp-162)">
+          <g :clip-path="urlId">
             <path d="M0,8,16,0,32,8V28L16,36,0,28Z" vector-effect="non-scaling-stroke" opacity="1" stroke-width="2"
               stroke="#fff" fill="none"></path>
           </g>
@@ -108,9 +108,20 @@
   </button>
 </template>
 <script setup lang="ts">
+import { HotPoint } from '@/utils/interface';
+import { uuid } from "@/utils/common";
+const uid = ref(uuid());
+// 热点id
+const hpId = computed(()=>{
+  return `hp-${uid.value}`;
+})
+// clip-path id
+const urlId = computed(()=>{
+  return `url(#${uid.value})`;
+})
 const props = defineProps({
   modelValue: {
-    type: Object,
+    type: Object as PropType<HotPoint>,
     default: () => ({
       show: true,
       type: 'add',

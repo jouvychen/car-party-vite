@@ -1,23 +1,39 @@
 <template>
-  <div class="hot-point hot-point__0">
-    <svgButton id="111" key="111" v-model:model-value="btn1"></svgButton>
-  </div>
-  <div class="hot-point hot-point__1">
-    <svgButton id="222" key="222" v-model:model-value="btn2"></svgButton>
-  </div>
+  <template v-for="(point, index) in hotPoints" :key="index">
+    <div :class="['hot-point', `hot-point__${index}`]">
+      <!-- Internal server error: v-model cannot be used on v-for or v-slot scope variables because they are not writable. -->
+      <!-- so, use :model-value="point" but no v-model:model-value="" -->
+      <svgButton :model-value="point" @click="onClickPoint(point)"></svgButton>
+    </div>
+  </template>
 </template>
 <script setup lang="ts">
+import { HotPoint } from '@/utils/interface';
+import { message } from 'ant-design-vue';
 import svgButton from './svg-button.vue';
-const btn1 = reactive({
-  show: true,
-  type: 'add',
-  name: '按钮说明文字'
-})
-const btn2 = reactive({
-  show: true,
-  type: 'play',
-  name: '按钮说明文字2'
-})
+const hotPoints: HotPoint[] = [
+  {
+    show: true,
+    type: 'add',
+    name: '查看介绍',
+    event: 'CameraAnimation',
+  },
+  {
+    show: true,
+    type: 'play',
+    name: '播放宣传视频',
+    event: 'Play',
+  },
+  {
+    show: true,
+    type: 'add',
+    name: '控制台',
+    event: 'Control',
+  }
+]
+const onClickPoint = (point: HotPoint) => {
+  message.success(point.name);
+};
 </script>
 
 <style scoped lang="less">
@@ -33,6 +49,7 @@ const btn2 = reactive({
   .html-hp-btn {
     opacity: 0;
   }
+
   &.visible .html-hp-btn {
     opacity: 1;
     transition: opacity 200ms ease-out;
