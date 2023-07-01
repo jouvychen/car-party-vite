@@ -335,6 +335,7 @@ const init = async () => {
   carStore.source.texture.textureFlare0 = mainThree.textureFlare0;
   carStore.source.texture.textureFlare3 = mainThree.textureFlare3;
   carStore.carModel = mainThree.carModel;
+  boothStore.boothModel = mainThree.boothModel;
 
   hdrTexture = mainThree.hdrEnvironmentTexture;
   // scene.environment = texture;
@@ -402,12 +403,8 @@ const init = async () => {
   htmlNodes = new CreateHtmlNodes(
     mainThree.scene,
     mainThree.camera,
-    mainThree.boothModel,
-    [".hot-point__1", ".hot-point__0"],
-    ["屏幕", "视频面版"]
+    mainThree.boothModel
   );
-
-  // 创建视频
   promotionalFilm = new CreatePromotionalFilm(mainThree.boothModel, "屏幕");
 
   /**

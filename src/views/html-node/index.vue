@@ -8,32 +8,16 @@
   </template>
 </template>
 <script setup lang="ts">
+
 import { HotPoint } from '@/utils/interface';
 import { message } from 'ant-design-vue';
 import svgButton from './svg-button.vue';
-const hotPoints: HotPoint[] = [
-  {
-    show: true,
-    type: 'add',
-    name: '查看介绍',
-    event: 'CameraAnimation',
-  },
-  {
-    show: true,
-    type: 'play',
-    name: '播放宣传视频',
-    event: 'Play',
-  },
-  {
-    show: true,
-    type: 'add',
-    name: '控制台',
-    event: 'Control',
-  }
-]
+import { hotPoints } from '@/config/data';
+
 const onClickPoint = (point: HotPoint) => {
   message.success(point.name);
 };
+
 </script>
 
 <style scoped lang="less">

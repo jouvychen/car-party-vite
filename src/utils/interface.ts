@@ -39,6 +39,7 @@ interface HotPoint {
   show: boolean;
   type: string;
   name: string;
+  meshName: string,
   [key: string]: any; // 用户拓展更多类型
 }
 

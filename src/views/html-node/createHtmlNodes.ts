@@ -2,17 +2,14 @@
 /**
  * 根据世界坐标绑定Html节点
  */
+import * as THREE from 'three';
+import { sizes, hotPoints } from '@/config/data';
 interface PointItem {
   position: THREE.Vector3,
   element: HTMLDivElement,
 }
-const sizes = {
-  width: window.innerWidth,
-  height: window.innerHeight,
-};
 
-import * as THREE from 'three';
-export class CreateHtmlNodes {
+class CreateHtmlNodes {
   public frustumBox!: THREE.Box3;
   public raycaster: THREE.Raycaster;
   public modal: THREE.Object3D;
@@ -22,8 +19,18 @@ export class CreateHtmlNodes {
   public objectNameList: string[]; // 3d对象名称, 包括object3d和mesh
   public pointsList!: PointItem[]; // 定位到页面上的html节点信息
   public mousedown = false;
+  public hotPoints = hotPoints;
 
-  constructor(scene: THREE.Scene, camera: THREE.PerspectiveCamera, modal: THREE.Object3D, divClassList: string[], objectNameList: string[]) {
+  constructor(scene: THREE.Scene, camera: THREE.PerspectiveCamera, modal: THREE.Object3D) {
+
+    const divClassList: string[] = (this.hotPoints || []).map((hotPoint, index) => {
+      return `.hot-point__${index}`;
+    })
+  
+    const objectNameList: string[] = (this.hotPoints || []).map((hotPoint, index) => {
+      return hotPoint.meshName;
+    })
+
     this.raycaster = new THREE.Raycaster();
     this.scene = scene;
     this.camera = camera;
@@ -126,3 +133,4 @@ export class CreateHtmlNodes {
   }
 
 }
+export { CreateHtmlNodes, hotPoints }
