@@ -40,6 +40,7 @@ interface HotPoint {
   type: string;
   name: string;
   meshName: string,
+  controlPName: string,
   [key: string]: any; // 用户拓展更多类型
 }
 

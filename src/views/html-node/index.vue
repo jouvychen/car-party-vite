@@ -18,23 +18,26 @@ import svgButton from './svg-button.vue';
 import { hotPoints } from '@/config/data';
 import { EntranceAnimations } from "@/utils/entranceTweenClass";
 import { CreatePromotionalFilm } from "../function/createPromotionalFilm";
+import { getWorldPositionByName } from '@/utils/threejsUtils';
 
 const appStore = useStoreApp();
 const threejsModule = useThreejsModuleStore();
 const htmlNodeModule = useHtmlNodeModelStore();
 const entranceAnimations = new EntranceAnimations();
-
 const onClickPoint = (point: HotPoint) => {
   appStore.focusSceneName = point.name;
+
+  const meshPosition = getWorldPositionByName(point.meshName);
+  const controlPosition = getWorldPositionByName(point.controlPName);
 
   entranceAnimations.animateCamera(
     threejsModule.camera,
     threejsModule.controls,
-    { x: 4.25, y: 1.4, z: 4.5 },
-    { x: 0, y: 0.5, z: 0 },
+    { x: controlPosition.x, y: controlPosition.y, z: controlPosition.z }, // 从控点看向网格↓
+    { x: meshPosition.x, y: meshPosition.y, z: meshPosition.z },
     2400,
     () => {
-      threejsModule.camera.position.set(4.25, 1.4, 4.5);
+      // threejsModule.camera.position.set(4.25, 1.4, 4.5);
       // 播放视频
       setTimeout(() => {
         htmlNodeModule.promotionalFilm.onPlay();
