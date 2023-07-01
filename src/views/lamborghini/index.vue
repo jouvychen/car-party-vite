@@ -126,7 +126,6 @@ import { EntranceAnimations } from "@/utils/entranceTweenClass";
 import { CreateFlag } from "../function/createFlag";
 let flag: CreateFlag;
 import { CreatePromotionalFilm } from "../function/createPromotionalFilm";
-let promotionalFilm: CreatePromotionalFilm;
 
 import { createTransitions } from "../function/createTransitions";
 
@@ -164,11 +163,13 @@ import {
   useBoothModelStore,
   useCarModelStore,
   useThreejsModuleStore,
+  useHtmlNodeModelStore,
 } from "@/store";
 const appStore = useStoreApp();
 const boothStore = useBoothModelStore();
 const carStore = useCarModelStore();
 const threejsModule = useThreejsModuleStore();
+const htmlNodeModule = useHtmlNodeModelStore();
 
 // let camera: THREE.PerspectiveCamera;
 // let scene: THREE.Scene;
@@ -405,7 +406,7 @@ const init = async () => {
     mainThree.camera,
     mainThree.boothModel
   );
-  promotionalFilm = new CreatePromotionalFilm(mainThree.boothModel, "屏幕");
+  htmlNodeModule.promotionalFilm = new CreatePromotionalFilm(mainThree.boothModel, "屏幕");
 
   /**
    * 创建镜子

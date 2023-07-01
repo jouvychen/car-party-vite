@@ -126,7 +126,9 @@ export class CreatePromotionalFilm {
   }
 
   rePlay() {
-    this.videoSource.play();
+    if (this.videoStatus === 'loaded') {
+      this.videoSource.play();
+    }
   }
 
 }

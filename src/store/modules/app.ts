@@ -12,6 +12,7 @@ export const useStoreApp = defineStore('main', {
       loading: false, // 加载状态
       localInfo: lsLocaleSetting,
       mode: 'day', // 主场景模式{ day: '白天', night: '黑夜'}
+      focusSceneName: '', // 聚焦场景名称
       debug: true, // 调试模式
     };
   },
