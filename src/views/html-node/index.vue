@@ -6,6 +6,9 @@
       <svgButton :model-value="point" @click="onClickPoint(point)"></svgButton>
     </div>
   </template>
+  <div class="hot-point close-point">
+    <svgButton :model-value="closePointItem" @click="closeHotPoint"></svgButton>
+  </div>
 </template>
 <script setup lang="ts">
 import {
@@ -15,37 +18,99 @@ import {
 } from "@/store";
 import { HotPoint } from '@/utils/interface';
 import svgButton from './svg-button.vue';
-import { hotPoints } from '@/config/data';
+import { hotPoints, closePointItem } from '@/config/data';
 import { EntranceAnimations } from "@/utils/entranceTweenClass";
-import { CreatePromotionalFilm } from "../function/createPromotionalFilm";
 import { getWorldPositionByName } from '@/utils/threejsUtils';
+// 摄像机和控制器复位
+import { onResetCamera } from '@/utils/threejsUtils';
 
 const appStore = useStoreApp();
 const threejsModule = useThreejsModuleStore();
 const htmlNodeModule = useHtmlNodeModelStore();
 const entranceAnimations = new EntranceAnimations();
+let closePoint: HTMLDivElement;
 const onClickPoint = (point: HotPoint) => {
+
+  if (appStore.focusSceneName != point.name) {
+    htmlNodeModule.htmlNode.hidePoint();
+    setTimeout(() => {
+      hide();
+    }, 2500)
+
+    const meshPosition = getWorldPositionByName(point.meshName);
+    const controlPosition = getWorldPositionByName(point.controlPName);
+    entranceAnimations.animateCamera(
+      threejsModule.camera,
+      threejsModule.controls,
+      { x: controlPosition.x, y: controlPosition.y, z: controlPosition.z }, // 从控点看向网格↓
+      { x: meshPosition.x, y: meshPosition.y, z: meshPosition.z },
+      2400,
+      () => {
+        onSwitchEnable(point.name);
+        threejsModule.controls.enabled = false;
+        closePoint?.classList.add('visible');
+      }
+    );
+  }
   appStore.focusSceneName = point.name;
+};
 
-  const meshPosition = getWorldPositionByName(point.meshName);
-  const controlPosition = getWorldPositionByName(point.controlPName);
-
-  entranceAnimations.animateCamera(
-    threejsModule.camera,
-    threejsModule.controls,
-    { x: controlPosition.x, y: controlPosition.y, z: controlPosition.z }, // 从控点看向网格↓
-    { x: meshPosition.x, y: meshPosition.y, z: meshPosition.z },
-    2400,
-    () => {
-      // threejsModule.camera.position.set(4.25, 1.4, 4.5);
-      // 播放视频
-      setTimeout(() => {
+const onSwitchEnable = (name: string) => {
+  switch (name) {
+    case '播放宣传视频':
+      {
         htmlNodeModule.promotionalFilm.onPlay();
-      }, 3000);
-    }
-  );
+      }
+      break;
+
+    default:
+      break;
+  }
+};
+
+const onSwitchClose = () => {
+  switch (appStore.focusSceneName) {
+    case '播放宣传视频':
+      {
+        htmlNodeModule.promotionalFilm.onPause();
+      }
+      break;
+
+    default:
+      break;
+  }
+};
+
+const closeHotPoint = () => {
+  onSwitchClose();
+  closePoint?.classList.remove('visible');
+  // 摄像机重置
+  onResetCamera(3200).then(() => {
+    // 恢复更新
+    threejsModule.controls.enabled = true;
+    htmlNodeModule.htmlNode.enabled = true;
+    appStore.focusSceneName = '';
+    show();
+  });
 
 };
+
+
+// 解决热点隐藏后还有悬浮手势
+const show = () => {
+  hotPoints.value.map((o)=>{
+    o.show = true;
+  })
+};
+const hide = () => {
+  hotPoints.value.map((o)=>{
+    o.show = false;
+  })
+};
+
+onMounted(() => {
+  closePoint = document.querySelector('.close-point') as HTMLDivElement;
+})
 
 </script>
 
@@ -61,12 +126,17 @@ const onClickPoint = (point: HotPoint) => {
   // button样式
   .html-hp-btn {
     opacity: 0;
+    transition: opacity 200ms ease-out;
   }
 
   &.visible .html-hp-btn {
     opacity: 1;
-    transition: opacity 200ms ease-out;
   }
 
+}
+
+.close-point {
+  bottom: 50px;
+  top: auto !important;
 }
 </style>

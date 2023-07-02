@@ -60,7 +60,7 @@ export class CreatePromotionalFilm {
       this.videoSource.loop = false;
       this.videoSource.addEventListener('canplaythrough', () => {
         this.setVideoStatus('loaded');
-        console.log('视频纹理加载至可播放');
+        console.log('视频纹理加载完成');
         resovle('视频加载完成');
       });
       this.videoSource.addEventListener('error', (event) => {
@@ -128,6 +128,14 @@ export class CreatePromotionalFilm {
   rePlay() {
     if (this.videoStatus === 'loaded') {
       this.videoSource.play();
+    }
+  }
+
+  onPause() {
+    if (this.videoStatus === 'playing') {
+      this.videoSource.pause();
+      this.setVideoStatus('played');
+      this.setTexture();
     }
   }
 

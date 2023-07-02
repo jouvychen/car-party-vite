@@ -21,7 +21,7 @@
               : "停止轮播"
           }}
         </a-button>
-        <a-button :disabled="!boothReady" @click="onResetCamera"
+        <a-button :disabled="!boothReady" @click="onReset"
           >视角复位</a-button
         >
         <a-button @click="onTweenOpenLight">{{
@@ -55,6 +55,9 @@ import {
   LensflareElement,
 } from "./test111.js";
 
+// 摄像机和控制器复位
+import { onResetCamera } from '@/utils/threejsUtils';
+
 /**
  * Antd依赖
  */
@@ -84,11 +87,6 @@ import floatWindow from "../float-window/index.vue";
 //     textureFlare3: undefined,
 //   },
 // };
-
-const initialConfiguration = {
-  cameraPosition: new THREE.Vector3(4.25, 1.4, 4.5),
-  controlsPosition: new THREE.Vector3(0, 0.5, 0),
-};
 
 /**
  * 通信
@@ -854,33 +852,11 @@ const onTweenOpenEngine = () => {
 };
 
 // 视角复位
-const onResetCamera = () => {
+const onReset = () => {
   entranceAnimations.stop();
   tweenState.value.openWheelSeedingBroke = false;
   tweenState.value.openWheelSeeding = false;
-  entranceAnimations.animateCamera(
-    camera.value,
-    controls.value,
-    {
-      x: initialConfiguration.cameraPosition.x,
-      y: initialConfiguration.cameraPosition.y,
-      z: initialConfiguration.cameraPosition.z,
-    },
-    {
-      x: initialConfiguration.controlsPosition.x,
-      y: initialConfiguration.controlsPosition.y,
-      z: initialConfiguration.controlsPosition.z,
-    },
-    2400,
-    () => {
-      camera.value.position.set(
-        initialConfiguration.cameraPosition.x,
-        initialConfiguration.cameraPosition.y,
-        initialConfiguration.cameraPosition.z
-      );
-      controls.value?.update();
-    }
-  );
+  onResetCamera();
 };
 
 /**

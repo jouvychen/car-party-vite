@@ -1,11 +1,17 @@
 import * as THREE from 'three';
+import { initialConfiguration } from '@/config/data';
 /**
  * 状态仓库
  */
 import {
   useThreejsModuleStore,
 } from "@/store";
+import { EntranceAnimations } from './entranceTweenClass';
+import { resolve } from 'path';
+import { rejects } from 'assert';
 const threejsModule = useThreejsModuleStore();
+
+const entranceAnimations = new EntranceAnimations();
 
 /**
  * 获取对象在场景中的世界坐标
@@ -28,4 +34,39 @@ const isMaterialWithColor = (material: any): material is THREE.Material & { colo
   return 'color' in material && material.color instanceof THREE.Color;
 }
 
-export { getWorldPositionByName, isMaterialWithColor }
+/**
+ * 重置摄像机和控制器成预设状态
+ */
+const onResetCamera = (time?: number): Promise<boolean> => {
+
+  return new Promise((resolve) => {
+    entranceAnimations.animateCamera(
+      threejsModule.camera,
+      threejsModule.controls,
+      {
+        x: initialConfiguration.cameraPosition.x,
+        y: initialConfiguration.cameraPosition.y,
+        z: initialConfiguration.cameraPosition.z,
+      },
+      {
+        x: initialConfiguration.controlsPosition.x,
+        y: initialConfiguration.controlsPosition.y,
+        z: initialConfiguration.controlsPosition.z,
+      },
+      time ?? 2400,
+      () => {
+        threejsModule.camera.position.set(
+          initialConfiguration.cameraPosition.x,
+          initialConfiguration.cameraPosition.y,
+          initialConfiguration.cameraPosition.z
+        );
+        threejsModule.controls?.update();
+        resolve(true);
+      }
+    );
+  })
+
+  
+};
+
+export { getWorldPositionByName, isMaterialWithColor, onResetCamera }

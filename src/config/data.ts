@@ -1,12 +1,19 @@
 import { HotPoint } from '@/utils/interface';
+import * as THREE from 'three';
 
 const sizes = {
   width: window.innerWidth,
   height: window.innerHeight,
 };
 
+// 摄像机和控制器预设位置
+const initialConfiguration = {
+  cameraPosition: new THREE.Vector3(4.25, 1.4, 4.5),
+  controlsPosition: new THREE.Vector3(0, 0.5, 0),
+};
+
 // html热点
-const hotPoints: HotPoint[] = [
+const hotPoints = ref<HotPoint[]>([
   {
     show: true,
     type: 'add',
@@ -39,6 +46,15 @@ const hotPoints: HotPoint[] = [
     controlPName: 'p-作者面板',
     event: 'Control',
   }
-]
+])
 
-export { sizes, hotPoints }
+const closePointItem = {
+  show: true,
+  type: 'close',
+  name: '退出',
+  meshName: '',
+  controlPName: '',
+  event: '',
+};
+
+export { sizes, initialConfiguration, hotPoints, closePointItem }

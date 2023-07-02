@@ -406,6 +406,7 @@ const init = async () => {
     mainThree.camera,
     mainThree.boothModel
   );
+  htmlNodeModule.htmlNode = htmlNodes;
   htmlNodeModule.promotionalFilm = new CreatePromotionalFilm(mainThree.boothModel, "屏幕");
 
   /**
