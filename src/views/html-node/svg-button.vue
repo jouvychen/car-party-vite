@@ -220,7 +220,8 @@ const model = computed({
   }
 
   .Hp__wrapper.isHotPoint:hover .Hp__line {
-    transform: translateY(0%);
+    // 0%时有部分出不来, 所以要设置成负的
+    transform: translateY(-10%);
   }
 
   .Hp__wrapper.isHotPoint:hover .hexagonHalo {
@@ -423,7 +424,7 @@ button {
 
 @media (hover: hover) {
   .Hp__wrapper.Cta__toggle:hover .Hp__line {
-    transform: translateY(0%);
+    transform: translateY(-10%);
   }
 }
 
@@ -441,7 +442,7 @@ button {
   }
 
   .Hp__wrapper.isHotPoint:hover .Hp__line {
-    transform: translateY(0%);
+    transform: translateY(-10%);
   }
 
   .Hp__wrapper.isHotPoint:hover .hexagonHalo {

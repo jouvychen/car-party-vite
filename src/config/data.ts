@@ -45,6 +45,22 @@ const hotPoints = ref<HotPoint[]>([
     meshName: '作者面板',
     controlPName: 'p-作者面板',
     event: 'Control',
+  },
+  {
+    show: true,
+    type: 'add',
+    name: '幻灯片',
+    meshName: 'Glass002',
+    controlPName: 'p-幻灯片',
+    event: 'Control',
+  },
+  {
+    show: true,
+    type: 'add',
+    name: '旗帜',
+    meshName: '旗帜',
+    controlPName: 'p-旗帜',
+    event: 'Control',
   }
 ])
 

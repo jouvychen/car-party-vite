@@ -353,6 +353,7 @@ const init = async () => {
   const transitionMesh = mainThree.boothModel.getObjectByName(
     "Glass002"
   ) as THREE.Mesh;
+  transitionMesh.material instanceof THREE.Material && (transitionMesh.material.transparent = false);
   createTransitions(transitionMesh);
 
   postProcessing = new PostProcessing(
