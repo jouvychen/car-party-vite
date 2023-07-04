@@ -7,9 +7,10 @@
     </div>
   </template>
   <div v-show="appStore.focusSceneName" class="arrow-wrapper close-group align-center">
-    <div v-show="['查看介绍'].includes(appStore.focusSceneName)">
+    <div v-show="carousel.pointNameList.includes(appStore.focusSceneName)">
       <svg class="arrow-svg arrow-pre" width="18px" height="17px" viewBox="0 0 18 17" version="1.1"
-        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        @click="onControlCarouselDerection('preview')">
         <g id="prev" transform="translate(8.500000, 8.500000) scale(-1, 1) translate(-8.500000, -8.500000)">
           <polygon class="arrow"
             points="16.3746667 8.33860465 7.76133333 15.3067621 6.904 14.3175671 14.2906667 8.34246869 6.908 2.42790698 7.76 1.43613596">
@@ -28,9 +29,10 @@
       <svgButton :model-value="closePointItem" @click="closeHotPoint"></svgButton>
     </div>
 
-    <div v-show="['查看介绍'].includes(appStore.focusSceneName)">
+    <div v-show="carousel.pointNameList.includes(appStore.focusSceneName)">
       <svg class="arrow-svg arrow-next" width="18px" height="17px" viewBox="-1 0 18 17" version="1.1"
-        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        @click="onControlCarouselDerection('next')">
         <g>
           <polygon class="arrow"
             points="16.3746667 8.33860465 7.76133333 15.3067621 6.904 14.3175671 14.2906667 8.34246869 6.908 2.42790698 7.76 1.43613596">
@@ -59,15 +61,23 @@ import { EntranceAnimations } from "@/utils/entranceTweenClass";
 import { getWorldPositionByName } from '@/utils/threejsUtils';
 // 摄像机和控制器复位
 import { onResetCamera } from '@/utils/threejsUtils';
+import { message } from "ant-design-vue";
+import { findObjectsByKeywords } from "@/utils/common";
 
 const appStore = useStoreApp();
 const threejsModule = useThreejsModuleStore();
 const htmlNodeModule = useHtmlNodeModelStore();
 const entranceAnimations = new EntranceAnimations();
 let closePoint: HTMLDivElement;
+const carousel = reactive<{ pointNameList: string[], pointList: HotPoint[] }>({
+  pointNameList: ['幻灯片', '查看介绍', '旗帜'],
+  pointList: []
+});
+const animationComplete = ref(false);
 const onClickPoint = (point: HotPoint) => {
 
   if (appStore.focusSceneName != point.name) {
+    animationComplete.value = false;
     threejsModule.controls.enabled = false;
     htmlNodeModule.htmlNode.hidePoint();
     setTimeout(() => {
@@ -86,12 +96,14 @@ const onClickPoint = (point: HotPoint) => {
         onSwitchEnable(point.name);
         threejsModule.controls.enabled = false;
         closePoint?.classList.add('close-visible');
+        animationComplete.value = true;
+        appStore.focusSceneName = point.name;
       }
     );
   }
-  appStore.focusSceneName = point.name;
 };
 
+// 激活某些热点的事件
 const onSwitchEnable = (name: string) => {
   switch (name) {
     case '播放宣传视频':
@@ -116,6 +128,7 @@ const onSwitchClose = () => {
     default:
       break;
   }
+  appStore.focusSceneName = '';
 };
 
 const closeHotPoint = () => {
@@ -126,7 +139,6 @@ const closeHotPoint = () => {
     // 恢复更新
     threejsModule.controls.enabled = true;
     htmlNodeModule.htmlNode.enabled = true;
-    appStore.focusSceneName = '';
     show();
   });
 
@@ -145,8 +157,18 @@ const hide = () => {
   })
 };
 
+const onControlCarouselDerection = (d: string) => {
+  if (!animationComplete.value) return;
+  const index = carousel.pointList.findIndex((o) => {
+    return appStore.focusSceneName === o.name;
+  })
+  const point = carousel.pointList[d === 'preview' ? (index === 0 ? carousel.pointList.length - 1 : index - 1) : (index === carousel.pointList.length - 1 ? 0 : index + 1)]
+  onClickPoint(point);
+};
+
 onMounted(() => {
   closePoint = document.querySelector('.close-group') as HTMLDivElement;
+  carousel.pointList = findObjectsByKeywords(carousel.pointNameList, hotPoints.value, 'name');
 })
 
 </script>
