@@ -135,7 +135,7 @@ const closeHotPoint = () => {
   onSwitchClose();
   closePoint?.classList.remove('close-visible');
   // 摄像机重置
-  onResetCamera(3200).then(() => {
+  onResetCamera(entranceAnimations, 3200).then(() => {
     // 恢复更新
     threejsModule.controls.enabled = true;
     htmlNodeModule.htmlNode.enabled = true;

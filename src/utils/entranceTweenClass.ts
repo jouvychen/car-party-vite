@@ -2,7 +2,7 @@ import { TWEEN } from 'three/examples/jsm/libs/tween.module.min'; // 补间动�
 export class EntranceAnimations {
   public tween: typeof TWEEN;
   public constructor() {
-    console.log('构造函数');
+
   }
   stop() {
     this.tween && this.tween.stop();
@@ -10,7 +10,7 @@ export class EntranceAnimations {
   restart() {
     this.tween && this.tween.start();
   }
-  animateCamera(camera:any, controls:any, newP:any, newT:any, time = 2000, callBack:any) {
+  animateCamera(camera: any, controls: any, newP: any, newT: any, time = 2000, callBack: any) {
     this.tween = new TWEEN.Tween({
       x1: camera.position.x,
       y1: camera.position.y,
@@ -27,7 +27,7 @@ export class EntranceAnimations {
       y2: newT.y,
       z2: newT.z,
     }, time);
-    this.tween.onUpdate((object:any) => {
+    this.tween.onUpdate((object: any) => {
       camera.position.x = object.x1;
       camera.position.y = object.y1;
       camera.position.z = object.z1;

@@ -11,8 +11,6 @@ import { resolve } from 'path';
 import { rejects } from 'assert';
 const threejsModule = useThreejsModuleStore();
 
-const entranceAnimations = new EntranceAnimations();
-
 /**
  * 获取对象在场景中的世界坐标
  * @param name 3D对象的名称
@@ -36,10 +34,13 @@ const isMaterialWithColor = (material: any): material is THREE.Material & { colo
 
 /**
  * 重置摄像机和控制器成预设状态
+ * 如果当前有动画在执行并希望重置动作打断当前动画, 则传入当前缓动动画实例
  */
-const onResetCamera = (time?: number): Promise<boolean> => {
+const onResetCamera = (entranceAnimations = new EntranceAnimations(), time?: number): Promise<boolean> => {
 
   return new Promise((resolve) => {
+    // 停止未执行完的动画
+    entranceAnimations.stop();
     entranceAnimations.animateCamera(
       threejsModule.camera,
       threejsModule.controls,
