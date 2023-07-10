@@ -12,6 +12,7 @@
     "@types/node": "^18.14.2",
     "ant-design-vue": "^3.2.15",
     "dayjs": "^1.11.7",
+    "fabric": "^6.0.0-beta10",
     "jquery": "^3.6.1",
     "less": "^4.1.3",
     "mitt": "^3.0.0",

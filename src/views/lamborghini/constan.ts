@@ -39,7 +39,7 @@ const revolverList: Revolver[] = [
     },
     {
         index: 3,
-        name: "材质",
+        name: "贴图",
         uuid: "",
         state: false,
         unfoldClass: {

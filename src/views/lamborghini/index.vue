@@ -46,12 +46,11 @@
         :float-window="o"
       ></color-control>
 
-      <!-- 材质面板 -->
-      <material-control
-        v-if="o.name === '材质'"
+      <!-- 贴图面板 -->
+      <texture-control
+        v-if="o.name === '贴图'"
         :float-window="o"
-        @on-change-material="onChangeMaterial"
-      ></material-control>
+      ></texture-control>
 
       <!-- 动画控制面板 -->
       <animation-control
@@ -143,8 +142,8 @@ import animationControl from "../control-window/animation-control.vue";
 
 import centerControl from "../control-window/center-control.vue";
 import colorControl from "../control-window/color-control.vue";
+import textureControl from "../control-window/texture-control.vue";
 
-import materialControl from "../control-window/material-control.vue";
 
 import HtmlNode from "../html-node/index.vue";
 import { CreateHtmlNodes } from "../html-node/createHtmlNodes";
