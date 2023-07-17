@@ -82,14 +82,14 @@
         </template>
       </floatWindow>
 
-      <floatWindow v-if="o.name === '贴图'" :float-window="o">
+      <!-- <floatWindow v-if="o.name === '贴图'" :float-window="o">
         <template #content>
           <div class="mt6">
             <div class="class">贴图面板：</div>
             <div id="gui-container"></div>
           </div>
         </template>
-      </floatWindow>
+      </floatWindow> -->
 
       <!-- </template> -->
     </template>
@@ -163,12 +163,14 @@ import {
   useCarModelStore,
   useThreejsModuleStore,
   useHtmlNodeModelStore,
+  useWindowControlStore,
 } from "@/store";
 const appStore = useStoreApp();
 const boothStore = useBoothModelStore();
 const carStore = useCarModelStore();
 const threejsModule = useThreejsModuleStore();
 const htmlNodeModule = useHtmlNodeModelStore();
+const windowControlModule = useWindowControlStore();
 
 // let camera: THREE.PerspectiveCamera;
 // let scene: THREE.Scene;
@@ -194,7 +196,7 @@ const loadManager = ref({
   schedule: 0,
   success: false,
   showMask: true,
-  total: 29, // 总共加载的资源数(从默认加载器得知)
+  total: 32, // 总共加载的资源数(从默认加载器得知)
 });
 
 let rectLight: THREE.RectAreaLight;
@@ -274,6 +276,7 @@ const init = async () => {
   //   100
   // );
   threejsModule.camera = mainThree.camera;
+  threejsModule.renderer = mainThree.renderer;
   // camera.position.set(-40, 20, 40);
 
   // container && (controls = new OrbitControls(camera, container));
@@ -497,6 +500,8 @@ const render = () => {
   appStore.mode === "night" && updateSpotLight();
 
   carStore.wheelStart && startWheel(-performance.now() / 1000);
+
+  windowControlModule.textureWindow.texture && (windowControlModule.textureWindow.texture.needsUpdate = true);
 
   // mainThree?.test222();
   appStore.mode === "night" && postProcessing?.update();

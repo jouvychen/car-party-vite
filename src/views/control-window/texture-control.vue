@@ -2,91 +2,145 @@
   <!-- 控制贴图面板 -->
   <floatWindow :float-window="floatWindow1" class="texture-control">
     <template #content>
-      <canvas id="fabric-canvas" width="300" height="300"></canvas>
+      <canvas id="fabric-canvas" width="256" height="256"></canvas>
     </template>
   </floatWindow>
 </template>
-<script setup lang="ts" name="colorControl">
+<script setup lang="ts" name="textureControl">
+import EventsBus from "@/utils/eventBus";
+import floatWindow from "../float-window/index.vue";
+import { message } from "ant-design-vue";
 import * as THREE from "three";
-// import { Canvas, Rect } from 'fabric'; // browser
 import * as fabric from 'fabric';
+import type { Revolver } from "../revolver/typeStatement";
+
+const props = defineProps({
+  floatWindow: {
+    type: Object as PropType<Revolver>, // 断言、props类型自定义约束
+    default: () => { },
+  },
+});
+
+const floatWindow1 = props.floatWindow;
 
 import {
-  useBoothModelStore,
   useCarModelStore,
+  useBoothModelStore,
+  useWindowControlStore,
   useThreejsModuleStore,
 } from "@/store";
 
+const boothModel = useBoothModelStore();
+const carModule = useCarModelStore();
 const threejsModule = useThreejsModuleStore();
-
-/**
- * Fabricjs
- * @type {fabric}
- */
-
-var canvas = new fabric.Canvas("canvas");
-canvas.backgroundColor = "#FFBE9F";
-
-var rectangle = new fabric.Rect({
-  top: 100,
-  left: 100,
-  fill: '#FF6E27',
-  width: 100,
-  height: 100,
-  transparentCorners: false,
-  centeredScaling: false, // ?
-  borderColor: 'black',
-  cornerColor: 'black',
-  corcerStrokeColor: 'black'
-});
-
-canvas.add(rectangle);
-
-
-/**
- * Threejs
- */
-
-var containerHeight = "512";
-var containerWidth = "512";
-var container, texture, material, geometry;
-
-var raycaster = new THREE.Raycaster();
-var mouse = new THREE.Vector2();
-var onClickPosition = new THREE.Vector2();
-
-init();
-animate();
-
+const windowControlModule = useWindowControlStore();
+const inited = ref(false);
 
 /**
  * Configurator init function
  */
 
 function init() {
+  inited.value = true;
+
+  /**
+   * Fabricjs
+   * @type {fabric}
+   */
+
+  var canvas = new fabric.Canvas("fabric-canvas");
+  canvas.backgroundColor = "#ffffff";
+
+  var rectangle = new fabric.Rect({
+    top: 0,
+    left: 0,
+    fill: '#ffffff',
+    width: 50,
+    height: 50,
+    transparentCorners: false,
+    centeredScaling: false, // ?
+    borderColor: 'white',
+    cornerColor: 'white',
+    corcerStrokeColor: 'white'
+  });
+
+  canvas.add(rectangle);
+
+  const text = new fabric.IText('Three.js\n+\nFaBric.js', {
+    fontSize: 40,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    left: 128,
+    top: 128,
+    angle: 30,
+    originX: 'center',
+    originY: 'center',
+    shadow: 'blue -5px 6px 5px',
+    styles: {
+      0: {
+        0: {
+          fontSize: 60,
+          fontFamily: 'Impact',
+          fontWeight: 'normal',
+          fill: 'orange'
+        }
+      },
+      1: {
+        0: {
+          fill: "blue"
+        }
+      },
+      2: {
+        0: {
+          textBackgroundColor: 'red'
+        },
+        2: {
+          fill: 'fuchsia',
+          stroke: 'orange',
+          strokeWidth: 1
+        }
+      }
+    }
+  });
+  text.setSelectionStyles({
+    fontStyle: 'italic',
+    fill: '',
+    stroke: 'red',
+    strokeWidth: 2
+  }, 1, 5);
+  canvas.add(text);
+  canvas.setActiveObject(text);
+
   /**
    * Texture and material
    */
 
-  texture = new THREE.Texture(document.getElementById("fabric-canvas"));
-  texture.anisotropy = threejsModule.renderer.capabilities.getMaxAnisotropy();
+  const canvasTexture = new THREE.Texture(document.getElementById("fabric-canvas") as HTMLCanvasElement);
+  canvasTexture.wrapS = THREE.RepeatWrapping;
+  canvasTexture.wrapT = THREE.RepeatWrapping;
+  canvasTexture.repeat.set(2, 2);
+  // canvasTexture.anisotropy = threejsModule.renderer.capabilities.getMaxAnisotropy();
+  windowControlModule.textureWindow.texture = canvasTexture;
 
-  material = new THREE.MeshBasicMaterial({ map: texture });
+  const material = new THREE.MeshBasicMaterial({ map: windowControlModule.textureWindow.texture });
+
+  const mesh = boothModel.boothModel?.getObjectByName('作者面板') as THREE.Mesh;
+  mesh.material = material;
+  mesh.material.side = THREE.DoubleSide;
+
+  // canvas.on("after:render", function () {
+  //   mesh.material instanceof THREE.Material && (mesh.material.needsUpdate = true);
+  // });
 
 }
 
-
-/**
- * Configurator frame render function
- */
-
-function animate() {
-  requestAnimationFrame(animate);
-
-  texture.needsUpdate = true;
-
-  renderer.render(threejsModule.scene, threejsModule.camera);
-}
+EventsBus.on("onBusRevolver", (value) => {
+  const revolver = value as Revolver;
+  if (!inited.value && revolver.uuid === props.floatWindow.uuid) {
+    init();
+    message.success('初始化')
+  }
+});
 
 </script>
 

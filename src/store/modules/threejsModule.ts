@@ -9,6 +9,7 @@ const useThreejsModuleStore = defineStore('threejsModule', {
             // controls: {} as Partial<OrbitControls>, // Partial声明为部分类型
             controls: {} as OrbitControls, // Partial声明为部分类型
             scene: {} as THREE.Scene,
+            renderer: {} as THREE.WebGLRenderer,
         }
     },
 })
