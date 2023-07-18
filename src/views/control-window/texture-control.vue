@@ -2,7 +2,7 @@
   <!-- 控制贴图面板 -->
   <floatWindow :float-window="floatWindow1" class="texture-control">
     <template #content>
-      <canvas id="fabric-canvas" width="256" height="256"></canvas>
+      <canvas id="fabric-canvas" width="1024" height="1024"></canvas>
     </template>
   </floatWindow>
 </template>
@@ -125,8 +125,13 @@ function init() {
   const material = new THREE.MeshBasicMaterial({ map: windowControlModule.textureWindow.texture });
 
   const mesh = boothModel.boothModel?.getObjectByName('作者面板') as THREE.Mesh;
-  mesh.material = material;
-  mesh.material.side = THREE.DoubleSide;
+  mesh.material instanceof THREE.Material && (mesh.material.transparent = true) && (mesh.material.opacity = 0); // 如果需要透明效果
+
+  const newMesh = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), material);
+  newMesh.rotateY(Math.PI * 0.5);
+  newMesh.material = material;
+  newMesh.material.side = THREE.DoubleSide;
+  mesh.add(newMesh);
 
   // canvas.on("after:render", function () {
   //   mesh.material instanceof THREE.Material && (mesh.material.needsUpdate = true);
