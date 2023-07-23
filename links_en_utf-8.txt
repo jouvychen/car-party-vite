@@ -1,0 +1,997 @@
+
+
+Space flying with shaking https://nickyvanurk.com/void/
+
+
+Car movement on a trajectory https://hofk.de/main/discourse.threejs/2021/CarRacing/CarRacing.html
+
+Trajectory of falling of an arch https://codepen.io/prisoner849/pen/BaQzqqx
+3d a smoke 1 https://codepen.io/prisoner849/pen/wvzVoYm
+3d a smoke 2 https://codepen.io/prisoner849/pen/WNwdXey
+Fog at a foot https://codepen.io/prisoner849/details/gOPVeRv
+Silver https://codepen.io/prisoner849/pen/mdVONVE
+scan https://codepen.io/prisoner849/details/mdeKeZX
+Illumination of sides with degradation https://codepen.io/prisoner849/details/yLYoNWX
+dissolve gradient https://codepen.io/prisoner849/pen/LYVMNoE
+Grid https://codepen.io/prisoner849/pen/OJVbZdq
+111         Sphere with pictures and splitting https://codepen.io/prisoner849/pen/KKpeoGv
+111         Model filling https://codepen.io/prisoner849/pen/MWWXoMx
+Movement on a curve https://codepen.io/prisoner849/pen/RwbjwgZ
+Tracking the cursor of a mouse https://codepen.io/prisoner849/pen/yGMWNg
+Mixing of one geometry in another points https://codepen.io/prisoner849/pen/gQOKMB
+Filling of volume of a figure with points https://codepen.io/prisoner849/pen/LgabWZ
+111         Candle flame https://codepen.io/prisoner849/pen/XPVGLp
+Effect of construction of object lines https://codepen.io/prisoner849/pen/PBWYLr
+Grid https://codepen.io/prisoner849/pen/LBWqpZ
+Simply mirror and скрыгленный a box https://codepen.io/prisoner849/pen/OeJGjB
+Bendings https://codepen.io/prisoner849/pen/VJZZBL
+Colour interpolation https://codepen.io/prisoner849/pen/LoKQoR
+Whether there is a point in range https://codepen.io/prisoner849/pen/ROdXzw
+111         Change text rotation on canvas https://codepen.io/prisoner849/pen/aMZrVM
+Effect of hit of a shell on sphere https://codepen.io/prisoner849/pen/ErwYqM
+111         Fish floats https://codepen.io/prisoner849/pen/WNQNdpv
+The summary https://codepen.io/prisoner849/pen/rNxbLzw
+111         Illumination of crossing of a sphere with objects 1 https://codepen.io/prisoner849/pen/dyXLOrp
+111         Illumination of crossing of a sphere with objects 2 https://codepen.io/prisoner849/pen/NWrJmrG
+Type illumination rim https://codepen.io/prisoner849/pen/VwjQBqV
+111         Illumination of sides https://codepen.io/prisoner849/pen/VwjWMOw
+111         Rain drops https://www.shadertoy.com/view/ltffzl
+看下灯光下的光影怎么实现的	Rain https://codepen.io/prisoner849/full/poNXPyv
+Bent rope https://codepen.io/prisoner849/pen/eYWeLNM
+Spiral structure https://www.shadertoy.com/view/sstGzH#
+Sphere toy with rim freshnel https://codesandbox.io/s/camera-pan-nsb7f?file=/src/App.js
+Sockets and movement https://developer.playcanvas.com/en/tutorials/real-time-multiplayer/
+trail a tail https://playcanv.as/p/jGeaTg6B/
+Calculation of patches of light. It is possible to check crossing of triangles with the sun http://thewebdesignerpro.com/portfolio.html
+Flame an example https://playcanv.as/p/eavVneJi/
+Flag on a wind https://playcanv.as/p/3NdgiVsp/
+___________________________________________________
+
+
+worker carries out a code on the party and accelerates to 3 times approximately
+https://developer.mozilla.org/ru/docs/Web/API/Web_Workers_API/Using_web_workers
+https://developer.mozilla.org/ru/docs/Web/API/Web_Workers_API
+http://synset.com/comp/ru/cab/worker.html
+https://webformyself.com/javascript-web-workers-service-workers-i-worklets/
+https://habr.com/ru/company/ruvds/blog/348424/
+https://webdevblog.ru/javascript-web-workers-rukovodstvo-dlya-nachinajushhih/
+https://github.com/afshinm/50k
+
+
+___________________________________________________
+
+Turn sprite sparks https://gamedev.stackexchange.com/questions/153326/how-to-rotate-directional-billboard-particle-sprites-toward-the-direction-the-pa
+
+https://gamedev.stackexchange.com/questions/153326/how-to-rotate-directional-billboard-particle-sprites-toward-the-direction-the-pa
+
+To take turn and a vector http://becczor.github.io/forest-bump/
+
+
+Effect of burning 1 https://www.youtube.com/watch?v=xipvqtXEW-4
+Effect of burning 2 https://www.youtube.com/watch?v=_vGLVXHEQDQ
+
+Movement on a parabola https://www.programmersought.com/article/71418583127/
+
+
+111         道路流光	https://www.programmersought.com/article/69036735370/
+
+The plane and sound http://philcrowther.com/WebGL/Flight/ACflytModelDemoXP.htm
+The plane and loop http://ostafichuk.com/RonsRCSim/RonsRCFlightSim.php
+The plane turn https://medium.com/geekculture/3d-animations-made-simple-with-matlab-visualizing-flight-test-data-and-simulation-results-ed399cdcc711
+
+The sun the sea and position co-ordinates directlight https://jblaha.art/sketchbook/0.4/
+
+
+
+Patches of light of the sun / of a lantern https://alteredqualia.com/three/examples/webgl_city.html
+
+hdr http://editor.me/three/examples/#webgl_shaders_tonemapping
+
+Chrome https://thewebdesignerpro.com/
+
+
+Stones with a covering a moss at an angle Y https://www.youtube.com/watch?v=_CRXajDyJi8
+
+Blood running off https://www.youtube.com/watch?v=z1IsxDQ5cPg
+
+http://madebyevan.com/shaders/lightmap/
+111         http://marky.pl/cloth/
+https://threejs.org/examples/#webgl_animation_cloth
+http://madebyevan.com/shaders/grid/
+
+For the particles https://www.youtube.com/watch?v=arn_3WzCJQ8
+
+Normal calculation http://madebyevan.com/shaders/curvature/
+
+111         https://github.com/simondevyoutube(上面这个链接指向的)
+
+
+环境光遮蔽
+http://floored.github.io/blog/2013/ssao-screen-space-ambient-occlusion
+http://www.aduprat.com/portfolio/?page=articles/hemisphericalSDFAO
+111         https://alteredqualia.com/three/examples/webgl_postprocessing_ssao.html(车灯光斑例子)
+___________________________________________________
+
+
+BOX_PROJECTED_ENV_MAP - Parallax Corrected Cubemaps
+
+https://threejs.org/examples/?q=envm#webgl_materials_envmaps_parallax
+The description https://github.com/mrdoob/three.js/issues/15704
+
+___________________________________________________
+
+Very important lighting phong on the chamber and world co-ordinates https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/code/WebGLShaderLightMat/ShaderLightMat.html
+
+For a microphone https://github.com/search?l=JavaScript&q=audio+stream&type=Repositories
+For a microphone https://github.com/jeromeetienne/webaudiox
+For a microphone https://github.com/jeromeetienne/webRTC.io
+For a microphone https://github.com/jeromeetienne/webrtc.io-client
+
+
+
+Thick lines for bullets https://github.com/shawn0326/three.InstancedLine
+111         Way geometry https://github.com/shawn0326/three.path
+故障风	Effect of the TV https://github.com/jeromeetienne/threex.badtvpproc
+屏幕光晕		Shine from a lantern https://github.com/jeromeetienne/threex.sslensflare
+气泡	Bubbles https://github.com/jeromeetienne/threex.bubble
+111         吊炸天将dom集成到webgl中html		https://github.com/jeromeetienne/threex.htmlmixer
+Transparency sorting https://github.com/jeromeetienne/threex.transparency
+bvh splitting into sectors, рисовалка, a ball, movement of the player, etc. https://github.com/gkjohnson/three-mesh-bvh
+Onions and arrow with an inclination, a hook a cat https://bowdown.io/
+Tornado https://www.youtube.com/watch?v=NWDN5XTfQ0w
+Contour https://www.youtube.com/watch?v=zJzcJ1Jzfdk
+Contour https://www.youtube.com/watch?v=laastFVkTaA
+Posteffect of night vision https://github.com/jeromeetienne/threex.coloradjust
+Range with painting https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/code_v2/RasterPoly/index.html
+Arrangement https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/code/ImportanceSampling/index.html
+Splitting of range into triangles https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/code/JsCoarseImg/EarCutting.html
+
+
+___________________________________________________
+
+lasers https://will.ninja/011/
+turbulence particles red https://github.com/dli/flow
+Jungle sniper and the Vietnamese house https://www.blend4web.com/apps/tutorials/firstperson/firstperson.html?v=dc7c38afdc7affae2a320df52d5b398d
+Farm the river https://www.blend4web.com/apps/farm/farm.html?v=38ccd4be9c93b16cff5d8018746261bb
+Portal the third scene, marble the fifth, firethe sixth, falls the seventh, summaries the eighth https://techbrood.com/stone/
+Game https://github.com/kripken/BananaBread/
+Collision of balls http://mbostock.github.io/d3/talk/20111018/collision.html
+111         下雨天	Rain drops https://www.vertexshaderart.com/art/fs6GHW2crknZmzoWy
+Colour noise for a landscape https://www.vertexshaderart.com/art/8oJh9QtFGgJksSFFk
+111         粒子烟花	Fountain of particles fireworks https://www.vertexshaderart.com/art/TdqvseMQyoJ3ZrjrD
+Reflexion https://cyos.babylonjs.com/
+
+___________________________________________________
+
+
+
+The circle cut off rotates https://pixelscommander.com/ru/interactive-revolution/glsl-web-components-webgl/
+voxels with raycast https://github.com/jwagner/voxelworlds
+Noise colour https://webgl-shaders.com/noise-example.html
+Explosion https://www.shadertoy.com/view/4sByWz
+Snow ice https://www.shadertoy.com/view/4tGfz3
+Fog with noise https://developpaper.com/unity-shader-for-dynamic-fog-effect/
+Not repeating structure https://www.willpodpechan.com/blog/2020/10/16/de-tiled-triplanar-mapping-in-unity
+Glass and ice https://www.rastertek.com/dx10tut32.html
+
+看到这里__________________________________________
+
+Reflexion, normal http://www.pocketgl.com/tutorials/
+
+
+Extraterrestrial organic https://shaderfrog.com/app/view/5100
+Distortion of textural co-ordinates https://shaderfrog.com/app/view/5138
+Poured marble https://shaderfrog.com/app/view/5142
+Eye sauron https://shaderfrog.com/app/view/5145
+Noise https://shaderfrog.com/app/view/5146
+Patches of light on snow https://shaderfrog.com/app/view/5159
+Flame excellent https://shaderfrog.com/app/view/5255
+Cube with sides green https://shaderfrog.com/app/view/5250
+Shining circle with rotation and a hole https://shaderfrog.com/app/view/5241
+Colour change https://shaderfrog.com/app/view/5239
+
+______________________ illumination _____________________________
+
+Illumination https://imdoingitwrong.wordpress.com/tag/glsl/
+And its example https://va3c.github.io/three.js/examples/webgldeferred_pointlights.html
+
+______________________ thick rounded off lines and dotted _____________________________
+
+
+https://www.youtube.com/watch?v=fplfxXVDIdU
+
+______________________ THE TEXT _____________________________
+
+
+https://alteredqualia.com/xg/examples/text_rendering.html
+https://alteredqualia.com/xg/examples/shuffle.html
+
+______________________ FPS NODE _____________________________
+
+
+HDR https://threejs.org/examples/#webgl_tonemapping
+
+Cars https://epicskidmarks.com/
+
+______________________ FPS NODE _____________________________
+
+https://discourse.threejs.org/t/game-ai-how-to-implement-a-basic-deathmatch-shooter/7609
+https://raw.githack.com/Mugen87/dive/master/app/index.html
+https://mugen87.github.io/yuka/examples/
+https://mugen87.github.io/yuka/examples/graph/basic/
+https://mugen87.github.io/yuka/examples/navigation/navmesh/
+https://mugen87.github.io/yuka/examples/navigation/navmeshPerformance/
+https://mugen87.github.io/yuka/examples/navigation/navmeshPerformance/
+https://mugen87.github.io/yuka/examples/navigation/firstperson/
+https://mugen87.github.io/yuka/examples/math/boundingVolumes/
+https://mugen87.github.io/yuka/examples/math/bvh/
+https://mugen87.github.io/yuka/examples/math/orientation/
+https://mugen87.github.io/yuka/examples/misc/trigger/
+https://mugen87.github.io/yuka/examples/perception/lineOfSight/
+https://mugen87.github.io/yuka/examples/perception/memorySystem/
+https://mugen87.github.io/yuka/examples/steering/flee/
+https://mugen87.github.io/yuka/examples/steering/flocking/
+https://mugen87.github.io/yuka/examples/steering/followPath/
+https://mugen87.github.io/yuka/examples/steering/obstacleAvoidance/
+https://mugen87.github.io/yuka/examples/steering/offsetPursuit/
+https://mugen87.github.io/yuka/examples/steering/pursuit/
+декали are not appeared through the friend under friend https://mugen87.github.io/yuka/examples/playground/shooter/
+https://mugen87.github.io/yuka/examples/playground/hideAndSeek/
+https://mugen87.github.io/yuka/docs/NavMeshLoader.html
+
+______________________ _____________________________
+
+
+https://halisavakis.com/my-take-on-shaders-vfx-master-shader-part-i/
+https://halisavakis.com/my-take-on-shaders-sky-shader/
+https://halisavakis.com/my-take-on-shaders-cliff-terrain-shader/
+https://halisavakis.com/my-take-on-shaders-cel-shading/
+https://halisavakis.com/my-take-on-shaders-grass-shader-part-ii/
+https://halisavakis.com/my-take-on-shaders-water-shader/
+https://halisavakis.com/my-take-on-shaders-parallax-effect-part-ii/
+https://halisavakis.com/my-take-on-shaders-parallax-effect-part-i/
+https://halisavakis.com/my-take-on-shaders-teleportation-dissolve/
+https://halisavakis.com/my-take-on-shaders-directional-dissolve/
+https://halisavakis.com/my-take-on-shaders-snow-shader/
+https://halisavakis.com/my-take-on-shaders-firewatch-multi-colored-fog/
+https://halisavakis.com/my-take-on-shaders-dissolve-shader/
+https://halisavakis.com/my-take-on-shaders-shockwave-effect/
+https://halisavakis.com/my-take-on-shaders-waving-displacement/
+https://halisavakis.com/my-take-on-shaders-simple-displacement/
+
+
+______________________ _____________________________
+
+
+Jolting from explosion https://www.youtube.com/watch?v=9A9yj8KnM8c
+Effect of explosion, blood https://www.youtube.com/watch?v=twLLpD7XEWo
+https://www.khronos.org/registry/webgl/sdk/demos/google/shiny-teapot/
+https://www.khronos.org/registry/webgl/sdk/demos/google/particles/
+Falls https://www.youtube.com/watch?v=LSXF38aYru8
+https://va3c.github.io/three.js/examples/webgldeferred_pointlights.html
+
+https://joeoeoe.github.io/Jonithan-s-Three.js/works/particale/TextParticale/demo.html
+https://tympanus.net/Tutorials/InteractiveParticles/
+https://tympanus.net/Development/AnimatedMeshLines/demo2.html
+https://tympanus.net/Development/AnimatedMeshLines/demo4.html
+https://tympanus.net/Development/AnimatedMeshLines/demo5.html
+
+Particles https://dev.xingway.com/experiments/threejs/particle-system/
+
+
+Snow depending on an inclination https://www.programmersought.com/article/23046189393/
+
+https://www.youtube.com/watch?v=taMp1g1pBeE
+
+https://github.com/lo-th?tab=repositories
+https://github.com/lo-th/root
+https://github.com/lo-th/3d.city
+http://lo-th.github.io/labs/index.html
+https://github.com/lo-th/Ammo.lab
+
+
+https://alteredqualia.com/three/examples/webgl_deferred_postprocessing.html
+http://editor.me/three/examples/?q=post#webgl_postprocessing_nodes
+Ocean, landscape https://derschmale.com/helix/examples/terrain/
+
+The sun https://renaultespace.littleworkshop.fr/
+
+Splitting of geometry 1 https://enable3d.io/examples/convex-objects-breaking.html
+Splitting of geometry 2 http://editor.me/three/examples/?q=ammo#physics_ammo_break
+ammo instancing http://editor.me/three/examples/?q=ammo#physics_ammo_instancing
+physics_ammo_rope http://editor.me/three/examples/?q=ammo#physics_ammo_rope
+ammo types-of-constraints https://enable3d.io/examples/types-of-constraints.html
+ammo play-with-physics-bodies https://enable3d.io/examples/play-with-physics-bodies.html
+first-person-shooter https://enable3d.io/examples/first-person-shooter.html
+wrecking-ball-with-metal-chain https://enable3d.io/examples/wrecking-ball-with-metal-chain.html
+https://openprocessing.org/sketch/1102374
+https://openprocessing.org/sketch/1102760
+
+
+______________________ PBR FRESHNEK _____________________________
+
+PBR swords and freshnel https://derschmale.com/helix/examples/pbr/
+specular https://derschmale.com/helix/examples/specular-properties/
+glossy https://derschmale.com/helix/examples/env-map-equirectangular/
+halo planet https://derschmale.com/helix/examples/blue-marble/
+https://derschmale.com/helix/examples/sponza-obj/
+
+
+______________________ a miscellaneous _____________________________
+
+
+https://www.youtube.com/watch?v=akyIJJ3el_Q
+parallax cubemap https://www.youtube.com/watch?v=ZH6s1hbwoQQ
+parallax cubemap https://www.youtube.com/watch?v=OLKbBYM8Les
+https://www.youtube.com/watch?v=f8_oEg2s8dM
+https://www.youtube.com/watch?v=nvok7temQuI
+It is possible for explosion on the earth to impose on top as decal with a grass as at a landscape certainly
+https://www.habrador.com/tutorials/shaders/3-parallax-mapping/
+Volume rendering of clouds https://www.habrador.com/tutorials/shaders/1-volume-rendering-death-star/
+interrior https://www.habrador.com/tutorials/shaders/2-interior-mapping/
+spline way search https://www.youtube.com/watch?v=L591fS51F4I&ab_channel=ErikNordeus
+spline way search https://blog.habrador.com/2015/11/explaining-hybrid-star-pathfinding.html
+https://interplayoflight.wordpress.com/2013/04/29/parallax-corrected-cubemapping-with-any-cubemap/
+https://seblagarde.wordpress.com/2012/09/29/image-based-lighting-approaches-and-parallax-corrected-cubemap/
+https://dontnormalize.me/2015/01/02/1-year/
+https://www.clicktorelease.com/blog/making-of-cruciform/
+
+
+______________________ RENDERING IN THE STRUCTURE _____________________________
+
+
+https://editor.me/three/examples/webgl_framebuffer_texture.html
+https://editor.me/three/examples/webgl_rtt.html
+
+______________________ WATER _____________________________
+
+
+Hogwash https://watersimulation.tumblr.com/
+Hogwash freshnel https://github.com/piellardj/pool-webgl
+Hogwash https://github.com/piellardj/navier-stokes-webgl
+Hogwash https://www.youtube.com/watch?v=7T5o4vZXAvI
+Hogwash https://forum.unity.com/threads/free-fake-water-shader.394962/
+Hogwash https://www.youtube.com/watch?v=aC5Yzx7tS74
+Hogwash the PART 1 https://www.youtube.com/watch?v=Pg79tztNZeA
+Hogwash the PART 2 https://docs.godotengine.org/ko/latest/tutorials/shading/intro_to_shaders_water_workshop.html
+Hogwash https://www.youtube.com/watch?v=7T5o4vZXAvI
+
+
+
+The best ocean with a boat and foam https://www.tamats.com/work/bwr/
+https://codepen.io/Khangeldy/pen/pgXNMZ
+https://thewebdesignerpro.com/fog.html
+https://thewebdesignerpro.com/iceberg.html
+http://thewebdesignerpro.com/musicvisualization2.html
+From алиасинга on water https://www.iquilezles.org/www/articles/filtering/filtering.htm
+Norms ocean idle time https://www.youtube.com/watch?v=DpOg8L-vYsU
+Wave https://shaderfrog.com/app/view/5139
+Type water https://shaderfrog.com/app/view/4975
+Waves https://shaderfrog.com/app/view/5263
+Wave https://shaderfrog.com/app/view/5251
+Lake in a precipice with каустикой and a boat https://www.blend4web.com/apps/webplayer/webplayer.html?load=../../assets/azure_grotto/azure_grotto.json&autorotate&compressed_textures&compressed_textures_pvr&v=0c4fbfab10a328fb85d4ed7c9698cf5d
+Lake island falls the plane https://www.blend4web.com/apps/flight/flight.html?v=26e0188ffa417cc3d83d6a287fb90dbf
+Ocean island game the ship http://race.assassinscreedpirates.com/
+Ocean on the world map https://demo.f4map.com/#lat=55.0013184&lon=82.9161986&zoom=21&ui.discoveryOpen=false&camera.theta=80&camera.phi=93.679
+Jellyfishes https://akirodic.com/p/jellyfish/
+Ocean and island with robots http://massiveassaultnetwork.com/html5/
+ripple http://pixelscommander.com/polygon/htmlgl/demo/filters.html#.YAAnJnYzaUk
+https://www.youtube.com/watch?v=02FjpFDXjAs
+https://codepen.io/knoland/pen/XKxAJb
+https://www.youtube.com/watch?v=wdcvPegJ1lw
+https://followthedarkside.github.io/webvr-threejs-red-ocean/
+https://enable3d.io/examples/water.html
+Qualitatively, waves гестнера http://s.mecg.me/pbr.html?id=ocean
+http://editor.me/three/examples/webgl_shaders_ocean.html
+It 2d like http://www.kevs3d.co.uk/dev/shaders/waves3.html
+It 2d like http://www.kevs3d.co.uk/dev/shaders/waves6.html
+It 2d like http://www.kevs3d.co.uk/dev/shaders/distancefield3.html
+https://www.shadertoy.com/view/MlGSDD
+Under water https://www.shadertoy.com/view/4ljXWh
+UNDER WATER https://www.shadertoy.com/view/4tySzD
+Under water https://www.youtube.com/watch?v=6VFkyE_43oI
+Under water https://www.youtube.com/watch?v=Af9QCUIPooQ
+пено on the basis of depth of pixels http://fire-face.com/water/
+Drops on water and ripples https://www.shadertoy.com/view/ldfyzl
+The sea with тестурой a bottom and ripples here again the SUN is AT A STOP - to TRANSFER IT to ITSELF https://www.shadertoy.com/view/MlXGWf
+REFLECTION, REFRACTION QUALITATIVE FOR ICE AND THE SEA https://itnan.ru/post.php?c=1&p=347750
+foam at ocean and the moon https://www.shadertoy.com/view/ltXSz4
+Ocean and inflow https://www.shadertoy.com/view/wdGBWG
+Current and obstacles https://www.shadertoy.com/view/ls3cR4
+Current https://www.shadertoy.com/view/4dtyWM
+The river and grass https://www.shadertoy.com/view/4styzj
+INFLOW FOR FOAM https://www.shadertoy.com/view/4dGSDw
+Fountain, ripples, https://webgl-shaders.com/flare-example.html
+random a landscape and water https://draemm.li/various/terrain/webgl/
+Lake idle time https://www.youtube.com/watch?v=jbYrpKWTlpw
+It is possible to take generation of mountains and ripples http://yiwenl.github.io/Sketches/exps/12/
+https://webgl.softfalcon.com/
+caustic 1 https://shaderfrog.com/app/view/4208
+caustic 2 https://habr.com/ru/post/467887/
+caustic 3 http://kb.worldviz.com/articles/1932
+causticazure https://shaderfrog.com/app/view/5260
+caustichttp://editor.me/three.js/examples/webgl_loader_nodes.html
+Correct minimum env http://oos.moxiecode.com/js_webgl/terrain/index.html
+Sun patches of light https://www.shadertoy.com/view/4slGRM
+Correct lake with freshnel (reflexion) https://www.chinedufn.com/3d-webgl-basic-water-tutorial/
+Mirror water https://shaderfrog.com/app/view/250
+foam at ocean https://shaderfrog.com/app/view/3576
+https://threejs.org/examples/webgl_water.html
+Inflow through flowmap and a sine likely https://www.youtube.com/watch?v=fYX_rq1DSLA
+District video https://www.youtube.com/watch?v=OEd65NGYzQc is simple
+Excellent ocean with inflow and waves https://www.youtube.com/watch?v=oRVeNRKV5ek
+Drops and good illumination of a relief https://github.com/Dave13h/WebGL-Water-Ripples-2D
+The river with reflexion https://github.com/J-Zeitler/webgl-procedural-water
+Interactive water beautiful green https://github.com/nguest/WebGL-Fluid
+Interactive water with caustic https://github.com/grassydragon/Water
+Interactive water without caustic on three.js https://github.com/KarRei/waterwave
+Interactive water with caustic fast 1 https://github.com/arch-19/Water-And-Caustics
+Interactive water with caustic fast 2 https://github.com/evanw/webgl-water
+Noise by displacement it is possible and not for water https://github.com/kalleankah/proceduralwater
+Ocean, but shader heavy like https://github.com/ettlitetlov/TileGen
+Ocean good https://github.com/jwagner/terrain
+same the ocean but is easier https://29a.ch/sandbox/2011/webglice/
+Fluid html5 for ripples from object https://github.com/jwagner/fluidcanvas
+Fluid webgl https://github.com/jwagner/fluidwebgl
+Huge ready ocean with waves https://github.com/jbouny/fft-ocean
+gerstner without optimisation https://raw.githack.com/Sean-Bradley/three.js/gerstner-waves/examples/webgl_shaders_ocean_gerstner.html
+gerstner a source code https://github.com/Sean-Bradley/three.js/blob/gerstner-waves/examples/webgl_shaders_ocean_gerstner.html
+Experiments https://github.com/jbouny/experiments
+Ocean https://github.com/jbouny/ocean
+The landscape generator http://jeremybouny.fr/terrain-generator/demo/
+https://github.com/jbouny/projected-grid
+https://github.com/jbouny/river
+https://github.com/jbouny/LODplane
+
+The river and heap of animals http://jeremybouny.fr/runrun/
+
+https://github.com/wuhao1117/WebGL-Ocean-FFT
+https://github.com/Frederoche/Webgl-FFT-Ocean -
+https://github.com/dghost/ocean
+https://github.com/pkamenarsky/ocean
+https://github.com/johnhollen/Procedural-Ocean
+
+There is an ocean raznoe/sketchbook 4.0
+
+______________________ JS OCTREE _____________________________
+
+It is not necessary https://github.com/vanruesc/sparse-octree
+https://github.com/anvaka/yaot
+https://github.com/oguzeroglu/Nearby
+https://oguzeroglu.github.io/ROYGBIV/demo/blaster/application.html
+https://oguzeroglu.github.io/ROYGBIV/demo/shooter/application.html
+https://github.com/oguzeroglu/ROYGBIV
+https://oguzeroglu.github.io/ROYGBIV/demo/psShowcase/application.html
+
+______________________ BAKED LIGHT _____________________________
+
+https://threejs.org/examples/#webgl_lightprobe
+https://threejs.org/examples/#webgl_lightprobe_cubecamera
+https://blogs.unity3d.com/2011/03/09/light-probes/
+https://github.com/mrdoob/three.js/issues/6251
+https://github.com/mrdoob/three.js/issues/16228
+https://github.com/mrdoob/three.js/pull/18371
+In the same place and a demo with a blinking bug https://three-lightprobevolume-glvcoabvdt.now.sh/examples/webgl_lightprobevolume
+And a code with a blinking bug https://github.com/mrdoob/three.js/compare/dev...donmccurdy:feat-lightprobevolume
+Here already without a bug like https://raw.githack.com/donmccurdy/three.js/feat-lightprobevolume-build/examples/?q=volume#webgl_lightprobe_volume
+
+
+______________________ WAY SEARCH _____________________________
+
+
+https://www.youtube.com/watch?v=6P1tbSFalI0
+Demo and code. The fastest A* search https://morioh.com/p/b7a50257c5a8
+https://github.com/bgrins/javascript-astar
+https://three-pathfinding.donmccurdy.com/demo/
+https://github.com/mikewesthad/navmesh
+https://codepen.io/nik-lever/pen/xxbZrGv
+https://codepen.io/nik-lever/pen/MWYerrM
+
+
+______________________ THE SKY _____________________________
+
+
+The sun the sea and position co-ordinates directlight https://jblaha.art/sketchbook/0.4/
+3d clouds https://github.com/jeromeetienne/threex.noiseshadermaterial
+The sky https://shaderfrog.com/app/view/5257
+https://danilw.github.io/godot-utils-and-other/dyn_sky_refl/web/dsr.html
+https://editor.me/three/examples/?q=sky#webgl_shaders_sky
+https://derschmale.com/lab/doodles/dynamicsky/build/
+https://www.shadertoy.com/view/ltdXRS
+TO PUT const int count = 4; THAT DID NOT SPREAD https://www.shadertoy.com/view/XtKXR3
+The dark blue sky and field https://www.shadertoy.com/view/ltXXRM
+The flat sky 1 https://www.shadertoy.com/view/4tdSWr
+The flat sky 2 https://www.shadertoy.com/view/ltdXRS
+The flat sky 3 https://shaderfrog.com/app/view/2753
+Volume cloud https://www.shadertoy.com/view/XsfXW8
+For turn we put so: uv.y / = iResolution.x/iResolution.y; uv.y + = 0.1; uv.x - = 0.5; https://www.shadertoy.com/view/XlsXzN
+Day and night https://www.nutty.ca/webgl/skygen/
+https://www.shadertoy.com/view/XtBXDw
+https://www.jerryjrchen.com/cs184/final/
+https://www.shadertoy.com/view/tdSXzD
+https://www.shadertoy.com/view/Msfcz2
+http://glslsandbox.com/e#70013.0
+https://www.youtube.com/watch?v=X6_m7C7CG9w
+
+______________________ THE LANDSCAPE _____________________________
+
+https://www.youtube.com/watch?v=XGivGIrkJVc
+Is shader turn of a normal or another https://www.youtube.com/watch?v=JLs4dWZ1PwM
+
+______________________ FLUIDITY _____________________________
+
+
+vertex THE LAVA https://gamedevelopment.tutsplus.com/tutorials/create-a-glowing-flowing-lava-river-using-bezier-curves-and-shaders--gamedev-919
+TEXTURAL LAKE http://graphicsrunner.blogspot.com/2010/08/water-using-flow-maps.html
+TEXTURAL LAVA https://habr.com/ru/post/339566/
+godot https://www.youtube.com/watch?v=kkZJ9SBH_24
+Direction http://johnsietsma.com/2015/12/01/flow-maps/
+
+______________________ SPLAT _____________________________
+
+https://tech.innogames.com/terrain-shader-in-unity/
+Part 1 https://habr.com/ru/post/180743/
+http://www.garagegames.com/community/forums/viewthread/134634/1
+http://untitledgam.es/2017/01/height-blending-shader/
+http://unitytipsandtricks.blogspot.com/2014/07/terrain-texture-splatting-and-threejs.html
+babylon https://www.babylonjs-playground.com/#E6OZX#7
+https://www.blitzcoder.org/forum/topic.php?id=135
+godot 1 https://godotforums.org/discussion/19724/splatmapping-any-examples
+godot 2 5 structures https://godotforums.org/discussion/20565/splatmap-shader-issues-on-mobile-devices-gles2-and-how-to-cope-with-them
+godot 3 https://ffxrunner2.ffx.it/simple-terrain-shader-tutorial/
+godot 4 in comments a code https://www.youtube.com/watch?v=RLAG4RbT-5U
+https://www.youtube.com/watch?v=7652ZSQ-8Qk
+godot 5 screen small is attached https://godotforums.org/discussion/18663/godot-3-0-the-new-way-to-make-a-terrain-shader-with-normal-maps
+godot 6 https://www.youtube.com/watch?v=NIIRTTu0ix8
+godot 7 https://kinwailo.wordpress.com/2017/05/19/godot-terrain-shader/
+godot 8 https://www.reddit.com/r/godot/comments/g07nj7/splat_shader_in_the_works/
+unrepeat structures. Is on a desktop https://www.youtube.com/watch?v=RedUqzO3Y7I
+
+triplanar https://godotengine.org/qa/12952/automatic-seamless-texture-object-through-materialshader
+https://www.chinedufn.com/webgl-multitexture-blend-map-tutorial/
+______________________ NOISE _____________________________
+
+
+FOG 1 https://www.shadertoy.com/view/XtXXD8
+FOG 2 https://thewebdesignerpro.com/mist.html
+http://glslb.in/
+
+
+______________________ THE CIRCLE _____________________________
+
+
+THE SHINING MULTI-COLOURED
+http://glslsandbox.com/e#65257.0
+
+
+______________________ Shaders LIGHT, THE NORMAL, THE PARALLAX _____________________________
+
+
+PARALLAX https://www.opengl.org/sdk/docs/tutorials/TyphoonLabs/Chapter_4.pdf
+https://www.opengl.org/sdk/docs/tutorials/TyphoonLabs/
+Parallax https://www.youtube.com/watch?v=4A_nkSOBNRI
+PARALLAX https://habr.com/ru/post/416163/
+PARALLAX https://learnopengl.com/Advanced-Lighting/Parallax-Mapping
+PARALLAX https://stackoverflow.com/questions/27045998/parralax-mapping-does-not-work-correctly-using-opengl-and-glsl
+PARALLAX DIFFERENT https://apoorvaj.io/exploring-bump-mapping-with-webgl/
+TEAPOT WITH HOLES https://www.opengl.org/sdk/docs/tutorials/ClockworkCoders/discard.php
+NORMAL https://fabiensanglard.net/bumpMapping/index.php
+ILLUMINATION NORMAL https://forum.worldviz.com/showthread.php?t=4656
+позолото http://yiwenl.github.io/Sketches/exps/33/
+Mountains http://yiwenl.github.io/Sketches/exps/24/
+Luster http://yiwenl.github.io/Sketches/exps/9/
+Live fog https://stackblitz.com/edit/threejs-fog-hacks
+The snow earth https://derschmale.com/lab/doodles/snowfield/build/?sss=true
+https://www.derschmale.com/
+Skeleton too as at three.js https://mattdesl.github.io/webgl-wireframes/app/
+
+Light blinn phong https://en.wikipedia.org/wiki/Blinn–Phong_reflection_model
+Different light https://www.nutty.ca/?page_id=352&link=basic_lighting
+
+Lava 1 http://erkaman.github.io/glsl-gradient-palette/
+Lava 2 http://erkaman.github.io/glsl-cos-palette/
+
+PBR THEORY https://learnopengl.com/PBR/Theory
+PBR LIGHTING https://learnopengl.com/PBR/Lighting
+PBR IBL Diffuse irradiance https://learnopengl.com/PBR/IBL/Diffuse-irradiance
+PBR IBL Specular IBL https://learnopengl.com/PBR/IBL/Specular-IBL
+
+
+Effect of an eye on the second scene it is possible https://www.blitzcoder.org/forum/topic.php?id=132
+
+SSAO затенение https://www.blitzcoder.org/forum/topic.php?id=151
+
+______________________ PARTICLES _____________________________
+
+
+https://www.chinedufn.com/webgl-particle-effect-billboard-tutorial/
+http://www.opengl-tutorial.org/fr/intermediate-tutorials/billboards-particles/billboards/
+Tornado www.opengl-tutorial.org/intermediate-tutorials/
+Fountain https://www.nutty.ca/webgl/template/
+
+
+
+______________________ THE MISCELLANEOUS _____________________________
+
+
+bump and 3 lights https://derschmale.com/helix/examples/primitives/
+THE FOUNTAIN, SPREADING POOL https://stemkoski.github.io/AR-Examples/water-effect.html
+Crossing with shape or cliques on шейпу https://www.youtube.com/watch?v=CendZL897vg
+Flight in a spline https://codepen.io/nik-lever/pen/ydvrVN
+Radar https://codepen.io/nik-lever/pen/dybBQPV
+Shade following for the player https://codepen.io/nik-lever/pen/ZEErOPO
+Collision of the person with an obstacle https://codepen.io/nik-lever/pen/YzzvXLb
+Collision of the zombie with an obstacle https://codepen.io/nik-lever/details/yLLEeNW
+Cube suspension https://codepen.io/nik-lever/details/mddoQNL
+Ripples at a clique https://codepen.io/nik-lever/pen/BaaeLYv
+Ripples with reflexion https://codepen.io/nik-lever/details/yLLWaEN
+Explosion of pixels https://codepen.io/nik-lever/pen/ZEYzZRm
+Cloud or smoke https://codepen.io/nik-lever/pen/yLyLJvV
+firework https://codepen.io/nik-lever/pen/YzPXZbK
+Structure projection https://observablehq.com/@severo/three-js-webgl-lights-textured-spotlight
+BLOOD THE RIVER ERITROTSITOV https://www.shadertoy.com/view/4ttXzj
+FLAME 2D WITHOUT STRUCTURES https://www.shadertoy.com/view/4tXXRn
+Flame additive https://www.ibiblio.org/e-notes/webgl/models/fire.html
+Lens https://webgl-shaders.com/lens-example.html
+Infinite mountains https://webgl-shaders.com/mountains-example.html
+TOON https://webgl-shaders.com/toon-example.html
+Microphone https://www.clicktorelease.com/code/speech-jammer/
+Object destruction http://yiwenl.github.io/Sketches/exps/10/
+Grenade explosion http://oos.moxiecode.com/js_webgl/explosion/
+The size спрайта http://editor.me/three/examples/?q=nei#webgl_nearestneighbour
+Way search https://arongranberg.com/
+Way search https://www.youtube.com/watch?v=qXi5qhhGNIw&feature=emb_title
+Fabric on a wind https://www.youtube.com/watch?v=scg33DHDnHc
+
+Snow, earth deformation, arch, stones, branches, http://www.snwbx.com/
+Posteffects https://github.com/zz85/crayon.js
+Mixing of colours https://www.youtube.com/watch?v=C8Cuwq1eqDw
+var c1=new THREE.Vector3 (1,0,0);
+var c2=new THREE.Vector3 (0,1,0);
+var c3=c1.lerp (c2, v);
+
+
+______________________ PROGRAMS _____________________________
+
+
+The generator of structures of explosions
+http://plasmation.jamesheazlewood.com/scenes/editor/1
+
+
+______________________ ALGORITHMS _____________________________
+
+simplyfier geometry https://gist.github.com/zz85/a317597912d68cf046558006d7647381
+https://www.youtube.com/watch?v=IvT8hjy6q4o
+Shell flight https://www.youtube.com/watch?v=d7pwmO6IS2I
+Trajectory https://www.youtube.com/watch?v=N0twawHdZOI
+raycast 2d DDA fast https://github.com/OneLoneCoder/olcPixelGameEngine/blob/master/Videos/OneLoneCoder_PGE_RayCastDDA.cpp
+minecraft 1 https://github.com/mikolalysenko/voxel-mipmap-demo
+minecraft 2 http://mikolalyse nko.github.io/MinecraftMeshes2/
+Trajectory interpolation https://observablehq.com / severo/interpolate-a-trajectory
+Moving and rotation of cubes https://codepen.io/pboueke/pen/ALRWLW
+Cube rotation https://www.tutorialspoint.com/webgl/webgl_interactive_cube.htm
+CAPSULE AND TRIANGLE COLLISION https://wickedengine.net/2020/04/26/capsule-collision-detection/
+Snake, fish, a hose FOLLOWING ON THE WAY With TURNS https://github.com/zz85/threejs-path-flow
+Walking on a slope http://www.mo ntereyinstitute.org/courses/DevelopmentalMath/COURSE_TEXT2_RESOURCE/U13_L2_T1_text_final.html
+quaternion https://blog.mozvr.com/quaternions-are-spooky/
+Edges of object in the form of lines https://blog.mozvr.com/three-js-medium-skill-tutorials/
+
+Spline https://webglfundamentals.org/webgl/lessons/webgl-3d-geometry-lathe.html
+
+
+Rebound of sphere from a triangle http://www.peroxide.dk/dow nload/tutorials/tut10/pxdtut10.html
+
+Line a triangulation https://mattdesl.svbtle.com/drawing-lines-is-hard
+https://www.youtube.com/watch?v=h0NJK4mEIJU
+
+https://processing.org/examples/follow1.html
+https://processing.org/examples/follow2.html
+https://processing.org/examples/follow3.html
+https://processing.org/examples/reach1.html
+https://processing.org/examples/reach2.html
+https://processing.org/examples/reach3.html
+https://processing.org/examples/bouncybubbles.html
+https://processing.org/examples/movingoncurves.html
+https://processing.org/examples/chain.html
+
+===================================
+https://www.shadertoy.com/view/ld2GRh
+https://github.com/lettier/3d-game-shaders-for-begi nners
+https://github.com/jobtalle/HydraulicErosio n
+https://www.youtube.com/watch?v=Ms1vvo45Wi8
+https://al-ro.github.io/index.html
+https://www.youtube.com/watch?v=AamjoqmovIM
+https://blog.demofox.org/2017/07/10/webgl-pbr-impleme ntation/
+https://blog.dsmu.me/2018/02/physically-based-re ndering-in-webgl.html
+https://www.unrealengine.com/en-US/blog/physically-based-shading-on-mobile
+http://alu nevans.info/apps/webgl/pbr/
+https://doodlewind.github.io/beam/examples.html#3d-models/material-ball
+http://alu nevans.info/apps/webgl/
+https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/code/WebGLShaderLightMat/ShaderLightMat_WebGL1.html
+https://github.com/stackgl/glsl-lighting-walkthrough
+http://adva nces.realtimerendering.com/s2012/Ubisoft/Rock-Solid%20Shading.pdf
+https://web.cs.wpi.edu / ~ emmanuel/courses/cs543/f13/slides/lecture09_p1.pdf
+https://blog.selfshadow.com/2011/07/22/specular-showdow n/
+http://carvisualizer.plus360degrees.com/threejs/
+http://www.smartjava.org/ltjs/chapter-06/08-bi nary-operations.html
+https://alteredqualia.com/xg/examples/animation_physics_terrain.html
+http://felixpalmer.github.io/webgl-tombsto ne/
+https://patapom.com/topics/WebGL/BRDF/
+http://leebeegames.co.uk/fast-voxel-traversal/
+https://github.com/francisengelmann/fast_voxel_traversal/blob/master/main.cpp
+https://gdbooks.gitbooks.io/3dcollisions/content/Chapter1/closest_point_on_plane.html
+https://yomotsu.github.io/walkthrough/
+https://github.com/google/filament/blob/main/shaders/src/brdf.fs#L141
+http://filmicworlds.com/blog/everythi ng-has-fresnel/
+http://s.mecg.me/pbr.html?id=1
+http://s.mecg.me/pbr.html?id=base
+http://s.mecg.me/pbr.html?id=pbr
+http://s.mecg.me/pbr.html
+http://s.mecg.me/tool.html
+http://simo nstechblog.blogspot.com/2011/12/microfacet-brdf.html
+https://www.mdeditor.tw/pl/2Bqm
+http://s.mecg.me/pbr.html?id=ocea n
+
+https://discourse.threejs.org/t/driving-demo-using-ammo-js/5217/15
+http://drive.x10host.com/world/world.htm
+http://schteppe.github.io/vehicle-editor/
+https://stackoverflow.com/questions/61017721/cannon-js-three-js-minimal-car-physics
+https://cotosystem.com.br/webgl_demo_vehicle/
+
+https://erkaman.github.io/regl-fire/fire.html
+https://github.com/GDQuest/godot-shaders/
+
+
+http://editor.me/three/examples/?q=refr#webgl_materials_wireframe
+
+
+===================================
+020120
+
+https://github.com/Arnklit/WaterGenGodot
+https://codepen.io/zadvorsky/pen/qOYqGv
+https://catlikecoding.com/unity/tutorials/flow/
+https://catlikecoding.com/unity/tutorials/flow/waves/
+http://projects.markkellogg.org/threejs/demoParticleSystem.php
+http://reader.epubee.com/books/mobile/49/4908007a001f4861b408203da916ff2a/text00018.html#ch07lev1sec1
+https://catlikecoding.com/unity/tutorials/flow/looking-through-water/
+https://forum.babylonjs.com/t/who-can-help-me-porting-watershader-from-threejs-to-babylonjs/8076
+https://codercat.tk/ma/
+https://sbcode.net/threejs/fbx-animation/
+https://discourse.threejs.org/t/clipactio n-select-range-to-play/1134/12
+https://github.com/mrdoob/three.js/pull/13430
+http://editor.me/three/docs/#api/e n/core/Object3D.getWorldPosition
+https://stackoverflow.com/questions/16396874/manual-frustum-culling-with-three-js
+https://github.com/mrdoob/three.js/issues/15339
+https://medium.com / Zadvorsky/into-vertex-shaders-addendum-1-matrix-math-and-you-565a51094472
+https://github.com/munsocket/gl-bench
+https://zfx.fr/demos/2021/index2.html
+https://zfx.fr/demos/2021/index.html
+https://www.youtube.com/watch? v=arn_3WzCJQ8
+https://webglsamples.org/field/field.html
+
+
+https://habr.com/ru/post/458060/
+http://0s.mzxxe5l n.ovxgs5dzfzrw63i.cmle.ru/threads/offscreen-enemy-indicator.57852/
+https://gist.github.com/zentrope/5022d89cfa995ac71978
+http://0s.mzxxe5l n.ovxgs5dzfzrw63i.cmle.ru/threads/camera-worldtoscreenpoint-bug.85311/#post-2844282
+https://discourse.threejs.org/t/detect-if-target-is-behi nd-the-camera-outdated/207/4
+http://jsfiddle.net/Horsetopus/67q690fg/
+https://github.com/jinincarnate/off-screen-indicator/blob/master/Off%20Screen%20Indicator/Assets/Scripts/OffScreenIndicator.cs
+http:// niklever.com/udemy-resources/
+
+
+
+https://www.shadertoy.com/view/ld2GRh
+https://css-tricks.com/techniques-for-rendering-text-with-webgl/
+http://www.gamedev.ru/projects/forum/?id=152527
+https://github.com/scriptum/Cheetah-Texture-Packer
+https://mapbox.s3.amazonaws.com/kkaefer/sdf/index.html
+https://github.com/astiopin/webgl_fonts
+https://gero3.github.io/facetype.js/
+https://github.com/Jam3/three-bmfont-text
+https://tympanus.net/codrops/2019/10/10/create-text-in-three-js-with-three-bmfont-text/
+https://www.npmjs.com/package/text-modules#bitmap-text
+https://mattdesl.svbtle.com/material-desig n-on-the-gpu
+http://mattdesl.github.io/ npm-names/
+http://threejs-experime nts.surge.sh/text/6-cartogram-sdf.html
+https://github.com/thi-ng/umbrella/tree/develop/packages/webgl-msdf
+https://github.com/mattdesl/gl-sprite-text
+https://www.npmjs.com/package/word-wrapper
+https://github.com/hughsk/font-atlas
+https://forum.libcinder.org/#Topic/23286000001127007
+https://habr.com/ru/post/282191/
+https://drewcassidy.me/2020/06/26/sdf-antialiasing/
+https://github.com/libgdx/libgdx/wiki/Dista nce-field-fonts
+https://habr.com/ru/post/215905/
+https://github.com/dy/bitmap-sdf
+https://github.com/mattdesl/image-sdf
+https://github.com/anvaka/yaot
+https://victorribeiro.com/sphereCollision/
+https://exploratoria.github.io/exhibits/mecha nics/elastic-collisions-in-3d/
+https://www.redblobgames.com/maps/terrain-from-noise/
+https://jobtalle.com/random_procedural_generation.html
+https://jobtalle.com/cubic_noise.html
+https://github.com/jobtalle/HydraulicErosio n
+https://devforum.roblox.com/t/directional-damage-indicator-not-working-properly-need-help-with-logic/358360
+https://answers.unity.com/questions/1556778/help-about-damage-indicator.html
+
+
+-------------------------------- ammo.physiq
+
+ammo.js instancing colour https://editor.p5js.org/setapolo/full/nsRcS9thN
+https://developer.playcanvas.com/en/tutorials/Using-forces-on-rigid-bodies/
+https://playcanv.as/p/Q7CJA9Ku/
+Capsule https://discourse.threejs.org/t/ammo-js-with-three-js/12530/36
+https://github.com/lo-th/Ammo.lab/tree/af8ee2562dd1b928722784319417944b55904399
+
+https://threejs.org/examples/? q=instan#physics_ammo_instancing
+https://github.com/jeromeetienne/ammojs-demos
+https://github.com/schteppe/goo-cannon-softbody
+https://github.com/schteppe/velvet-drop
+https://github.com/schteppe/vehicle-editor
+https://github.com/schteppe/gpu-springs
+http://schteppe.github.io/goo-p2-platformer/
+https://github.com/schteppe/bomb-sorting-game
+https://github.com/schteppe/PathFinding3D.js
+https://github.com/schteppe/gpu-physics.js
+https://progi.pro/cannonjs-t18468
+https://medium.com / bluemagnificent
+https://medium.com / bluemagnificent/intro-to-javascript-3d-physics-using-ammo-js-and-three-js-dd48df81f591
+https://medium.com / bluemagnificent/moving-objects-in-javascript-3d-physics-using-ammo-js-and-three-js-6e39eff6d9e5
+
+
+
+-----------------------------
+
+
+____________________________________________
+
+ELECTRO
+
+
+https://shaderfrog.com/app/view/3183
+https://shaderfrog.com/app/view/4139
+https://shaderfrog.com/app/view/4118
+https://shaderfrog.com/app/view/3438
+https://shaderfrog.com/app/view/2301
+https://shaderfrog.com/app/view/3242
+https://shaderfrog.com/app/view/3169
+https://shaderfrog.com/app/view/1945
+https://shaderfrog.com/app/view/1703
+
+____________________________________________
+
+
+MARBLE
+
+
+https://shaderfrog.com/app/view/2565
+https://shaderfrog.com/app/view/3062
+https://shaderfrog.com/app/view/3415
+https://shaderfrog.com/app/view/3232
+https://shaderfrog.com/app/view/3066
+https://shaderfrog.com/app/view/3064
+https://shaderfrog.com/app/view/3060
+https://shaderfrog.com/app/view/3057
+https://shaderfrog.com/app/view/3005
+https://shaderfrog.com/app/view/2931
+https://shaderfrog.com/app/view/2759
+https://shaderfrog.com/app/view/2742
+https://shaderfrog.com/app/view/2726
+https://shaderfrog.com/app/view/2725
+https://shaderfrog.com/app/view/2724
+https://shaderfrog.com/app/view/2713
+https://shaderfrog.com/app/view/2678
+https://shaderfrog.com/app/view/2540
+https://shaderfrog.com/app/view/2321
+https://shaderfrog.com/app/view/2186
+https://shaderfrog.com/app/view/2186
+https://shaderfrog.com/app/view/2019
+https://shaderfrog.com/app/view/2000
+https://shaderfrog.com/app/view/1601
+https://shaderfrog.com/app/view/1476
+https://shaderfrog.com/app/view/1046
+https://shaderfrog.com/app/view/3874
+https://shaderfrog.com/app/view/3112
+https://shaderfrog.com/app/view/3094
+
+____________________________________________
+
+
+ball latice https://shaderfrog.com/app/view/2975
+beam https://shaderfrog.com/app/view/3530
+blen treshold https://shaderfrog.com/app/view/1859
+blood https://codepen.io/shubniggurath/pen/qxgbLG
+bloody screen https://shaderfrog.com/app/view/1911
+box edge https://shaderfrog.com/app/view/3063
+box open https://shaderfrog.com/app/view/2916
+brain fountain https://shaderfrog.com/app/view/3753
+circle glow https://www.geeks3d.com/20130705/shader-library-circle-disc-fake-sphere-i n-glsl-opengl-glslhacker/2/
+circle gradient https://shaderfrog.com/app/view/1766
+circle https://shaderfrog.com/app/view/4169
+clip https://shaderfrog.com/app/view/2955
+clip2 https://shaderfrog.com/app/view/1663
+clipped red https://shaderfrog.com/app/view/2954
+cosmo swirl https://shaderfrog.com/app/view/3115
+dna https://shaderfrog.com/app/view/2098
+drone https://codepen.io/b29/details/roVJYY
+edge neon https://shaderfrog.com/app/view/3925
+edge shading https://shaderfrog.com/app/view/651
+
+edge2 https://shaderfrog.com/app/view/650
+env freshnel https://2pha.com/demos/threejs/shaders/fres nel_cube_env_2.html
+env https://2pha.com/demos/threejs/shaders/fres nel_cube_env.html
+equaliser https://shaderfrog.com/app/view/3464
+fire7 https://shaderfrog.com/app/view/1841
+fireball https://shaderfrog.com/app/view/3517
+fireball2 https://shaderfrog.com/app/view/2708
+firedisp https://shaderfrog.com/app/view/1736
+flag https://shaderfrog.com/app/view/3019
+flame_cone https://shaderfrog.com/app/view/3218
+flame3 https://shaderfrog.com/app/view/2604
+fountain https://shaderfrog.com/app/view/4104
+fountain2 https://shaderfrog.com/app/view/2902
+fountain5 https://shaderfrog.com/app/view/1752
+fresnel_alpha_reflect_glass http://sce nejs.org/examples/fresnel_alpha_reflect.html
+fresnel_diffuse http://sce nejs.org/examples/fresnel_diffuse.html
+fresnel_emit http://sce nejs.org/examples/fresnel_emit.html
+fresnel_reflect http://sce nejs.org/examples/fresnel_reflect.html
+galaxy https://shaderfrog.com/app/view/3604
+gate block enemy https://shaderfrog.com/app/view/2553
+golden https://shaderfrog.com/app/view/1418
+gradient https://shaderfrog.com/app/view/4165
+graph http://www.iquilezles.org/apps/graphtoy/
+green_есть In _stone.js https://shaderfrog.com/app/view/3754
+hell https://shaderfrog.com/app/view/2751
+hexa https://shaderfrog.com/app/view/2360
+hypnoball https://shaderfrog.com/app/view/3516
+ice_dice https://shaderfrog.com/app/view/4014
+ice https://shaderfrog.com/app/view/4111
+ice4 https://shaderfrog.com/app/view/2629
+jam https://shaderfrog.com/app/view/4115
+lava2 https://shaderfrog.com/app/view/3299
+lava3 https://shaderfrog.com/app/view/2655
+liquid https://shaderfrog.com/app/view/2548
+loading https://shaderfrog.com/app/view/272
+matrix_plane https://shaderfrog.com/app/view/3051
+matrix https://shaderfrog.com/app/view/3660
+neon https://shaderfrog.com/app/view/4157
+night vision https://www.geeks3d.com/20091009/shader-library-night-vision-post-processing-filter-glsl/
+noise https://thebookofshaders.com/examples/
+noise2 https://thebookofshaders.com/examples/?chapter=proceduralTexture
+noise3 https://thebookofshaders.com/edit.php#11/2d-g noise.frag
+pixel wave https://shaderfrog.com/app/view/3807
+plasma https://shaderfrog.com/app/view/4155
+portal https://shaderfrog.com/app/view/2336
+projection http://jsfiddle.net/1sywfhm0/
+quake chrome etc. http://media.tojicode.com/q3bsp/
+quake effects http://media.tojicode.com/q3bsp/physics-test.html
+rave https://shaderfrog.com/app/view/4212
+rave2 https://shaderfrog.com/app/view/3898
+ray https://shaderfrog.com/app/view/3474
+reflections_custom_gold http://sce nejs.org/examples/reflections_custom.html
+reflections_intensity_silver http://sce nejs.org/examples/reflections_intensity.html
+reflections_shinyRaptor http://sce nejs.org/examples/reflections_shinyRaptor.html
+refplasma https://shaderfrog.com/app/view/4144
+ribbon http://oos.moxiecode.com/js_webgl/ribbo n/index.html
+rin https://roystan.net/articles/toon-shader.html
+rockets https://shaderfrog.com/app/view/3677
+rotation https://shaderfrog.com/app/view/3688
+slime https://codepen.io/shubniggurath/pen/ppOgPW
+smoke dust https://shaderfrog.com/app/view/2459
+snow https://thewebdesignerpro.com/mistymountain.html
+star circle https://shaderfrog.com/app/view/2449
+sun lights https://thewebdesignerpro.com/scenery.html
+swirl https://shaderfrog.com/app/view/4274
+teleport https://shaderfrog.com/app/view/1708
+texture projection https://shaderfrog.com/app/view/2956
+thunder https://shaderfrog.com/app/view/3873
+toon https://shaderfrog.com/app/view/4094
+transition https://shaderfrog.com/app/view/3538
+tv https://shaderfrog.com/app/view/4112
+twisting https://shaderfrog.com/app/view/1718
+twistup https://shaderfrog.com/app/view/1717
+vein https://shaderfrog.com/app/view/4089
+bush http://bgibbo nsweb.github.io/GoldenField/GoldenField
+follow https://github.com/mrdoob/three.js/blob/master/examples/webgl_math_orie ntation_transform.html

@@ -12,6 +12,7 @@ import floatWindow from "../float-window/index.vue";
 import { message } from "ant-design-vue";
 import * as THREE from "three";
 import * as fabric from 'fabric';
+import { THREEx } from '@/assets/libs/threex.htmlmixer.js';
 import type { Revolver } from "../revolver/typeStatement";
 
 const props = defineProps({
@@ -29,12 +30,17 @@ import {
   useWindowControlStore,
   useThreejsModuleStore,
 } from "@/store";
+import { getImageUrl } from "@/utils/common";
 
 const boothModel = useBoothModelStore();
 const carModule = useCarModelStore();
 const threejsModule = useThreejsModuleStore();
 const windowControlModule = useWindowControlStore();
 const inited = ref(false);
+
+var onRenderFcts: any[] = [];
+var mixerPlane: THREEx.HtmlMixer.Plane;
+var mixerContext: THREEx.HtmlMixer.Context;
 
 /**
  * Configurator init function
@@ -43,107 +49,109 @@ const inited = ref(false);
 function init() {
   inited.value = true;
 
-  /**
-   * Fabricjs
-   * @type {fabric}
-   */
+  // create THREEx.HtmlMixer
 
-  var canvas = new fabric.Canvas("fabric-canvas");
-  canvas.backgroundColor = "#ffffff";
+  mixerContext = new THREEx.HtmlMixer.Context(threejsModule.renderer, threejsModule.scene, threejsModule.camera)
+  mixerContext.rendererCss.setSize(window.innerWidth, window.innerHeight)
+  
+  // handle window resize for mixerContext
+  window.addEventListener('resize', function () {
+    mixerContext.rendererCss.setSize(window.innerWidth, window.innerHeight)
+  }, false)
 
-  var rectangle = new fabric.Rect({
-    top: 0,
-    left: 0,
-    fill: '#ffffff',
-    width: 50,
-    height: 50,
-    transparentCorners: false,
-    centeredScaling: false, // ?
-    borderColor: 'white',
-    cornerColor: 'white',
-    corcerStrokeColor: 'white'
-  });
+  // mixerContext configuration and dom attachement
 
-  canvas.add(rectangle);
+  // set up rendererCss
+  var rendererCss = mixerContext.rendererCss
+  // set up rendererWebgl
+  var rendererWebgl = mixerContext.rendererWebgl
 
-  const text = new fabric.IText('Three.js\n+\nFaBric.js', {
-    fontSize: 40,
-    textAlign: 'center',
-    fontWeight: 'bold',
-    left: 128,
-    top: 128,
-    angle: 30,
-    originX: 'center',
-    originY: 'center',
-    shadow: 'blue -5px 6px 5px',
-    styles: {
-      0: {
-        0: {
-          fontSize: 60,
-          fontFamily: 'Impact',
-          fontWeight: 'normal',
-          fill: 'orange'
-        }
-      },
-      1: {
-        0: {
-          fill: "blue"
-        }
-      },
-      2: {
-        0: {
-          textBackgroundColor: 'red'
-        },
-        2: {
-          fill: 'fuchsia',
-          stroke: 'orange',
-          strokeWidth: 1
-        }
-      }
-    }
-  });
-  text.setSelectionStyles({
-    fontStyle: 'italic',
-    fill: '',
-    stroke: 'red',
-    strokeWidth: 2
-  }, 1, 5);
-  canvas.add(text);
-  canvas.setActiveObject(text);
+  var css3dElement = rendererCss.domElement
+  css3dElement.style.position = 'absolute'
+  css3dElement.style.top = '0px'
+  // css3dElement.style.zIndex = '9999'
+  css3dElement.style.width = '100%'
+  css3dElement.style.height = '100%'
+  document.body.appendChild(css3dElement)
 
-  /**
-   * Texture and material
-   */
+  var webglCanvas = rendererWebgl.domElement
+  webglCanvas.style.position = 'absolute'
+  webglCanvas.style.top = '0px'
+  // webglCanvas.style.zIndex = '9999'
+  webglCanvas.style.width = '100%'
+  webglCanvas.style.height = '100%'
+  webglCanvas.style.pointerEvents = 'none'
+  css3dElement.appendChild(webglCanvas)
 
-  const canvasTexture = new THREE.Texture(document.getElementById("fabric-canvas") as HTMLCanvasElement);
-  canvasTexture.wrapS = THREE.RepeatWrapping;
-  canvasTexture.wrapT = THREE.RepeatWrapping;
-  canvasTexture.repeat.set(2, 2);
-  // canvasTexture.anisotropy = threejsModule.renderer.capabilities.getMaxAnisotropy();
-  windowControlModule.textureWindow.texture = canvasTexture;
+  // create a Plane for THREEx.HtmlMixer
 
-  const material = new THREE.MeshBasicMaterial({ map: windowControlModule.textureWindow.texture });
+  var url = getImageUrl('bg_member.jpg');
+  var domElement = THREEx.HtmlMixerHelpers.createImageDomElement(url)
 
-  const mesh = boothModel.boothModel?.getObjectByName('作者面板') as THREE.Mesh;
-  mesh.material instanceof THREE.Material && (mesh.material.transparent = true) && (mesh.material.opacity = 0); // 如果需要透明效果
+  mixerPlane = new THREEx.HtmlMixer.Plane(mixerContext, domElement)
+  threejsModule.scene.add(mixerPlane.object3d)
 
-  const newMesh = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), material);
-  newMesh.rotateY(Math.PI * 0.5);
-  newMesh.material = material;
-  newMesh.material.side = THREE.DoubleSide;
-  mesh.add(newMesh);
+  // Comment
+  switchValue('default')
 
-  // canvas.on("after:render", function () {
-  //   mesh.material instanceof THREE.Material && (mesh.material.needsUpdate = true);
-  // });
+
+  // handle resize
+
+  window.addEventListener('resize', function () {
+    // notify the renderer of the size change
+    threejsModule.renderer.setSize(window.innerWidth, window.innerHeight)
+    // update the camera
+    threejsModule.camera.aspect = window.innerWidth / window.innerHeight
+    threejsModule.camera.updateProjectionMatrix()
+  }, false)
+
+
+  // render the scene
+  onRenderFcts.push(function () {
+    mixerContext?.update()
+  })
+  onRenderFcts.push(function () {
+    threejsModule.renderer.render(threejsModule.scene, threejsModule.camera);
+  })
 
 }
+
+function switchValue(value: string) {
+  threejsModule.scene.remove(mixerPlane.object3d)
+  if (value === 'default') {
+    var url = 'https://threejs.org/';
+    var domElement = THREEx.HtmlMixerHelpers.createIframeDomElement(url)
+    mixerPlane = new THREEx.HtmlMixer.Plane(mixerContext, domElement)
+    // threejsModule.scene.add(mixerPlane.object3d)
+    const mesh = boothModel.boothModel?.getObjectByName('作者面板') as THREE.Mesh;
+    mixerPlane.object3d.rotateY(Math.PI * 0.25)
+    // mixerPlane.object3d.position.set(-2, -2, -2)
+    mesh.attach(mixerPlane.object3d);
+  }
+}
+
+
+function onResize() {
+  // notify the renderer of the size change
+  threejsModule.renderer.setSize(window.innerWidth, window.innerHeight)
+  // update the camera
+  threejsModule.camera.aspect = window.innerWidth / window.innerHeight
+  threejsModule.camera.updateProjectionMatrix()
+}
+window.addEventListener('resize', onResize, false)
+
+
+requestAnimationFrame(function animate(nowMsec) {
+  // keep looping
+  requestAnimationFrame(animate);
+  mixerContext?.update()
+})
 
 EventsBus.on("onBusRevolver", (value) => {
   const revolver = value as Revolver;
   if (!inited.value && revolver.uuid === props.floatWindow.uuid) {
     init();
-    message.success('初始化')
+    // message.success('初始化')
   }
 });
 
