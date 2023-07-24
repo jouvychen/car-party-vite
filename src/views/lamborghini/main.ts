@@ -34,8 +34,6 @@ export class MainThreeSetup {
   boothModel!: THREE.Object3D;
 
   loadEvent: CustomEvent; // 加载进度
-  
-
   constructor(domId?: string) {
     // 自定义事件
     this.loadEvent = new CustomEvent('loadEvent', {
@@ -100,6 +98,7 @@ export class MainThreeSetup {
   initControl() {
     this.controlChange = false;
     this.container && (this.controls = new OrbitControls(this.camera, this.container));
+    // this.container && (this.controls = new OrbitControls(this.camera, document.body));
     this.controls.enableDamping = true;
     // this.controls.maxDistance = 10; // 设置相机距离原点的最远距离
     // this.controls.maxPolarAngle = 1.55;
