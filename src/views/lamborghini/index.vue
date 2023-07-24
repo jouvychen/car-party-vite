@@ -491,7 +491,7 @@ const onChangeMaterial = () => {
 };
 const r = ref(false);
 const render = () => {
-  mainThree.controls.update();
+  mainThree?.controls?.update();
   TWEEN?.update();
   appStore.debug && stats?.update();
   flag?.flagUpdate();

@@ -30,6 +30,8 @@ THREEx.HtmlMixer.Context	= function(rendererWebgl, scene, camera){
 	//////////////////////////////////////////////////////////////////////////////////
 
 	var rendererCss	= new CSS3DRenderer()
+	// 设置渲染器尺寸
+	// rendererCss.setSize(window.innerWidth, window.innerHeight)
 	this.rendererCss= rendererCss
 
 
