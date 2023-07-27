@@ -50,6 +50,18 @@ export namespace THREEx.HtmlMixer {
     }
   }
 
+  /**
+ * 创建一个 Plane 实例。
+ * @param {THREEx.HtmlMixer.Context} mixerContext - HTML Mixer 的上下文对象。
+ * @param {HTMLElement} domElement - 用于将 HTML 内容渲染到 WebGL 平面的 DOM 元素。
+ * @param {PlaneOptions} [opts={}] - 可选的配置选项对象。
+ *   可选配置选项包括：
+ *   - elementW: 元素宽度 (可选)
+ *   - planeW: 平面宽度 (可选)
+ *   - planeH: 平面高度 (可选)
+ *   - object3d: 用于渲染平面的 Three.js Mesh 对象或 null (可选)
+ * @constructor
+ */
   export class Plane {
     domElement: HTMLElement;
     object3d: THREE.Mesh;
@@ -57,27 +69,27 @@ export namespace THREEx.HtmlMixer {
     elementWidth: number;
     elementHeight: number;
     mixerContext: THREEx.HtmlMixer.Context;
-  
+
     constructor(mixerContext: THREEx.HtmlMixer.Context, domElement: HTMLElement, opts: PlaneOptions = {}) {
       this.mixerContext = mixerContext;
       this.domElement = domElement;
       this.object3d = opts.object3d || this.createObject3D(opts);
-  
+
       const { planeW, planeH } = opts;
       this.elementWidth = opts.elementW || 768;
       this.elementHeight = this.elementWidth * (planeH || 3 / 4);
-  
+
       this.setDomElementSize();
-  
+
       this.cssObject = new CSS3DObject(this.domElement);
       this.cssObject.scale.set(1, 1, 1).multiplyScalar(mixerContext.cssFactor / (this.elementWidth / (planeW || 1)));
       this.cssObject.userData.mixerPlane = this;
-  
+
       this.addEventListeners(mixerContext);
-  
+
       this.update();
     }
-  
+
     createObject3D(opts: PlaneOptions): THREE.Mesh {
       const { planeW = 1, planeH = 3 / 4, object3d = null } = opts;
       if (object3d === null) {
@@ -93,62 +105,62 @@ export namespace THREEx.HtmlMixer {
         return object3d;
       }
     }
-  
+
     setDomElementSize() {
       this.domElement.style.width = this.elementWidth + "px";
       this.domElement.style.height = this.elementHeight + "px";
     }
-  
+
     addEventListeners(mixerContext: THREEx.HtmlMixer.Context) {
       const { object3d, cssObject } = this;
-      object3d.addEventListener('added', function(event) {
+      object3d.addEventListener('added', function (event) {
         mixerContext.cssScene.add(cssObject);
       });
-      object3d.addEventListener('removed', function(event) {
+      object3d.addEventListener('removed', function (event) {
         mixerContext.cssScene.remove(cssObject);
       });
     }
-  
+
     update() {
       const { object3d, cssObject } = this;
-  
+
       // get world position
       object3d.updateMatrixWorld();
       const worldMatrix = object3d.matrixWorld;
-  
+
       // get position/quaternion/scale of object3d
       const position = new THREE.Vector3();
       const scale = new THREE.Vector3();
       const quaternion = new THREE.Quaternion();
       worldMatrix.decompose(position, quaternion, scale);
-  
+
       // handle quaternion
       cssObject.quaternion.copy(quaternion);
-  
+
       // handle position
       cssObject.position
         .copy(position)
         .multiplyScalar(this.mixerContext.cssFactor);
-  
+
       // handle scale
       const boundingBox = new THREE.Box3().setFromObject(object3d);
       const width = boundingBox.max.x - boundingBox.min.x;
       const scaleFactor = this.elementWidth / width;
       cssObject.scale.set(1, 1, 1).multiplyScalar(this.mixerContext.cssFactor / scaleFactor);
     }
-  
+
     setDomElement(newDomElement: HTMLElement) {
       const { domElement, cssObject } = this;
-  
+
       // remove the oldDomElement
       if (domElement.parentNode) {
         domElement.parentNode.removeChild(domElement);
       }
-  
+
       // update local variables
       this.domElement = newDomElement;
       cssObject.element = newDomElement;
-  
+
       // reset the size of the domElement
       this.setDomElementSize();
     }
