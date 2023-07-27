@@ -9,8 +9,7 @@
 <script setup lang="ts" name="textureControl">
 import EventsBus from "@/utils/eventBus";
 import floatWindow from "../float-window/index.vue";
-// import { THREEx } from '@/assets/libs/threex.htmlmixer.js';
-import { THREEx } from '@/assets/libs/htmlmixer';
+import { THREEx } from '@/assets/libs/threex.htmlmixer.js';
 import type { Revolver } from "../revolver/typeStatement";
 
 const props = defineProps({
@@ -85,9 +84,7 @@ function init() {
 	css3dElement.appendChild( webglCanvas )
 
   // create the iframe element
-	// var url		= 'http://threejs.org/';
-	var url		= 'http://127.0.0.1:5173/#/svg-button';
-  
+	var url		= 'http://threejs.org/';
 	var domElement	= document.createElement('iframe')
 	domElement.src	= url
 	domElement.style.border	= 'none'

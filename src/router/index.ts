@@ -27,11 +27,19 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'lamborghini',
         meta: {
           title: 'Lamborghini',
-          keepAlive:  true,
+          keepAlive: true,
         },
         component: () => import(/* webpackChunkName: "about" */ '@/views/lamborghini/index.vue'),
       },
     ],
+  },
+  {
+    path: '/svg-button',
+    name: 'SvgButton',
+    meta: {
+      title: 'svg按钮',
+    },
+    component: () => import(/* webpackChunkName: "about" */ '@/views/iframe-components/index.vue'),
   },
   {
     path: '/:pathMatch(.*)*',
