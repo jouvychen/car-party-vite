@@ -73,11 +73,14 @@ export namespace THREEx.HtmlMixer {
     constructor(mixerContext: THREEx.HtmlMixer.Context, domElement: HTMLElement, opts: PlaneOptions = {}) {
       this.mixerContext = mixerContext;
       this.domElement = domElement;
-      this.object3d = opts.object3d || this.createObject3D(opts);
+      // this.object3d = opts.object3d || this.createObject3D(opts);
+      this.object3d = this.createObject3D(opts);
 
-      const { planeW, planeH } = opts;
-      this.elementWidth = opts.elementW || 768;
-      this.elementHeight = this.elementWidth * (planeH || 3 / 4);
+      const { elementW, planeW, planeH } = opts;
+      // this.elementWidth = opts.elementW || 768;
+      // this.elementHeight = this.elementWidth * (planeH || 3 / 4);
+      this.elementWidth = elementW || 1920;
+      this.elementHeight = (elementW ?? 1920) * ((planeH ?? 9) / (planeW ?? 16));
 
       this.setDomElementSize();
 

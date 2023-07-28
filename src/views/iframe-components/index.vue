@@ -48,6 +48,7 @@ const onHue2 = 168;
 </script>
 
 <style scoped lang="less">
+@main-color: #1b2848;
 @hue: 223;
 @off-hue: 3;
 @on-hue1: 123;
@@ -58,13 +59,14 @@ const onHue2 = 168;
 @trans-timing: cubic-bezier(0.65, 0, 0.35, 1);
 
 .svg-button {
-  font: 1em/1.5 sans-serif;
-  background-image: linear-gradient(45deg, hsl(@hue, 10%, 20%), hsl(@hue, 10%, 10%));
+  // font: 1em/1.5 sans-serif;
+  // background-image: linear-gradient(45deg, hsl(@hue, 10%, 20%), hsl(@hue, 10%, 10%));
+  background: @main-color;
   color: @fg;
   display: flex;
   height: 100vh;
   transition: background-color @trans-dur, color @trans-dur;
-  font-size: calc(40px + (60 - 40) * (100vw - 320px) / (2560 - 320));
+  font-size: 10vw;
 
   .switch,
   .switch__input {
