@@ -7,6 +7,7 @@
   </floatWindow>
 </template>
 <script setup lang="ts" name="textureControl">
+// https://codepen.io/jouvychen/pen/zYMMyKp
 import EventsBus from "@/utils/eventBus";
 import floatWindow from "../float-window/index.vue";
 import * as THREE from "three";
@@ -14,6 +15,7 @@ import * as THREE from "three";
 import { THREEx } from '@/assets/libs/htmlmixer';
 import type { Revolver } from "../revolver/typeStatement";
 import { getWorldPositionByName } from '@/utils/threejsUtils';
+import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
 
 const props = defineProps({
   floatWindow: {
@@ -41,7 +43,7 @@ const inited = ref(false);
 var onRenderFcts: any[] = [];
 var mixerPlane: THREEx.HtmlMixer.Plane;
 var mixerContext: THREEx.HtmlMixer.Context;
-
+let labelRenderer: CSS3DRenderer;
 /**
  * Configurator init function
  */
@@ -49,82 +51,57 @@ var mixerContext: THREEx.HtmlMixer.Context;
 function init() {
   inited.value = true;
 
-  // create THREEx.HtmlMixer
+  labelRenderer = new CSS3DRenderer();
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
+  labelRenderer.domElement.style.position = "absolute";
+  labelRenderer.domElement.style.top = '0';
+  // labelRenderer.domElement.style.width = '100vw'
+  // labelRenderer.domElement.style.height = '100vh'
+  const container = document.getElementById("container") as HTMLDivElement;
+  container.appendChild(labelRenderer.domElement);
 
-  mixerContext = new THREEx.HtmlMixer.Context(threejsModule.renderer, threejsModule.scene, threejsModule.camera)
-  // 设置渲染器尺寸
-  mixerContext.rendererCss.setSize(window.innerWidth, window.innerHeight)
-
-  // handle window resize for mixerContext
-  window.addEventListener('resize', function () {
-    mixerContext.rendererCss.setSize(window.innerWidth, window.innerHeight)
-  }, false)
-
-  // mixerContext configuration and dom attachement
-
-  // set up rendererCss
-  var rendererCss = mixerContext.rendererCss
-  // set up rendererWebgl
-  var rendererWebgl = mixerContext.rendererWebgl
-
-  var css3dElement = rendererCss.domElement
-  css3dElement.style.position = 'absolute'
-  css3dElement.style.top = '0px'
-  css3dElement.style.width = '100vw'
-  css3dElement.style.height = '100vh'
-  // css3dElement.style.background = 'none'
-  const container = document.getElementById('container') as HTMLDivElement;
-  container.appendChild(css3dElement);
-
+  var css3dElement = labelRenderer.domElement
   threejsModule.controls.domElement = css3dElement;
   threejsModule.controls.update();
 
-  var webglCanvas = rendererWebgl.domElement
-  webglCanvas.style.position = 'absolute'
-  webglCanvas.style.top = '0px'
-  webglCanvas.style.width = '100vw'
-  webglCanvas.style.height = '100vh'
-  webglCanvas.style.pointerEvents = 'none'
-  // webglCanvas.style.background = 'none'
-  css3dElement.appendChild(webglCanvas)
-
   // create the iframe element
   // var url		= 'http://threejs.org/';
-  var url = 'http://127.0.0.1:5173/#/svg-button';
+  // var url = 'http://127.0.0.1:5173/#/svg-button';
 
-  var domElement = document.createElement('iframe')
-  domElement.src = url
-  domElement.style.border = 'none'
+  // var domElement = document.createElement('iframe')
+  // domElement.src = url
+  // domElement.style.border = 'none'
+  // // 解决追加到其他容器时出现左边距空白
+  // domElement.style.left = '0'
+
+  // let domEle = document.createElement("div");
+  // domEle.innerHTML = "<div class='domBox'><iframe src='https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene'></iframe></div>"
+  var url = 'http://threejs.org/';
+
+  var domEle = document.createElement('iframe')
+  domEle.src = url
+  domEle.style.width = '1366px'
+  domEle.style.height = '619px'
+  domEle.style.border = 'none'
   // 解决追加到其他容器时出现左边距空白
-  domElement.style.left = '0'
-  webglCanvas.style.background = '#ff000000'
+  domEle.style.left = '0'
+  /**
+   * 将创建的Dom元素用过CSS3DObject包装成3D对象
+   * @type {CSS3DObject}
+   */
+  let domEleObj = new CSS3DObject(domEle);
+  domEleObj.position.set(5, 5, -5);
+  domEleObj.scale.multiplyScalar(0.001)
+  domEleObj.rotateY(-Math.PI * 0.5)
+  threejsModule.scene.add(domEleObj);
 
-
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(10, 6), new THREE.MeshBasicMaterial({
-    opacity: 0,
-    color: new THREE.Color('black'),
-    blending: THREE.NoBlending,
-    side: THREE.DoubleSide,
-    transparent: true
-  }))
-  const plane = {
-    elementW: 1920, // 需和定义的dom大小一样
-    planeW: 10,
-    planeH: 8,
-    object3d: mesh,
-  }
-  mesh.rotation.y = 30;
-  // create the plane
-  var mixerPlane = new THREEx.HtmlMixer.Plane(mixerContext, domElement)
-  // mixerPlane.object3d.scale.set(0.14, 0.24, 0.1)
-  // const p = getWorldPositionByName('控制页面挂点');
-  const p = getWorldPositionByName('音乐挂点');
+  // const p = getWorldPositionByName('音乐挂点');
   // mixerPlane.object3d.position.set(p.x, p.y - 0.6, p.z);
-  
-  mixerPlane.object3d.rotateY(-Math.PI * 0.5)
+
+  // mixerPlane.object3d.rotateY(-Math.PI * 0.5)
   // mixerPlane.object3d.translateX(-10)
   // new THREE.Mesh().translateX
-  boothModel.boothModel.getObjectByName('音乐挂点')?.attach(mixerPlane.object3d);
+  // boothModel.boothModel.getObjectByName('音乐挂点')?.attach(mixerPlane.object3d);
   // boothModel.boothModel.getObjectByName('音乐挂点')?.rotateX(Math.PI * 0.1)
 
 
@@ -135,7 +112,8 @@ function init() {
 requestAnimationFrame(function animate(nowMsec) {
   // keep looping
   requestAnimationFrame(animate);
-  mixerContext?.update()
+  // mixerContext?.update()
+  labelRenderer?.render(threejsModule.scene, threejsModule.camera);
 })
 
 EventsBus.on("onBusRevolver", (value) => {
