@@ -42,6 +42,14 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "about" */ '@/views/iframe-components/index.vue'),
   },
   {
+    path: '/author-introduction',
+    name: 'AuthorIntroduction',
+    meta: {
+      title: '作者介绍',
+    },
+    component: () => import(/* webpackChunkName: "about" */ '@/views/iframe-components/author-introduction.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'notFound',
     component: notFound, // 引入 组件

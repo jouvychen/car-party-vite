@@ -95,6 +95,24 @@ function init() {
   domEleObj.rotateY(-Math.PI * 0.5)
   threejsModule.scene.add(domEleObj);
 
+  // 第2个挂点
+  var url2 = 'http://127.0.0.1:5173/#/author-introduction';
+  var domEle2 = document.createElement('iframe')
+  domEle2.id = 'iframe2'
+  domEle2.src = url2
+  domEle2.style.width = '1366px'
+  domEle2.style.height = '619px'
+  domEle2.style.border = 'none'
+  // domEle2.style.backgroundColor = 'transparent'; // 设置背景透明
+  // 解决追加到其他容器时出现左边距空白
+  domEle2.style.left = '0'
+  let domEleObj2 = new CSS3DObject(domEle2);
+  const p2 = getWorldPositionByName('作者面板');
+  domEleObj2.position.set(p2.x, p2.y, p2.z);
+  domEleObj2.scale.multiplyScalar(0.0025)
+  domEleObj2.rotateY(-Math.PI * 0.5)
+  threejsModule.scene.add(domEleObj2);
+
   // const p = getWorldPositionByName('音乐挂点');
   // mixerPlane.object3d.position.set(p.x, p.y - 0.6, p.z);
 

@@ -44,6 +44,7 @@ export const getImageUrl = (name: string) => {
   return new URL(`../../assets/images/home/${name}`, import.meta.url).href;
 };
 
+// 相对于本文件和静态资源的路径
 export const getAssetsUrlRelative = (prefix: string, name: string) => {
   return new URL(`${prefix}${name}`, import.meta.url).href;
 };
