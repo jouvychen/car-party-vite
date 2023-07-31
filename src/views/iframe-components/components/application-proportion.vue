@@ -64,14 +64,7 @@
 </script>
 
 <style scoped lang="less">
-@bg-color: #252954;
-@body-color: #9b9ca7;
-@main-bg: #0e0e23;
-@app-bg-dark: #01081f;
-@secondary-color: #5e6a81;
-@blue-text: #adb7cb;
-
-// 项目技术栈占比
+// 项目类型占比
 .application-proportion {
   display: flex;
 
@@ -81,7 +74,7 @@
     .chart-container-align {
       width: 100%;
       border-radius: 10px;
-      background-color: @app-bg-dark;
+      background-color: @intro-app-bg-dark;
       padding: 16px;
       display: flex;
       justify-content: space-between;
@@ -94,7 +87,7 @@
     flex-basis: 120px;
 
     h2 {
-      color: @blue-text;
+      color: @intro-blue-text;
       font-size: 14px;
       line-height: 16px;
       font-weight: 600;

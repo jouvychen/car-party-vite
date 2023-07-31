@@ -101,7 +101,7 @@ function init() {
   domEle2.id = 'iframe2'
   domEle2.src = url2
   domEle2.style.width = '1366px'
-  domEle2.style.height = '619px'
+  domEle2.style.height = '700px'
   domEle2.style.border = 'none'
   // domEle2.style.backgroundColor = 'transparent'; // 设置背景透明
   // 解决追加到其他容器时出现左边距空白
@@ -109,7 +109,7 @@ function init() {
   let domEleObj2 = new CSS3DObject(domEle2);
   const p2 = getWorldPositionByName('作者面板');
   domEleObj2.position.set(p2.x, p2.y, p2.z);
-  domEleObj2.scale.multiplyScalar(0.0025)
+  domEleObj2.scale.multiplyScalar(0.0026)
   domEleObj2.rotateY(-Math.PI * 0.5)
   threejsModule.scene.add(domEleObj2);
 
