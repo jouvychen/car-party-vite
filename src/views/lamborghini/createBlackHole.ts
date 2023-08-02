@@ -79,7 +79,7 @@ export const createShaderMat = () => {
       const float NB_ARMS = 5.;       // number of arms
       //const float ARM = 3.;         // contrast in/out arms
       const float COMPR = .1;         // compression in arms
-      const float SPEED = 10.0;
+      const float SPEED = .1;
       const float GALAXY_R = 1./2.;
       const float BULB_R = 1./2.5;
       const vec3 GALAXY_COL = vec3(.9,.9,1.); //(1.,.8,.5);

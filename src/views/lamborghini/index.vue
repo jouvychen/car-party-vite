@@ -153,13 +153,13 @@ let tuniform = {
   iChannel1: {
     type: 't',
     value: new THREE.TextureLoader().load(
-      '/textures/iChannel1.png',
+      '/textures/iChannel1.jpg',
     ),
   },
   iChannel2: {
     type: 't',
     value: new THREE.TextureLoader().load(
-      '/textures/16pic_8211096_s.png',
+      '/textures/iChannel2.png',
     ),
   },
 };
@@ -333,7 +333,7 @@ const init = async () => {
   flag.initFlag();
 
   // 测试
-  const mg = new THREE.PlaneGeometry(18, 9);
+  const mg = new THREE.PlaneGeometry(16, 9);
   // 顶点着色器
   const vertexShader = `
     varying vec2 vUv;
@@ -363,7 +363,7 @@ const init = async () => {
       const float NB_ARMS = 5.;       // number of arms
       //const float ARM = 3.;         // contrast in/out arms
       const float COMPR = .1;         // compression in arms
-      const float SPEED = 10.0;
+      const float SPEED = .1;
       const float GALAXY_R = 1./2.;
       const float BULB_R = 1./2.5;
       const vec3 GALAXY_COL = vec3(.9,.9,1.); //(1.,.8,.5);
@@ -415,14 +415,15 @@ const init = async () => {
           return v/2.;
       }
 
-      bool keyToggle(int ascii) 
-      {
-        return (texture(iChannel2,vec2((.5+float(ascii))/256.,0.75)).x > 0.);
-      }
+      // bool keyToggle(int ascii) 
+      // {
+      //   return (texture(iChannel2,vec2((.5+float(ascii))/256.,0.75)).x > 0.);
+      // }
 
       void mainImage( out vec4 fragColor, in vec2 fragCoord )
       {
         vec2 uv = fragCoord.xy/iResolution.y-vec2(.8,.5);
+        // vec2 uv = vUv;
         vec3 col;
         
         // spiral stretching with distance
@@ -463,10 +464,10 @@ const init = async () => {
         //stars = pow(stars,5.);
         
         // keybord controls (numbers)
-        if (keyToggle(49)) gaz_trsp = 1./1.7;
-        if (keyToggle(50)) stars = 0.;
-        if (keyToggle(51)) bulb = 0.;
-        if (keyToggle(52)) dens = .3*spires;
+        // if (keyToggle(49)) gaz_trsp = 1./1.7;
+        // if (keyToggle(50)) stars = 0.;
+        // if (keyToggle(51)) bulb = 0.;
+        // if (keyToggle(52)) dens = .3*spires;
         
         // mix all	
         col = mix(SKY_COL,
@@ -484,6 +485,8 @@ const init = async () => {
       
       void main( void ) {
           mainImage(gl_FragColor, vUv * iResolution.xy);
+          // vec4 texColor = texture(iChannel2, vUv);
+          // gl_FragColor = texColor;
       }
   `;
 
@@ -500,6 +503,7 @@ const init = async () => {
   });
   // let mt = createShaderMat();
   const mesh = new THREE.Mesh(mg, mt);
+  mesh.scale.multiplyScalar(0.5);
   mainThree?.scene.add(mesh)
   // 测试
 
@@ -705,7 +709,10 @@ const render = () => {
   flag?.flagUpdate();
   htmlNodes?.update();
 
-  tuniform.iTime.value += clock.getElapsedTime();
+  tuniform.iTime.value += clock.getDelta();
+
+  // console.log('tuniform.iTime.value', tuniform.iTime.value);
+  
 
   appStore.mode === "night" && updateSpotLight();
 
