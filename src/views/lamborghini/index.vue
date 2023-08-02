@@ -3,24 +3,13 @@
     <div v-show="loadManager.showMask" class="loading">
       <three-js-font-svg @onSvgComplete="onSvgComplete"></three-js-font-svg>
 
-      <a-progress
-        v-if="svgCompleted && loadManager.schedule !== 100"
-        :stroke-color="{
-          from: '#108ee9',
-          to: '#87d068',
-        }"
-        style="position: absolute"
-        :trailColor="'#9e9e9e1c'"
-        :strokeWidth="5"
-        :percent="loadManager.schedule"
-        :showInfo="false"
-      />
+      <a-progress v-if="svgCompleted && loadManager.schedule !== 100" :stroke-color="{
+        from: '#108ee9',
+        to: '#87d068',
+      }" style="position: absolute" :trailColor="'#9e9e9e1c'" :strokeWidth="5" :percent="loadManager.schedule"
+        :showInfo="false" />
 
-      <div
-        v-if="loadManager.schedule === 100"
-        @click="onPlay"
-        class="neon-button"
-      >
+      <div v-if="loadManager.schedule === 100" @click="onPlay" class="neon-button">
         <a @click="onPlay">
           <span></span>
           <span></span>
@@ -35,31 +24,17 @@
 
     <template v-for="o in revolverList" :key="o.uuid">
       <!-- 中心控制面板 -->
-      <center-control
-        v-if="o.name === '中心控制'"
-        :float-window="o"
-      >
+      <center-control v-if="o.name === '中心控制'" :float-window="o">
       </center-control>
       <!-- 颜色控制面板 -->
-      <color-control
-        v-if="o.name === '颜色'"
-        :float-window="o"
-      ></color-control>
+      <color-control v-if="o.name === '颜色'" :float-window="o"></color-control>
 
       <!-- 贴图面板 -->
-      <texture-control
-        v-if="o.name === '贴图'"
-        :float-window="o"
-      ></texture-control>
+      <texture-control v-if="o.name === '贴图'" :float-window="o"></texture-control>
 
       <!-- 动画控制面板 -->
-      <animation-control
-        v-if="o.name === '动画'"
-        :float-window="o"
-        :boothModel="boothModel"
-        :carModel="carModel"
-        :hdrTexture="hdrTexture"
-      >
+      <animation-control v-if="o.name === '动画'" :float-window="o" :boothModel="boothModel" :carModel="carModel"
+        :hdrTexture="hdrTexture">
       </animation-control>
 
       <!-- 性能指标面板 -->
@@ -137,6 +112,7 @@ import { revolverList } from "./constan";
 // 测试
 // 着色器材质
 // import { tuniform, createShaderMat } from './createBlackHole';
+const avatar = getAssetsUrlRelative('../assets/images/iframe-page/about-me/', 'avatar.jpg');
 // 加载纹理
 let iChannelResolution = {
   width: 0,
@@ -149,6 +125,8 @@ const texture = new THREE.TextureLoader().load('/textures/iChannel0.png', () => 
   iChannelResolution.width = texture.image.width;
   iChannelResolution.height = texture.image.height;
 });
+const myImageTexture = new THREE.TextureLoader().load(avatar);
+myImageTexture.repeat.set(0.5, 0.5); // 将纹理尺寸缩小为原来的一半
 let tuniform = {
   iTime: {
     value: 0.0,
@@ -174,10 +152,15 @@ let tuniform = {
       '/textures/iChannel2.png',
     ),
   },
+  avatariIChannel: {
+    type: 't',
+    value: myImageTexture,
+  },
 };
 tuniform.iChannel0.value.wrapS = tuniform.iChannel0.value.wrapT = THREE.RepeatWrapping;
 tuniform.iChannel1.value.wrapS = tuniform.iChannel1.value.wrapT = THREE.RepeatWrapping;
 tuniform.iChannel2.value.wrapS = tuniform.iChannel2.value.wrapT = THREE.RepeatWrapping;
+myImageTexture.repeat.set(1, 1)
 // 测试
 
 // 组件导入
@@ -252,15 +235,14 @@ for (let i = 0, l = revolverList.length; i < l; i++) {
   revolverList[i].unfoldClass.top = `${30 * i}px`;
   // revolverList[i].name = i.toString();
   // revolverList[i].name = i.toString();
-  revolverList[i].unfoldClass.right = `${
-    window.innerWidth -
+  revolverList[i].unfoldClass.right = `${window.innerWidth -
     Number(
       revolverList[i].unfoldClass.width.slice(
         0,
         revolverList[i].unfoldClass.width.length - 2
       )
     )
-  }px`;
+    }px`;
 }
 uuid();
 
@@ -361,6 +343,7 @@ const init = async () => {
       uniform sampler2D iChannel0;
       uniform sampler2D iChannel1;
       uniform sampler2D iChannel2;
+      uniform sampler2D avatariIChannel;
       varying vec2 vUv;
 
       const float RETICULATION = 1.;  // 粉尘质地强度
@@ -434,7 +417,7 @@ const init = async () => {
         // 螺旋形随距离拉伸
         float rho = length(uv); // 极坐标
         float ang = atan(uv.y,uv.x);
-        float shear = 2.*log(rho); // logarythmic螺旋
+        float shear = 2.*log(rho); // 螺旋层数/圈数
         float c = cos(shear), s=sin(shear);
         mat2 R = mat2(c,-s,s,c);
 
@@ -449,7 +432,7 @@ const init = async () => {
         uv = rho*vec2(cos(ang),sin(ang));
         // 拉伸后的纹理必须变暗 d(new_ang)/d(ang)
         float spires = 1.+NB_ARMS*COMPR*sin(phase);
-        dens *= .7*spires;	
+        dens *= .7*spires;
         
         // gaz texture
         float gaz = noise(.09*1.2*R*uv);
@@ -477,6 +460,14 @@ const init = async () => {
 
         col = mix(col, 1.2*BULB_BLACK_COL, 2.0*bulb_black);
 
+        // 头像
+        // 步骤4：采样新的纹理并放置在屏幕中心
+        vec2 myImageUV = vUv - vec2(0.5);
+        // vec2 myImageUV = vUv * iResolution.xy - vec2(0.5);
+        vec3 myImageColor = texture(avatariIChannel, myImageUV).rgb;
+
+        // 将新的纹理颜色与之前的效果进行混合
+        col = mix(col, myImageColor, 0.5);
           
         fragColor = vec4(col,1.);
       }
@@ -495,15 +486,19 @@ const init = async () => {
     uniforms: tuniform,
     transparent: true,
     depthWrite: false,
-    depthTest: false,
-    side: THREE.DoubleSide,
+    depthTest: true,
+    // side: THREE.DoubleSide,
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
   });
-  // let mt = createShaderMat();
-  const mesh = new THREE.Mesh(mg, mt);
-  mesh.scale.multiplyScalar(0.5);
-  mainThree?.scene.add(mesh)
+  // // let mt = createShaderMat();
+  // const mesh = new THREE.Mesh(mg, mt);
+  // mesh.scale.multiplyScalar(0.5);
+  // mainThree?.scene.add(mesh)
+
+  // 黑洞变形和mesh宽高有关
+  let mes = threejsModule.scene.getObjectByName('作者面板') as THREE.Mesh;
+  mes.material = mt;
   // 测试
 
   // const textureLoader = new THREE.TextureLoader();
@@ -711,7 +706,7 @@ const render = () => {
   tuniform.iTime.value += clock.getDelta();
 
   // console.log('tuniform.iTime.value', tuniform.iTime.value);
-  
+
 
   appStore.mode === "night" && updateSpotLight();
 
@@ -790,19 +785,23 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   background: #444444;
+
   :deep(.ant-progress-outer) {
     width: 250px !important;
   }
 }
+
 .car-booth {
   :deep(.left-container) {
     min-width: 300px;
     padding: 24px 18px;
   }
+
   body {
     color: #bbbbbb;
     background: #333333;
   }
+
   a {
     color: #08f;
   }
@@ -811,13 +810,16 @@ onMounted(() => {
     position: absolute;
     z-index: 1;
   }
+
   .colorPicker {
     display: inline-block;
     margin: 0 10px;
   }
+
   .mt6 {
     margin-top: 6px;
   }
+
   // 性能容器
   :deep(#stats) {
     position: relative !important;
@@ -902,6 +904,7 @@ onMounted(() => {
     0% {
       left: -100%;
     }
+
     50%,
     100% {
       left: 100%;
@@ -912,6 +915,7 @@ onMounted(() => {
     0% {
       top: -100%;
     }
+
     50%,
     100% {
       top: 100%;
@@ -922,6 +926,7 @@ onMounted(() => {
     0% {
       right: -100%;
     }
+
     50%,
     100% {
       right: 100%;
@@ -932,6 +937,7 @@ onMounted(() => {
     0% {
       bottom: -100%;
     }
+
     50%,
     100% {
       bottom: 100%;

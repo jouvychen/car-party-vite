@@ -18,7 +18,7 @@ const hotPoints = ref<HotPoint[]>([
     show: true,
     type: 'add',
     name: '查看介绍',
-    meshName: '视频面版',
+    meshName: '视频面板',
     controlPName: 'p-宣传',
     event: 'CameraAnimation',
   },
