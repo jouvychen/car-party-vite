@@ -137,6 +137,18 @@ import { revolverList } from "./constan";
 // 测试
 // 着色器材质
 // import { tuniform, createShaderMat } from './createBlackHole';
+// 加载纹理
+let iChannelResolution = {
+  width: 0,
+  height: 0,
+  x: 0,
+  y: 0,
+}
+const texture = new THREE.TextureLoader().load('/textures/iChannel0.png', () => {
+  // 纹理加载完成后，获取纹理的宽度和高度
+  iChannelResolution.width = texture.image.width;
+  iChannelResolution.height = texture.image.height;
+});
 let tuniform = {
   iTime: {
     value: 0.0,
@@ -344,132 +356,120 @@ const init = async () => {
   `;
   // 片元着色器
   const fragmentShader = `
-      // #include <common>
-      // #include <uv_pars_vertex>
-      // #include <uv2_pars_vertex>
       uniform vec3 iResolution;
       uniform float iTime;
       uniform sampler2D iChannel0;
       uniform sampler2D iChannel1;
       uniform sampler2D iChannel2;
       varying vec2 vUv;
-      // uniform vec2 iMouse;
-      // 以上是旧的
 
-      //Changed Galaxy3 by  FabriceNeyret2
-      //---  Galaxy --- Fabrice NEYRET  august 2013
-
-      const float RETICULATION = 3.;  // strenght of dust texture
-      const float NB_ARMS = 5.;       // number of arms
-      //const float ARM = 3.;         // contrast in/out arms
-      const float COMPR = .1;         // compression in arms
+      const float RETICULATION = 1.;  // 粉尘质地强度
+      const float NB_ARMS = 5.;       // 星臂数
+      const float COMPR = .1;         // 星臂内压缩程度
       const float SPEED = .1;
-      const float GALAXY_R = 1./2.;
-      const float BULB_R = 1./2.5;
+      const float GALAXY_R = 1./2.; // 星系磁盘样的半径
+      const float BULB_R = 1./2.8; // 星系黑洞的半径
       const vec3 GALAXY_COL = vec3(.9,.9,1.); //(1.,.8,.5);
       const vec3 BULB_COL   = vec3(1.,1.0,1.0);
-      const float BULB_BLACK_R = 1./4.;
+      const float BULB_BLACK_R = 1./4.; // 星系黑洞的另一个形状的半径
       const vec3 BULB_BLACK_COL   = vec3(0,0,0);
       const vec3 SKY_COL    = .5*vec3(.1,.3,.5);
-          
+      
+      // 宏定义
       #define Pi 3.1415927
+      #define t iTime
 
-      // --- base noise
+      // 基础噪音
       float tex(vec2 uv) 
       {
-        float n = texture(iChannel0,vUv).r;
+        float n = texture(iChannel0,uv).r;
         
-      #define MODE 3  // kind of noise texture
-      #if MODE==0         // unsigned
-        #define A 2.
-        return n;
-      #elif MODE==1       // signed
-        #define A 3.
-        return 2.*n-1.;
-      #elif MODE==2       // bulbs
-        #define A 3.
-        return abs(2.*n-1.);
-      #elif MODE==3       // wires
-        #define A 1.5
-        return 1.-abs(2.*n-1.);
-      #endif
+        #define MODE 3  // 噪音类型
+        #if MODE==0         // unsigned
+          #define A 2.
+          return n;
+        #elif MODE==1       // signed
+          #define A 3.
+          return 2.*n-1.;
+        #elif MODE==2       // bulbs
+          #define A 3.
+          return abs(2.*n-1.);
+        #elif MODE==3       // wires
+          #define A 1.5
+          return 1.-abs(2.*n-1.);
+        #endif
       }
 
 
-      // --- perlin turbulent noise + rotation
+      // 柏林湍流噪声+旋转
       float noise(vec2 uv)
       {
         float v=0.;
-        float a=-SPEED*iTime,	co=cos(a),si=sin(a); 
+        float a=-SPEED*t,	co=cos(a),si=sin(a); 
         mat2 M = mat2(co,-si,si,co);
         const int L = 7;
         float s=1.;
         for (int i=0; i<L; i++)
         {
-          uv = M*vUv;
+          uv = M*uv;
           float b = tex(uv*s);
           v += 1./s* pow(b,RETICULATION); 
           s *= 2.;
         }
         
-          return v/2.;
+        return v/2.;
       }
 
-      // bool keyToggle(int ascii) 
-      // {
-      //   return (texture(iChannel2,vec2((.5+float(ascii))/256.,0.75)).x > 0.);
-      // }
+      bool keyToggle(int ascii) 
+      {
+        return (texture(iChannel2,vec2((.5+float(ascii))/256.,0.75)).x > 0.);
+      }
 
       void mainImage( out vec4 fragColor, in vec2 fragCoord )
       {
-        vec2 uv = fragCoord.xy/iResolution.y-vec2(.8,.5);
-        // vec2 uv = vUv;
+        // 采样中心
+        vec2 uv = fragCoord.xy/iResolution.y-vec2(1.,.5);
         vec3 col;
         
-        // spiral stretching with distance
-        float rho = length(uv); // polar coords
+        // 螺旋形随距离拉伸
+        float rho = length(uv); // 极坐标
         float ang = atan(uv.y,uv.x);
-        float shear = 2.*log(rho); // logarythmic spiral
+        float shear = 2.*log(rho); // logarythmic螺旋
         float c = cos(shear), s=sin(shear);
         mat2 R = mat2(c,-s,s,c);
 
-        // galaxy profile
-        float r; // disk
+        // 星系概要
+        float r; // 星系磁盘样
         r = rho/GALAXY_R; float dens = exp(-r*r);
         r = rho/BULB_R;	  float bulb = exp(-r*r);
         r = rho/BULB_BLACK_R; float bulb_black = exp(-r*r);
         float phase = NB_ARMS*(ang-shear);
         // arms = spirals compression
-        ang = ang-COMPR*cos(phase)+SPEED*iTime;
+        ang = ang-COMPR*cos(phase)+SPEED*t;
         uv = rho*vec2(cos(ang),sin(ang));
-        // stretched texture must be darken by d(new_ang)/d(ang)
+        // 拉伸后的纹理必须变暗 d(new_ang)/d(ang)
         float spires = 1.+NB_ARMS*COMPR*sin(phase);
-        // pires = mix(1.,sin(phase),ARM);
         dens *= .7*spires;	
         
         // gaz texture
-        float gaz = noise(.09*1.2*R*vUv);
+        float gaz = noise(.09*1.2*R*uv);
         float gaz_trsp = pow((1.-gaz*dens),2.);
 
         // stars
-        //float a=SPEED*iTime, co=cos(a),si=sin(a); 
-        //mat2 M = mat2(co,-si,si,co);
-        // adapt stars size to display resolution
-        // float ratio = .8*iResolution.y/iChannelResolution[0].y;
-        float ratio = 1.0;
+        // 屏幕高度与第一个纹理高度之间的比例值，用于调整纹理采样的位置
+        // iChannelResolution是一个uniform数组，表示各个纹理（iChannel0、iChannel1等）的分辨率
+        float ratio = .8*iResolution.y/${iChannelResolution.height.toFixed(1)};
         float stars1 = texture(iChannel1,ratio*uv+.5).r, // M*uv
               stars2 = texture(iChannel0,ratio*uv+.5).r,
             stars = pow(1.-(1.-stars1)*(1.-stars2),5.);
         
-        //stars = pow(stars,5.);
+        // 键盘控制效果交互
+        if (keyToggle(49)) gaz_trsp = 1./1.7;
+        if (keyToggle(50)) stars = 0.;
+        if (keyToggle(51)) bulb = 0.;
+        if (keyToggle(52)) dens = .3*spires;
         
-        // keybord controls (numbers)
-        // if (keyToggle(49)) gaz_trsp = 1./1.7;
-        // if (keyToggle(50)) stars = 0.;
-        // if (keyToggle(51)) bulb = 0.;
-        // if (keyToggle(52)) dens = .3*spires;
-        
-        // mix all	
+        // 混合所有效果	
         col = mix(SKY_COL,
               gaz_trsp*(1.7*GALAXY_COL) + 1.2*stars, 
               dens);
@@ -480,11 +480,10 @@ const init = async () => {
           
         fragColor = vec4(col,1.);
       }
-
-      // 一直替换到这
       
       void main( void ) {
           mainImage(gl_FragColor, vUv * iResolution.xy);
+          // 直接将加载成功的贴图以图片纹理展示
           // vec4 texColor = texture(iChannel2, vUv);
           // gl_FragColor = texColor;
       }

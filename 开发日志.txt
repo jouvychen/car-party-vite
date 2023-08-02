@@ -163,3 +163,23 @@ async 函数返回一个 Promise 对象。
 黑夜处理时如果帧率太低可考虑暂停一些特效
 
 光晕节点出现黑暗背景(大小和光晕贴图一样)是因为后处理在材质替换时用的黑色材质导致的，替换时换成透明材质就好了
+
+shadertoy的一些知识：
+1、iChannelResolution是一个uniform数组，表示各个纹理（iChannel0、iChannel1等）的分辨率，如在shadertoy中
+iChannelResolution[0].y就是指iChannel0纹理的纵坐标，而获取纹理纵坐标可以从材质加载回调里获取。
+例子：
+let iChannelResolution = {
+  width: 0,
+  height: 0,
+  x: 0,
+  y: 0,
+}
+const texture = new THREE.TextureLoader().load('/textures/iChannel0.png', () => {
+  // 纹理加载完成后，获取纹理的宽度和高度
+  iChannelResolution.width = texture.image.width;
+  iChannelResolution.height = texture.image.height;
+});
+2、shadertoy上的纹理下载下来，要是正方形的，操作步骤如下：
+sahdertoy页面找到对应的iChannel，单击会展示所有纹理，找到对应纹理，鼠标悬浮到正方形图片上，
+右键将图片另存为。记住不能直接在长方形的4个纹理输入框里直接右键另存为，因为这时候是个canvas，
+且存下来的是个长方形，不是正方形，对纹理采样有影响可能会导致最终结果不同。
