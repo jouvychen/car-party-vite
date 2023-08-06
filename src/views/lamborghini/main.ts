@@ -13,6 +13,7 @@ let scback = {
   bloomOff: new THREE.Color(0x333333) // or define something else, a cubetexture, for example.
 }
 interface LoadManager {
+  firstLoaded: boolean,
   name: string,
   schedule: number,
   success: boolean,
@@ -40,6 +41,7 @@ export class MainThreeSetup {
       detail: { progress: this.loadManager }, // 初始值为空
     });
     this.loadManager = {
+      firstLoaded: false,
       name: '',
       schedule: 0,
       success: false,
@@ -201,21 +203,25 @@ export class MainThreeSetup {
 
   // 进度管理
   loadProgress() {
-    THREE.DefaultLoadingManager.onProgress = async (url, loaded, total) => {
-      console.log("total", total);
-      // console.log('进度', Math.floor((loaded / loadManager.value.total) * 100));
-      let loadingType = url.split(".");
-      this.loadManager.name = loadingType[loadingType.length - 1];
-      if (Math.floor((loaded / this.loadManager.total) * 100) === 100) {
-        this.loadManager.schedule = 100;
-      } else {
-        // 这里不用回调里的total是因为模型压缩成bin后再解压后资源数量会变化
+    const manager = THREE.DefaultLoadingManager;
+    manager.onLoad = () => {
+      // 模型压缩成bin后需要再解压，资源数量会变化，触发二次加载
+      if (!this.loadManager.firstLoaded) {
+        this.loadManager.firstLoaded = true;
+        return;
+      }
+      this.loadManager.schedule = 100;
+      this.updateProgress();
+    }
+
+    manager.onProgress = async (url, loaded, total) => {
+      if (Math.floor((loaded / total) * 100) != 100) {
         this.loadManager.schedule = Math.floor(
           (loaded / this.loadManager.total) * 100
         );
       }
       this.updateProgress();
-    };
+    }
   }
   calcBoundingBox() {
     if (this.carModel) {
