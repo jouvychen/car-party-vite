@@ -328,12 +328,8 @@ const init = async () => {
   flag = new CreateFlag(mainThree.scene, mainThree.camera, mainThree.renderer);
   flag.initFlag();
 
-  // 测试
-  // const mg = new THREE.PlaneGeometry(16, 9);
-  // const mesh = new THREE.Mesh(mg, new THREE.MeshBasicMaterial());
-  // mesh.rotateY(Math.PI * 0.5)
   let mes = threejsModule.scene.getObjectByName('作者面板') as THREE.Mesh;
-  const {width, height} = calculateBoundingBox(mes);
+  const {width, height} = calculateBoundingBox(mes, true);
   // 顶点着色器
   const vertexShader = `
     varying vec2 vUv;
@@ -502,17 +498,7 @@ const init = async () => {
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
   });
-  
-  // mesh.position.set(0, 6, 0);
-  // mesh.scale.multiplyScalar(0.5);
-  // mainThree?.scene.add(mesh)
-
-  // 黑洞变形和mesh宽高有关
-  // let mes = threejsModule.scene.getObjectByName('作者面板') as THREE.Mesh;
-  // const {width, height} = calculateBoundingBox(mes);
-  // debugger
   mes.material = mt;
-  // 测试
 
   // const textureLoader = new THREE.TextureLoader();
   // const rgbeLoader = new RGBELoader().setPath("/textures/equirectangular/");

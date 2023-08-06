@@ -69,24 +69,55 @@ const onResetCamera = (entranceAnimations = new EntranceAnimations(), time?: num
 };
 
 /**
- * 计算不规则 Mesh 的长方形包围盒的宽度和高度。
+ * 计算 Mesh 包围盒的宽度和高度，适用于不规则和经过变换后的mesh。
  * @param {THREE.Mesh} mesh - 包含顶点数组的 Mesh 对象。
+ * @param {boolean} [visible=false] - 包围盒是否可见，默认为false
  * @returns {{ width: number; height: number }} 返回包围盒的宽度和高度。
  * @throws {Error} 如果顶点数组为空，则抛出错误。
  */
-function calculateBoundingBox(mesh: THREE.Mesh): { width: number; height: number } {
-  // // 使用 Mesh 的 getBoundingBox() 方法获取包围盒
-  const boundingBox = new THREE.Box3().setFromObject(mesh);
+function calculateBoundingBox(mesh: THREE.Mesh, visible = false): { width: number; height: number } {
 
-  // 获取包围盒的最小和最大点的坐标
-  const min = boundingBox.min;
-  const max = boundingBox.max;
+  const geometry = mesh.geometry;
 
-  // 计算包围盒的宽度和高度
-  const width = max.z - min.z;
-  const height = max.y - min.y;
+  if (geometry instanceof THREE.BufferGeometry) {
+    // 获取 Geometry 的顶点数据
+    const positionAttribute = geometry.attributes.position as THREE.BufferAttribute;
+    const positions = positionAttribute.array;
 
-  return { width, height };
+    // 创建新的 BufferAttribute 用于存放经过变换后的顶点数据
+    const transformedPositions = new Float32Array(positions.length);
+
+    // 获取 Mesh 的世界矩阵
+    const worldMatrix = mesh.matrixWorld;
+
+    // 应用世界矩阵到顶点数据上
+    for (let i = 0; i < positions.length; i += 3) {
+      const vertex = new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2]);
+      vertex.applyMatrix4(worldMatrix);
+      transformedPositions[i] = vertex.x;
+      transformedPositions[i + 1] = vertex.y;
+      transformedPositions[i + 2] = vertex.z;
+    }
+
+    // 创建包围盒
+    const boundingBox = new THREE.Box3().setFromArray(transformedPositions);
+    // 获取包围盒的最小和最大点的坐标
+    const min = boundingBox.min;
+    const max = boundingBox.max;
+
+    // 计算包围盒的宽度和高度
+    const width = max.x === min.x ? max.z - min.z : max.x - min.x; // 修复建模时mesh计算宽度问题
+    const height = max.y - min.y;
+
+    // 可视化包围盒
+    const boxHelper = new THREE.Box3Helper(boundingBox, new THREE.Color(0xff0000));
+    !visible && mesh.add(boxHelper);
+
+    return { width, height }
+  } else {
+    // 如果不是 BufferGeometry，无法计算包围盒
+    throw new Error('Mesh 的 Geometry 必须是 BufferGeometry 类型。');
+  }
 }
 
 export { getWorldPositionByName, isMaterialWithColor, onResetCamera, calculateBoundingBox }
