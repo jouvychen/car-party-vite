@@ -92,6 +92,8 @@ import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHel
 import { Reflector } from "three/examples/jsm/objects/Reflector.js";
 import { createGUI, createLightGUI, createBloomGUI } from "./gui";
 
+import { calculateBoundingBox } from '@/utils/threejsUtils';
+
 // 工具类导入
 import { debounce, uuid, getAssetsUrlRelative } from "@/utils/common";
 import { EntranceAnimations } from "@/utils/entranceTweenClass";
@@ -327,13 +329,22 @@ const init = async () => {
   flag.initFlag();
 
   // 测试
-  const mg = new THREE.PlaneGeometry(16, 9);
+  // const mg = new THREE.PlaneGeometry(16, 9);
+  // const mesh = new THREE.Mesh(mg, new THREE.MeshBasicMaterial());
+  // mesh.rotateY(Math.PI * 0.5)
+  let mes = threejsModule.scene.getObjectByName('作者面板') as THREE.Mesh;
+  const {width, height} = calculateBoundingBox(mes);
   // 顶点着色器
   const vertexShader = `
     varying vec2 vUv;
     void main() {
-      vUv = uv;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+      // 比例应该是mesh的，而不是屏幕分辨率
+      vec2 aspectRatio = vec2(${width.toFixed(6)} / ${height.toFixed(6)}, 1.0);
+      vec2 scaledUV = uv * aspectRatio; // 对纹理坐标进行缩放
+      vec2 offset = (vec2(1.0) - aspectRatio) * 0.5; // 计算偏移量
+      // vUv = vec2(scaledUV.x, uv.y); // 保持星系的形状不变
+      vUv = scaledUV + offset; // 对纹理坐标进行偏移
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
   `;
   // 片元着色器
@@ -411,7 +422,7 @@ const init = async () => {
       void mainImage( out vec4 fragColor, in vec2 fragCoord )
       {
         // 采样中心
-        vec2 uv = fragCoord.xy/iResolution.y-vec2(1.,.5);
+        vec2 uv = vUv - vec2(0.5);
         vec3 col;
         
         // 螺旋形随距离拉伸
@@ -467,7 +478,7 @@ const init = async () => {
         vec3 myImageColor = texture(avatariIChannel, myImageUV).rgb;
 
         // 将新的纹理颜色与之前的效果进行混合
-        col = mix(col, myImageColor, 0.5);
+        // col = mix(col, myImageColor, 0.5);
           
         fragColor = vec4(col,1.);
       }
@@ -491,13 +502,15 @@ const init = async () => {
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
   });
-  // // let mt = createShaderMat();
-  // const mesh = new THREE.Mesh(mg, mt);
+  
+  // mesh.position.set(0, 6, 0);
   // mesh.scale.multiplyScalar(0.5);
   // mainThree?.scene.add(mesh)
 
   // 黑洞变形和mesh宽高有关
-  let mes = threejsModule.scene.getObjectByName('作者面板') as THREE.Mesh;
+  // let mes = threejsModule.scene.getObjectByName('作者面板') as THREE.Mesh;
+  // const {width, height} = calculateBoundingBox(mes);
+  // debugger
   mes.material = mt;
   // 测试
 

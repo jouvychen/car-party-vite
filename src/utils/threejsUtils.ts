@@ -66,8 +66,27 @@ const onResetCamera = (entranceAnimations = new EntranceAnimations(), time?: num
       }
     );
   })
-
-  
 };
 
-export { getWorldPositionByName, isMaterialWithColor, onResetCamera }
+/**
+ * 计算不规则 Mesh 的长方形包围盒的宽度和高度。
+ * @param {THREE.Mesh} mesh - 包含顶点数组的 Mesh 对象。
+ * @returns {{ width: number; height: number }} 返回包围盒的宽度和高度。
+ * @throws {Error} 如果顶点数组为空，则抛出错误。
+ */
+function calculateBoundingBox(mesh: THREE.Mesh): { width: number; height: number } {
+  // // 使用 Mesh 的 getBoundingBox() 方法获取包围盒
+  const boundingBox = new THREE.Box3().setFromObject(mesh);
+
+  // 获取包围盒的最小和最大点的坐标
+  const min = boundingBox.min;
+  const max = boundingBox.max;
+
+  // 计算包围盒的宽度和高度
+  const width = max.z - min.z;
+  const height = max.y - min.y;
+
+  return { width, height };
+}
+
+export { getWorldPositionByName, isMaterialWithColor, onResetCamera, calculateBoundingBox }
