@@ -468,15 +468,33 @@ const init = async () => {
         col = mix(col, 1.2*BULB_BLACK_COL, 2.0*bulb_black);
 
         // 头像
-        // 步骤4：采样新的纹理并放置在屏幕中心
-        vec2 myImageUV = vUv - vec2(0.5);
-        // vec2 myImageUV = vUv * iResolution.xy - vec2(0.5);
-        vec3 myImageColor = texture(avatariIChannel, myImageUV).rgb;
+        // 将头像裁剪成圆形
+        vec2 center = vec2(0.5, 0.5); // 头像中心点的uv坐标，可根据实际情况调整
+        float radius = 0.2; // 圆形半径，可根据实际情况调整
+        float dist = distance(vUv, center);
+        float avatarMask = step(dist, radius); // 判断是否在头像圆形区域内，是则为1.0，否则为0.0
 
-        // 将新的纹理颜色与之前的效果进行混合
-        // col = mix(col, myImageColor, 0.5);
-          
-        fragColor = vec4(col,1.);
+        // if (dist > radius) {
+        //     discard; // 不在圆形内的像素丢弃
+        // }
+
+        // 缩小头像
+        float scale = 2.5; // 缩小比例，可根据实际情况调整
+        vec2 scaledUV = (vUv - center) * scale + center;
+        scaledUV.y = 1.0 - scaledUV.y; // 反转头像的Y轴方向
+
+        // 获取缩小后的头像颜色
+        vec3 avatarColor = texture(avatariIChannel, scaledUV).rgb;
+        
+        // 添加头像边缘的渐变效果
+        float avatarAlpha = texture(avatariIChannel, vUv).a;
+        float gradient = smoothstep(radius, radius - 0.02, dist); // 控制圆形边缘的渐变程度
+        avatarMask *= gradient;
+
+        // 将头像设置于最上层
+        col = mix(col, avatarColor, avatarAlpha * avatarMask);
+
+        fragColor = vec4(col, 1.0);
       }
       
       void main( void ) {
