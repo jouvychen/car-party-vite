@@ -17,9 +17,11 @@ const threejsModule = useThreejsModuleStore();
  * @returns 在场景中的世界坐标THREE.Vector3
  */
 const getWorldPositionByName = (name: string): THREE.Vector3 => {
-  const object = threejsModule.scene?.getObjectByName(name) as THREE.Object3D;
-  const worldPosition = new THREE.Vector3();
+  const temp = threejsModule.scene?.getObjectByName(name);
+  const object = temp?.clone();
+  let worldPosition = new THREE.Vector3();
   object?.getWorldPosition(worldPosition);
+  // worldPosition = worldPosition.multiplyScalar(1.2);
   return worldPosition;
 }
 

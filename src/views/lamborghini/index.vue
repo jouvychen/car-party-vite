@@ -78,6 +78,7 @@
 </template>
 
 <script lang="ts" setup name="CarBooth">
+import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
 import { message } from "ant-design-vue/es";
 // 色调映射 https://threejs.org/examples/#webgl_tonemapping
 // threejs相关导入
@@ -107,6 +108,11 @@ import { createTransitions } from "../function/createTransitions";
 
 import { PostProcessing } from "../function/PostProcessing.js";
 let postProcessing: PostProcessing;
+
+
+import { CreateCSS3DIframe } from "../function/CreateCSS3DIframe";
+let css3dIframe: CreateCSS3DIframe;
+let c3dIframe: CSS3DObject;
 
 // 常量导入
 import { revolverList } from "./constan";
@@ -328,8 +334,15 @@ const init = async () => {
   flag = new CreateFlag(mainThree.scene, mainThree.camera, mainThree.renderer);
   flag.initFlag();
 
+  css3dIframe = new CreateCSS3DIframe('http://127.0.0.1:5173/#/author-introduction', '作者面板');
+  css3dIframe.dom.style.width = '1366px';
+  css3dIframe.dom.style.height = '700px'
+  css3dIframe.css3dObject.scale.multiplyScalar(0.0026)
+  css3dIframe.css3dObject.rotateY(-Math.PI * 0.5)
+
+
   let mes = threejsModule.scene.getObjectByName('作者面板') as THREE.Mesh;
-  const {width, height} = calculateBoundingBox(mes, true);
+  const { width, height } = calculateBoundingBox(mes, true);
   // 顶点着色器
   const vertexShader = `
     varying vec2 vUv;
@@ -728,6 +741,8 @@ const render = () => {
   appStore.mode === "night" && updateSpotLight();
 
   carStore.wheelStart && startWheel(-performance.now() / 1000);
+
+  css3dIframe?.update();
 
   windowControlModule.textureWindow.texture && (windowControlModule.textureWindow.texture.needsUpdate = true);
 
