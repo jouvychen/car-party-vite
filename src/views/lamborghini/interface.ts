@@ -1,8 +1,3 @@
-// 通用对象类型
-interface ObjectKey {
-    [key: string]: any;
-}
-
 // 过渡动画对象类型
 interface Transition {
     vsSource: string,
@@ -31,4 +26,4 @@ interface ParentDom {
     height?: string | number | undefined,
 }
 
-export type { ObjectKey, Transition, TransitionObj, AssignmentList, ParentDom }
+export type { Transition, TransitionObj, AssignmentList, ParentDom }

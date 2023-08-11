@@ -1,5 +1,5 @@
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min'; // GUI调试工具
-import { ObjectKey } from './interface';
+import { ObjectKeys } from '@/utils/interface';
 
 /**
  * 无法继承GUI类，因为在super()时自动生成一个实例，使用appendChild时控件内容又变空，所以抽取成方法，不封装成类
@@ -57,7 +57,7 @@ const createBloomGUI = (bloomParams: any) => {
 };
 
 // 辉光
-const createMainStageGUI = (stageMaterialParams: ObjectKey) => {
+const createMainStageGUI = (stageMaterialParams: ObjectKeys) => {
   const params = {
     roughness: stageMaterialParams.material.roughness,
   };

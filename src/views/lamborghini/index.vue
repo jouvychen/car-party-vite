@@ -93,7 +93,7 @@ import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHel
 import { Reflector } from "three/examples/jsm/objects/Reflector.js";
 import { createGUI, createLightGUI, createBloomGUI } from "./gui";
 
-import { calculateBoundingBox } from '@/utils/threejsUtils';
+
 
 // 工具类导入
 import { debounce, uuid, getAssetsUrlRelative } from "@/utils/common";
@@ -110,66 +110,15 @@ import { PostProcessing } from "../function/PostProcessing.js";
 let postProcessing: PostProcessing;
 
 
-import { CreateCSS3DIframe } from "../function/CreateCSS3DIframe";
+import { CreateCSS3DIframe } from "../function/createCSS3DIframe";
 let css3dIframe: CreateCSS3DIframe;
 let c3dIframe: CSS3DObject;
 
 // 常量导入
 import { revolverList } from "./constan";
 
-// 测试
-// 着色器材质
-// import { tuniform, createShaderMat } from './createBlackHole';
-const avatar = getAssetsUrlRelative('../assets/images/iframe-page/about-me/', 'avatar.jpg');
-// 加载纹理
-let iChannelResolution = {
-  width: 0,
-  height: 0,
-  x: 0,
-  y: 0,
-}
-const texture = new THREE.TextureLoader().load('/textures/iChannel0.png', () => {
-  // 纹理加载完成后，获取纹理的宽度和高度
-  iChannelResolution.width = texture.image.width;
-  iChannelResolution.height = texture.image.height;
-});
-const myImageTexture = new THREE.TextureLoader().load(avatar);
-myImageTexture.repeat.set(0.5, 0.5); // 将纹理尺寸缩小为原来的一半
-let tuniform = {
-  iTime: {
-    value: 0.0,
-  },
-  iResolution: {
-    value: new THREE.Vector3(window.innerWidth, window.innerHeight, 1.0), // 宽度、高度和深度，用于纹理采样
-  },
-  iChannel0: {
-    type: 't',
-    value: new THREE.TextureLoader().load(
-      '/textures/iChannel0.png',
-    ),
-  },
-  iChannel1: {
-    type: 't',
-    value: new THREE.TextureLoader().load(
-      '/textures/iChannel1.jpg',
-    ),
-  },
-  iChannel2: {
-    type: 't',
-    value: new THREE.TextureLoader().load(
-      '/textures/iChannel2.png',
-    ),
-  },
-  avatariIChannel: {
-    type: 't',
-    value: myImageTexture,
-  },
-};
-tuniform.iChannel0.value.wrapS = tuniform.iChannel0.value.wrapT = THREE.RepeatWrapping;
-tuniform.iChannel1.value.wrapS = tuniform.iChannel1.value.wrapT = THREE.RepeatWrapping;
-tuniform.iChannel2.value.wrapS = tuniform.iChannel2.value.wrapT = THREE.RepeatWrapping;
-myImageTexture.repeat.set(1, 1)
-// 测试
+// 黑洞星系
+import { CreateBlackHole } from './createBlackHole';
 
 // 组件导入
 import floatWindow from "../float-window/index.vue";
@@ -339,197 +288,16 @@ const init = async () => {
   css3dIframe.dom.style.height = '700px'
   css3dIframe.css3dObject.scale.multiplyScalar(0.0026)
   css3dIframe.css3dObject.rotateY(-Math.PI * 0.5)
+  css3dIframe.css3dObject.position.multiplyScalar(1.2);
 
 
   let mes = threejsModule.scene.getObjectByName('作者面板') as THREE.Mesh;
-  const { width, height } = calculateBoundingBox(mes, true);
-  // 顶点着色器
-  const vertexShader = `
-    varying vec2 vUv;
-    void main() {
-      // 比例应该是mesh的，而不是屏幕分辨率
-      vec2 aspectRatio = vec2(${width.toFixed(6)} / ${height.toFixed(6)}, 1.0);
-      vec2 scaledUV = uv * aspectRatio; // 对纹理坐标进行缩放
-      vec2 offset = (vec2(1.0) - aspectRatio) * 0.5; // 计算偏移量
-      // vUv = vec2(scaledUV.x, uv.y); // 保持星系的形状不变
-      vUv = scaledUV + offset; // 对纹理坐标进行偏移
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `;
-  // 片元着色器
-  const fragmentShader = `
-      uniform vec3 iResolution;
-      uniform float iTime;
-      uniform sampler2D iChannel0;
-      uniform sampler2D iChannel1;
-      uniform sampler2D iChannel2;
-      uniform sampler2D avatariIChannel;
-      varying vec2 vUv;
-
-      const float RETICULATION = 1.;  // 粉尘质地强度
-      const float NB_ARMS = 5.;       // 星臂数
-      const float COMPR = .1;         // 星臂内压缩程度
-      const float SPEED = .1;
-      const float GALAXY_R = 1./2.; // 星系磁盘样的半径
-      const float BULB_R = 1./2.8; // 星系黑洞的半径
-      const vec3 GALAXY_COL = vec3(.9,.9,1.); //(1.,.8,.5);
-      const vec3 BULB_COL   = vec3(1.,1.0,1.0);
-      const float BULB_BLACK_R = 1./4.; // 星系黑洞的另一个形状的半径
-      const vec3 BULB_BLACK_COL   = vec3(0,0,0);
-      const vec3 SKY_COL    = .5*vec3(.1,.3,.5);
-      
-      // 宏定义
-      #define Pi 3.1415927
-      #define t iTime
-
-      // 基础噪音
-      float tex(vec2 uv) 
-      {
-        float n = texture(iChannel0,uv).r;
-        
-        #define MODE 3  // 噪音类型
-        #if MODE==0         // unsigned
-          #define A 2.
-          return n;
-        #elif MODE==1       // signed
-          #define A 3.
-          return 2.*n-1.;
-        #elif MODE==2       // bulbs
-          #define A 3.
-          return abs(2.*n-1.);
-        #elif MODE==3       // wires
-          #define A 1.5
-          return 1.-abs(2.*n-1.);
-        #endif
-      }
-
-
-      // 柏林湍流噪声+旋转
-      float noise(vec2 uv)
-      {
-        float v=0.;
-        float a=-SPEED*t,	co=cos(a),si=sin(a); 
-        mat2 M = mat2(co,-si,si,co);
-        const int L = 7;
-        float s=1.;
-        for (int i=0; i<L; i++)
-        {
-          uv = M*uv;
-          float b = tex(uv*s);
-          v += 1./s* pow(b,RETICULATION); 
-          s *= 2.;
-        }
-        
-        return v/2.;
-      }
-
-      bool keyToggle(int ascii) 
-      {
-        return (texture(iChannel2,vec2((.5+float(ascii))/256.,0.75)).x > 0.);
-      }
-
-      void mainImage( out vec4 fragColor, in vec2 fragCoord )
-      {
-        // 采样中心
-        vec2 uv = vUv - vec2(0.5);
-        vec3 col;
-        
-        // 螺旋形随距离拉伸
-        float rho = length(uv); // 极坐标
-        float ang = atan(uv.y,uv.x);
-        float shear = 2.*log(rho); // 螺旋层数/圈数
-        float c = cos(shear), s=sin(shear);
-        mat2 R = mat2(c,-s,s,c);
-
-        // 星系概要
-        float r; // 星系磁盘样
-        r = rho/GALAXY_R; float dens = exp(-r*r);
-        r = rho/BULB_R;	  float bulb = exp(-r*r);
-        r = rho/BULB_BLACK_R; float bulb_black = exp(-r*r);
-        float phase = NB_ARMS*(ang-shear);
-        // arms = spirals compression
-        ang = ang-COMPR*cos(phase)+SPEED*t;
-        uv = rho*vec2(cos(ang),sin(ang));
-        // 拉伸后的纹理必须变暗 d(new_ang)/d(ang)
-        float spires = 1.+NB_ARMS*COMPR*sin(phase);
-        dens *= .7*spires;
-        
-        // gaz texture
-        float gaz = noise(.09*1.2*R*uv);
-        float gaz_trsp = pow((1.-gaz*dens),2.);
-
-        // stars
-        // 屏幕高度与第一个纹理高度之间的比例值，用于调整纹理采样的位置
-        // iChannelResolution是一个uniform数组，表示各个纹理（iChannel0、iChannel1等）的分辨率
-        float ratio = .8*iResolution.y/${iChannelResolution.height.toFixed(1)};
-        float stars1 = texture(iChannel1,ratio*uv+.5).r, // M*uv
-              stars2 = texture(iChannel0,ratio*uv+.5).r,
-            stars = pow(1.-(1.-stars1)*(1.-stars2),5.);
-        
-        // 键盘控制效果交互
-        if (keyToggle(49)) gaz_trsp = 1./1.7;
-        if (keyToggle(50)) stars = 0.;
-        if (keyToggle(51)) bulb = 0.;
-        if (keyToggle(52)) dens = .3*spires;
-        
-        // 混合所有效果	
-        col = mix(SKY_COL,
-              gaz_trsp*(1.7*GALAXY_COL) + 1.2*stars, 
-              dens);
-        col = mix(col, 2.*BULB_COL,1.2* bulb);
-
-        col = mix(col, 1.2*BULB_BLACK_COL, 2.0*bulb_black);
-
-        // 头像
-        // 将头像裁剪成圆形
-        vec2 center = vec2(0.5, 0.5); // 头像中心点的uv坐标，可根据实际情况调整
-        float radius = 0.2; // 圆形半径，可根据实际情况调整
-        float dist = distance(vUv, center);
-        float avatarMask = step(dist, radius); // 判断是否在头像圆形区域内，是则为1.0，否则为0.0
-
-        // if (dist > radius) {
-        //     discard; // 不在圆形内的像素丢弃
-        // }
-
-        // 缩小头像
-        float scale = 2.5; // 缩小比例，可根据实际情况调整
-        vec2 scaledUV = (vUv - center) * scale + center;
-        scaledUV.y = 1.0 - scaledUV.y; // 反转头像的Y轴方向
-
-        // 获取缩小后的头像颜色
-        vec3 avatarColor = texture(avatariIChannel, scaledUV).rgb;
-        
-        // 添加头像边缘的渐变效果
-        float avatarAlpha = texture(avatariIChannel, vUv).a;
-        float gradient = smoothstep(radius, radius - 0.02, dist); // 控制圆形边缘的渐变程度
-        avatarMask *= gradient;
-
-        // 将头像设置于最上层
-        col = mix(col, avatarColor, avatarAlpha * avatarMask);
-
-        fragColor = vec4(col, 1.0);
-      }
-      
-      void main( void ) {
-          mainImage(gl_FragColor, vUv * iResolution.xy);
-          // 直接将加载成功的贴图以图片纹理展示
-          // vec4 texColor = texture(iChannel2, vUv);
-          // gl_FragColor = texColor;
-      }
-  `;
-
+  
+  
   // 允许平铺
   // flowTexture.wrapS = THREE.RepeatWrapping;
-  let mt = new THREE.ShaderMaterial({
-    uniforms: tuniform,
-    transparent: true,
-    depthWrite: false,
-    depthTest: true,
-    // side: THREE.DoubleSide,
-    vertexShader: vertexShader,
-    fragmentShader: fragmentShader,
-  });
-  mes.material = mt;
+  const blackHole = new CreateBlackHole(mes);
+  mes.material = blackHole.blackHoleMaterial;
 
   // const textureLoader = new THREE.TextureLoader();
   // const rgbeLoader = new RGBELoader().setPath("/textures/equirectangular/");
@@ -733,10 +501,9 @@ const render = () => {
   flag?.flagUpdate();
   htmlNodes?.update();
 
-  tuniform.iTime.value += clock.getDelta();
+  CreateBlackHole.uniform.iTime.value += clock.getDelta();
 
-  // console.log('tuniform.iTime.value', tuniform.iTime.value);
-
+  
 
   appStore.mode === "night" && updateSpotLight();
 

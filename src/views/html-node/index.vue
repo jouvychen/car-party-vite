@@ -52,7 +52,8 @@
 import {
   useStoreApp,
   useThreejsModuleStore,
-  useHtmlNodeModelStore
+  useHtmlNodeModelStore,
+  useCss3dIframeModelStore,
 } from "@/store";
 import { HotPoint } from '@/utils/interface';
 import svgButton from './svg-button.vue';
@@ -63,12 +64,15 @@ import { getWorldPositionByName } from '@/utils/threejsUtils';
 import { onResetCamera } from '@/utils/threejsUtils';
 import { message } from "ant-design-vue";
 import { findObjectsByKeywords } from "@/utils/common";
+import { CreateBlackHole } from '../lamborghini/createBlackHole';
 
 const appStore = useStoreApp();
 const threejsModule = useThreejsModuleStore();
 const htmlNodeModule = useHtmlNodeModelStore();
 const entranceAnimations = new EntranceAnimations();
 let closePoint: HTMLDivElement;
+
+const css3dIframeModel = useCss3dIframeModelStore();
 const carousel = reactive<{ pointNameList: string[], pointList: HotPoint[] }>({
   pointNameList: ['幻灯片', '查看介绍', '旗帜'],
   pointList: []
@@ -111,6 +115,13 @@ const onSwitchEnable = (name: string) => {
         htmlNodeModule.promotionalFilm.onPlay();
       }
       break;
+    case '作者介绍':
+      {
+        CreateBlackHole.uniform.transparency.value = 0.0;
+        css3dIframeModel.transparency = 1;
+      }
+      break;
+
 
     default:
       break;
@@ -124,12 +135,23 @@ const onSwitchClose = () => {
         htmlNodeModule.promotionalFilm.onPause();
       }
       break;
+    case '作者介绍':
+      {
+        CreateBlackHole.uniform.transparency.value = 1.0;
+        css3dIframeModel.transparency = 0;
+      }
 
     default:
       break;
   }
   appStore.focusSceneName = '';
 };
+
+const transparency = computed(()=>{
+  console.log('--', css3dIframeModel.transparency);
+  
+  return css3dIframeModel.transparency;
+})
 
 const closeHotPoint = () => {
   onSwitchClose();

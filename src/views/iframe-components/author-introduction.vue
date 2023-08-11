@@ -1,5 +1,6 @@
 <template>
   <div class="author-introduction">
+    <span style="color: #fff">{{ css3dIframeModel.transparency }}</span>
     <!-- 左侧 -->
     <div class="left">
       <!-- 个人信息与技术栈 -->
@@ -20,10 +21,16 @@
 </template>
 
 <script lang="ts" setup name="AuthorIntroduction">
+import {
+  useCss3dIframeModelStore,
+} from "@/store";
 import ApplicationProportion from './components/application-proportion.vue'
 import TechnologyProportion from './components/technology-proportion.vue'
 import PersonalInfoTechnologyStack from './components/personal-info-technology-stack.vue'
-
+const css3dIframeModel = useCss3dIframeModelStore();
+const transparency = computed(()=>{
+  return css3dIframeModel.transparency;
+})
 </script>
 
 <style scoped lang="less">

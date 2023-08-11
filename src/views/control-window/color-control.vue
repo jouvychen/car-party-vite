@@ -21,7 +21,7 @@
 </template>
 <script setup lang="ts" name="colorControl">
 import * as THREE from "three";
-import { useBoothModelStore, useCarModelStore } from "@/store";
+import { useBoothModelStore, useCss3dIframeModelStore, useCarModelStore } from "@/store";
 import { isMaterialWithColor } from "@/utils/threejsUtils";
 import { ObjectKeys } from "@/utils/interface";
 import type { Revolver } from "../revolver/typeStatement";
@@ -235,7 +235,13 @@ const materials: ObjectKeys = {
 
 const carStore = useCarModelStore();
 const boothStore = useBoothModelStore();
+const css3dIframeModel = useCss3dIframeModelStore();
 const boothReady = computed(() => boothStore.boothReady);
+const transparency = computed(()=>{
+  console.log('--', css3dIframeModel.transparency);
+  debugger
+  return css3dIframeModel.transparency;
+})
 const floatWindow1 = props.floatWindow;
 
 /**
