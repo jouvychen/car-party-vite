@@ -1,6 +1,6 @@
 import { getWorldPositionByName } from '@/utils/threejsUtils';
-import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
-
+// import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
+import { CSS3DRenderer, CSS3DObject } from './CSS3DRenderer.js';
 import {
   useThreejsModuleStore,
 } from "@/store";
@@ -12,7 +12,7 @@ export class CreateCSS3DIframe {
   public meshName: string;
   public dom!: HTMLIFrameElement;
   public css3dObject!: CSS3DObject;
-  private css3dRenderer!: CSS3DRenderer;
+  public css3dRenderer!: CSS3DRenderer;
 
   constructor(url: string, meshName?: string) {
     this.url = url;

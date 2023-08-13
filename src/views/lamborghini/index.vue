@@ -151,6 +151,7 @@ import {
   useHtmlNodeModelStore,
   useWindowControlStore,
 } from "@/store";
+import { getWorldPositionByName } from '@/utils/threejsUtils';
 const appStore = useStoreApp();
 const boothStore = useBoothModelStore();
 const carStore = useCarModelStore();
@@ -290,7 +291,14 @@ const init = async () => {
   css3dIframe.css3dObject.rotateY(-Math.PI * 0.5)
   css3dIframe.css3dObject.position.multiplyScalar(1.2);
 
+  // 将 CSS3DObject 的元素引用传递给 addCSS3DObject 方法，以保持引用
+  css3dIframe.css3dRenderer.addCSS3DObject(css3dIframe.css3dObject, css3dIframe.dom);
 
+  setTimeout(()=>{
+    let p22 = getWorldPositionByName('作者面板');
+    p22 = p22.multiplyScalar(1.2)
+    css3dIframe.css3dRenderer.setPositionAndAngle(threejsModule.scene, threejsModule.camera, new THREE.Vector3(p22.x, p22.y, 0));
+  }, 15000)
   let mes = threejsModule.scene.getObjectByName('作者面板') as THREE.Mesh;
   // const bs = new THREE.MeshBasicMaterial({color: '#040f32'});
   // mes.material = bs;

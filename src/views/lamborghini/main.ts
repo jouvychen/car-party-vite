@@ -78,8 +78,8 @@ export class MainThreeSetup {
       0.1,
       100
     );
-    // this.camera.position.set(-40, 20, 40);
-    this.camera.position.set(4.25, 1.4, 4.5);
+    // this.camera.position.set(4.25, 1.4, 4.5);
+    this.camera.position.set(0, 0, 4);
 
     this.scene = new THREE.Scene();
     // 场景有雾气和背景色不为黑色影响辉光效果
