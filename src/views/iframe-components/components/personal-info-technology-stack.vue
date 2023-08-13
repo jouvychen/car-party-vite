@@ -73,6 +73,7 @@ const avatar = getAssetsUrlRelative('../assets/images/iframe-page/about-me/', 'a
       object-position: left;
       border: 3px solid #4255d3;
       padding: 5px;
+      cursor: pointer;
     }
 
     .blob {

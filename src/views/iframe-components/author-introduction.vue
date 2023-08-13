@@ -1,6 +1,6 @@
 <template>
   <div class="author-introduction">
-    <span style="color: #fff">{{ css3dIframeModel.transparency }}</span>
+    <span style="color: #fff">{{ transparency }}</span>
     <!-- 左侧 -->
     <div class="left">
       <!-- 个人信息与技术栈 -->

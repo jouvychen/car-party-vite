@@ -147,12 +147,6 @@ const onSwitchClose = () => {
   appStore.focusSceneName = '';
 };
 
-const transparency = computed(()=>{
-  console.log('--', css3dIframeModel.transparency);
-  
-  return css3dIframeModel.transparency;
-})
-
 const closeHotPoint = () => {
   onSwitchClose();
   closePoint?.classList.remove('close-visible');

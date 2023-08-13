@@ -292,8 +292,8 @@ const init = async () => {
 
 
   let mes = threejsModule.scene.getObjectByName('作者面板') as THREE.Mesh;
-  
-  
+  // const bs = new THREE.MeshBasicMaterial({color: '#040f32'});
+  // mes.material = bs;
   // 允许平铺
   // flowTexture.wrapS = THREE.RepeatWrapping;
   const blackHole = new CreateBlackHole(mes);

@@ -237,11 +237,6 @@ const carStore = useCarModelStore();
 const boothStore = useBoothModelStore();
 const css3dIframeModel = useCss3dIframeModelStore();
 const boothReady = computed(() => boothStore.boothReady);
-const transparency = computed(()=>{
-  console.log('--', css3dIframeModel.transparency);
-  debugger
-  return css3dIframeModel.transparency;
-})
 const floatWindow1 = props.floatWindow;
 
 /**
