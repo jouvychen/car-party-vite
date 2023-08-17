@@ -153,7 +153,7 @@ class CSS3DRenderer {
 
 			const style = cameraCSSMatrix +
 				'translate(' + _widthHalf + 'px,' + _heightHalf + 'px)';
-				// rotateX(3.14159rad) rotateY(0rad) rotateZ(3.14159rad) translateZ(-904px) translateY(-24.1px) translateX(-6px)
+			// rotateX(3.14159rad) rotateY(0rad) rotateZ(3.14159rad) translateZ(-904px) translateY(-24.1px) translateX(-6px)
 			// if ( cache.camera.style !== style ) {
 
 			// 	cameraElement.style.transform = style;
@@ -201,17 +201,17 @@ class CSS3DRenderer {
 		}
 
 		// 解析矩阵样式字符串并返回矩阵
-function parseMatrixFromStyle(style) {
-	const matrixArray = style.match(/-?[\d.]+/g).map(Number);
-    const matrix = new THREE.Matrix4();
-    matrix.set(
-        matrixArray[0], matrixArray[1], matrixArray[2], matrixArray[3],
-        matrixArray[4], matrixArray[5], matrixArray[6], matrixArray[7],
-        matrixArray[8], matrixArray[9], matrixArray[10], matrixArray[11],
-        matrixArray[12], matrixArray[13], matrixArray[14], matrixArray[15]
-    );
-    return matrix;
-}
+		function parseMatrixFromStyle(style) {
+			const matrixArray = style.match(/-?[\d.]+/g).map(Number);
+			const matrix = new THREE.Matrix4();
+			matrix.set(
+				matrixArray[0], matrixArray[1], matrixArray[2], matrixArray[3],
+				matrixArray[4], matrixArray[5], matrixArray[6], matrixArray[7],
+				matrixArray[8], matrixArray[9], matrixArray[10], matrixArray[11],
+				matrixArray[12], matrixArray[13], matrixArray[14], matrixArray[15]
+			);
+			return matrix;
+		}
 
 
 		// /新增
@@ -228,36 +228,66 @@ function parseMatrixFromStyle(style) {
 
 			const _widthHalf = window.innerWidth / 2;
 			const _heightHalf = window.innerHeight / 2;
-			const ttt =	'translateX(' + camera.projectionMatrix.elements[5] * _heightHalf + 'px)' + getCameraCSSMatrix(camera.matrixWorldInverse);
+			const ttt = 'translateX(' + camera.projectionMatrix.elements[5] * _heightHalf + 'px)' + getCameraCSSMatrix(camera.matrixWorldInverse);
 
 			const style2 = ttt +
 				'translate(' + _widthHalf + 'px,' + _heightHalf + 'px)';
-				// translateZ(902.5463322908435px)matrix3d(-0.00009970858114863734,0.008766358221636694,-0.9999615697724233,0,0,-0.999961574743133,-0.00876635826521339,0,0.9999999950290994,8.740811444674846e-7,-0.0000997047498208739,0,2.2091764833361633,1.0476882951510817,3.9677207775099146,1)translate(683px,328.5px)
+			// translateZ(902.5463322908435px)matrix3d(-0.00009970858114863734,0.008766358221636694,-0.9999615697724233,0,0,-0.999961574743133,-0.00876635826521339,0,0.9999999950290994,8.740811444674846e-7,-0.0000997047498208739,0,2.2091764833361633,1.0476882951510817,3.9677207775099146,1)translate(683px,328.5px)
 			const style = cameraCSSMatrix;
 			//  +
 			// 	'translate(' + _widthHalf + 'px,' + _heightHalf + 'px)';
-				// rotateX(-3.11187rad) rotateY(-0.900648rad) rotateZ(-3.08012rad) translateZ(12.9175px) translate(683px, 328.5px)
-				// rotateX(3.14159rad) rotateY(0rad) rotateZ(3.14159rad) translateZ(4.88548px) translate(683px, 328.5px)
-		debugger
-		// translateZ(902.5463322908435px)matrix3d(-0.00009970858114863734,0.008766358221636694,-0.9999615697724233,0,0,-0.999961574743133,-0.00876635826521339,0,0.9999999950290994,8.740811444674846e-7,-0.0000997047498208739,0,2.2091764833361633,1.0476882951510817,3.9677207775099146,1)translate(683px,328.5px)
+			// rotateX(-3.11187rad) rotateY(-0.900648rad) rotateZ(-3.08012rad) translateZ(12.9175px) translate(683px, 328.5px)
+			// rotateX(3.14159rad) rotateY(0rad) rotateZ(3.14159rad) translateZ(4.88548px) translate(683px, 328.5px)
+			// debugger
+			// translateZ(902.5463322908435px)matrix3d(-0.00009970858114863734,0.008766358221636694,-0.9999615697724233,0,0,-0.999961574743133,-0.00876635826521339,0,0.9999999950290994,8.740811444674846e-7,-0.0000997047498208739,0,2.2091764833361633,1.0476882951510817,3.9677207775099146,1)translate(683px,328.5px)
+			// const parentStyle = cameraElement.style.transform;
 			if (cache.camera.style !== style2) {
 				cache.keepTransformation = true;
 				// rotateX(180deg) rotateY(180deg)可以
-				cameraElement.style.transform = style2;
+				// cameraElement.style.transform = style2;
+				cameraElement.style.transform = 'rotateX(180deg) rotateY(180deg)';
 				cache.camera.style = style2;
 			}
-			
+
 			const cameraCSSMatrix2 = getCameraCSSMatrix(camera.matrixWorldInverse);
 
 			this.css3DObjects.forEach((element, css3DObject) => {
-				const matrixWorld = updateCSS3DObjectMatrix(css3DObject, camera)
-				// 用源码里的方法计算
-				const newElementStyle = getObjectCSSMatrix(matrixWorld)
-				// 更新 CSS3DObject 的样式
-				// matrix3d(-0.55999, -2.28306e-05, -4.29914e-07, 0, 2.28306e-05, -0.55999, 3.77522e-09, 0, 4.29931e-07, 0, -2.36, 0, 108.59563, 12.43572, -38.89936, 1)
-				element.style.transform = newElementStyle;
+
+				// const childStyle = element.style.transform;
+				// 父元素的样式字符串
+				const parentStyle = "translateZ(850.344px) matrix3d(-0.00027775, 0.00879695, -0.999961, 0, 0, -0.999961, -0.00879695, 0, 1, 2.44335e-06, -0.000277739, 0, 2.21041, 1.04748, 3.96736, 1) translate(683px, 309.5px)";
+
+				// 子元素的样式字符串
+				const childStyle = "translate(-50%, -50%) matrix3d(0, 0, 0.0026, 0, 0, -0.0026, 0, 0, -0.0026, 0, 0, 0, 8.30918, 1.33012, -2.65018, 1)";
+
+
+				// 解析父元素的平移和平移Z
+				const parentTranslateZRegex = /translateZ\((-?\d+\.?\d*)px\)/;
+				const parentTranslateRegex = /translate\((-?\d+\.?\d*)px,\s*(-?\d+\.?\d*)px\)/;
+
+				const parentTranslateZMatch = parentStyle.match(parentTranslateZRegex);
+				const parentTranslateMatch = parentStyle.match(parentTranslateRegex);
+
+				const parentTranslateX = parseFloat(parentTranslateMatch[1] || 0);
+				const parentTranslateY = parseFloat(parentTranslateMatch[2] || 0);
+				const parentTranslateZ = parseFloat(parentTranslateZMatch[1] || 0);
+
+				// 解析子元素的变换矩阵
+				const childMatrix = parseMatrixFromStyle(childStyle);
+
+				// 将父元素的平移应用到子元素的逆矩阵的位移部分
+				const newChildMatrix = new THREE.Matrix4();
+				newChildMatrix.copy(childMatrix);
+				newChildMatrix.elements[12] += parentTranslateX;
+				newChildMatrix.elements[13] += parentTranslateY;
+				newChildMatrix.elements[14] += parentTranslateZ;
+
+				// 将新的变换矩阵转换为样式字符串
+				const newChildStyle = "translate(-50%, -50%) " + getCSSMatrixFromMatrix(newChildMatrix);
+
+				element.style.transform = newChildStyle;
 				// 更新 CSS3DObject 在 Map 中的记录
-				this.css3DObjects.set(css3DObject, newElementStyle);
+				this.css3DObjects.set(css3DObject, newChildStyle);
 			});
 		};
 
@@ -266,11 +296,11 @@ function parseMatrixFromStyle(style) {
 			// 获取摄像机的世界变换矩阵
 			const cameraWorldMatrix = new THREE.Matrix4();
 			cameraWorldMatrix.copy(camera.matrixWorld);
-	
+
 			// 获取 CSS3DObject 的世界变换矩阵
 			const css3DObjectWorldMatrix = new THREE.Matrix4();
 			css3DObjectWorldMatrix.copy(css3DObject.matrixWorld);
-	
+
 			// 合并摄像机的世界变换矩阵和 CSS3DObject 的世界变换矩阵
 			const combinedMatrix = new THREE.Matrix4();
 			combinedMatrix.multiplyMatrices(cameraWorldMatrix, css3DObjectWorldMatrix);

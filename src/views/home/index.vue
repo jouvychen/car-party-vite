@@ -187,7 +187,7 @@ const pageInit = () => {
         ws.indexOf(cls) == -1
       )
         location.reload();
-      wrap.className = "wrap " + cls;
+      $wrap.className = "wrap " + cls;
     }
   };
   $(window).resize(resize);
