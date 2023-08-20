@@ -7,14 +7,22 @@ import AutoImport from 'unplugin-auto-import/vite'
 // setup语法糖拓展
 import vueSetupExtend from 'vite-plugin-vue-setup-extend'
 
+// svg
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons"
+
 // 自动导入组件
 import Components from 'unplugin-vue-components/vite';
 // ant按需加载
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
 
+function resolve(dir) {
+  return path.join(__dirname, dir)
+}
+
 const CWD = process.cwd();
 export default ({ command, mode }: ConfigEnv): UserConfigExport => {
   return {
+    base: './',
     css: {
       // css预处理器
       preprocessorOptions: {
@@ -45,7 +53,13 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
       Components({
         dirs: ['src/components'], // 配置需要默认导入的自定义组件文件夹，该文件夹下的所有组件都会自动 import
         resolvers: [AntDesignVueResolver({ importStyle: 'less', resolveIcons: true })]
-      })
+      }),
+      createSvgIconsPlugin({
+        // 指定需要缓存的图标文件夹
+        iconDirs: [resolve("./src/assets/svg")],
+        // 指定symbolId格式
+        symbolId: "[name]",
+      }),
     ],
     resolve: {
       alias: {

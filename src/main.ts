@@ -9,6 +9,8 @@ import 'ant-design-vue/es/message/style/css';
 import 'ant-design-vue/es/modal/style/css';
 import 'ant-design-vue/dist/antd.less';
 
+import 'virtual:svg-icons-register';
+
 import { setupI18n } from '@/locales/setupI18n';
 
 async function bootstrap() {
